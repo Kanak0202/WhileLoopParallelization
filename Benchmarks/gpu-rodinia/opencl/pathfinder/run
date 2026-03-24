@@ -1,3 +1,0 @@
-#!/bin/bash
-
-./pathfinder.out -c 100000 -r 100 -h 20 $@
