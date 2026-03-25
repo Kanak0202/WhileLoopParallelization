@@ -1,0 +1,1258 @@
+========================================================================
+  LOOP STATIC ANALYSIS REPORT
+  Generated: 2026-03-24 12:31:24
+========================================================================
+
+GLOBAL SUMMARY
+------------------------------------------------------------------------
+  Files analysed          : 10
+  Total loops             : 136
+    While loops           : 15  (nested: 1)
+    For loops             : 119  (nested: 25)
+    Do-while loops        : 2
+  Nested loops (total)    : 26
+  Canonicalizable while   : 0
+  Canonicalizable for     : 119
+  Canonicalizability rate : 119/136  (87.5%)
+
+========================================================================
+FILE: epcc-openmp-microbenchmarks-main/openmpbench_C_v40/taskbench.c
+------------------------------------------------------------------------
+  Total loops             : 16
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 16  (nested: 2,  canonicalizable: 16)
+    Do-while loops        : 0
+  Nested loops (total)    : 2
+  Canonicalizability      : 16/16  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for          135   d=0  Yes         j < innerreps
+  2    for          144   d=0  Yes         j < (innerreps >> DEPTH) * (1 << DEPTH)
+  3    for          157   d=0  Yes         j < innerreps
+  4    for          178   d=0  Yes         j < innerreps
+  5    for          194   d=0  Yes         j < innerreps * nthreads
+  6    for          217   d=0  Yes         j < innerreps * nthreads
+  7    for          237   d=0  Yes         j < innerreps
+  8    for          257   d=0  Yes         j < innerreps
+  9    for          270   d=0  Yes         j < innerreps / nthreads
+  10   for          273   d=1  Yes         i < nthreads
+  11   for          299   d=0  Yes         j < innerreps
+  12   for          302   d=1  Yes         i < nthreads
+  13   for          324   d=0  Yes         j < innerreps
+  14   for          340   d=0  Yes         j < innerreps
+  15   for          359   d=0  Yes         j < (innerreps >> DEPTH)
+  16   for          386   d=0  Yes         j < (innerreps >> DEPTH)
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 135, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [2] FOR  at line 144, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < (innerreps >> DEPTH) * (1 << DEPTH)
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [3] FOR  at line 157, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task 	    { 		delay( delaylength );  	    } // task
+
+  [4] FOR  at line 178, col 6
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : pointer, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task depend(inout:a[id])          {          delay( delaylength );  …
+
+  [5] FOR  at line 194, col 6
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task 		{ 		    delay(delaylength);  		}
+
+  [6] FOR  at line 217, col 10
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps * nthreads
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : id = j%nthreads;  #pragma omp task depend(inout: a[id])          {              …
+
+  [7] FOR  at line 237, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ( thread_num == 0 ) { #pragma omp task 		{ 		    delay( delaylength ); 		} //…
+
+  [8] FOR  at line 257, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task if(returnfalse()) 	    { 		delay( delaylength ); 	    }
+
+  [9] FOR  at line 270, col 3
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps / nthreads
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task private( i ) 	    { 		for ( i = 0; i < nthreads; i ++ ) { #prag…
+
+  [10] FOR  at line 273, col 3
+      Depth        : 1 (nested)
+      Condition    : i < nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task untied 		    { 			delay( delaylength );  		    } // task
+
+  [11] FOR  at line 299, col 6
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task private( i ) 		{ 		    for ( i = 0; i < nthreads; i ++ ) { #pra…
+
+  [12] FOR  at line 302, col 7
+      Depth        : 1 (nested)
+      Condition    : i < nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task 			{ 			    delay( delaylength );  			} // task
+
+  [13] FOR  at line 324, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task 	    { 		delay( delaylength );  	    } // task #pragma omp task…
+
+  [14] FOR  at line 340, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task 	    { 		delay( delaylength );  	    } // task #pragma omp barr…
+
+  [15] FOR  at line 359, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < (innerreps >> DEPTH)
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task 	    { 		branchTaskTree(DEPTH); 		delay(delaylength); 	    }
+
+  [16] FOR  at line 386, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < (innerreps >> DEPTH)
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : leafTaskTree(DEPTH);
+
+========================================================================
+FILE: epcc-openmp-microbenchmarks-main/openmpbench_C_v40/syncbench.c
+------------------------------------------------------------------------
+  Total loops             : 20
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 20  (nested: 2,  canonicalizable: 20)
+    Do-while loops        : 0
+  Nested loops (total)    : 2
+  Canonicalizability      : 20/20  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for          139   d=0  Yes         j < innerreps
+  2    for          151   d=0  Yes         j < innerreps
+  3    for          162   d=0  Yes         j < innerreps
+  4    for          170   d=0  Yes         j < innerreps
+  5    for          182   d=0  Yes         j < innerreps
+  6    for          184   d=1  Yes         i < nthreads
+  7    for          193   d=0  Yes         j < innerreps
+  8    for          195   d=1  Yes         i < nthreads
+  9    for          204   d=0  Yes         j < innerreps
+  10   for          216   d=0  Yes         j < innerreps
+  11   for          228   d=0  Yes         j < innerreps
+  12   for          239   d=0  Yes         j < innerreps / nthreads
+  13   for          252   d=0  Yes         j < innerreps / nthreads
+  14   for          264   d=0  Yes         j < innerreps / nthreads
+  15   for          279   d=0  Yes         j < innerreps
+  16   for          295   d=0  Yes         j < innerreps
+  17   for          307   d=0  Yes         j < (int)innerreps
+  18   for          323   d=0  Yes         j < ub
+  19   for          343   d=0  Yes         j < ub
+  20   for          356   d=0  Yes         j < innerreps
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 139, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [2] FOR  at line 151, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : arithmetic
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : aaaa += b; 	b *= c;
+
+  [3] FOR  at line 162, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength); 	aaaa += 1;
+
+  [4] FOR  at line 170, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp parallel 	{ 	    delay(delaylength); 	}
+
+  [5] FOR  at line 182, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp for 	    for (i = 0; i < nthreads; i++) { 		delay(delaylength); 	   …
+
+  [6] FOR  at line 184, col 6
+      Depth        : 1 (nested)
+      Condition    : i < nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [7] FOR  at line 193, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp parallel for 	for (i = 0; i < nthreads; i++) { 	    delay(delaylengt…
+
+  [8] FOR  at line 195, col 2
+      Depth        : 1 (nested)
+      Condition    : i < nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [9] FOR  at line 204, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength); #pragma omp barrier
+
+  [10] FOR  at line 216, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if(thread_num==(j%nthreads)) 	    delay(delaylength); #pragma omp barrier
+
+  [11] FOR  at line 228, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp single 	    delay(delaylength);
+
+  [12] FOR  at line 239, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps / nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp critical 	    { 		delay(delaylength); 	    }
+
+  [13] FOR  at line 252, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps / nthreads
+      Computation  : bitwise, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : omp_set_lock(&lock1); 	    delay(delaylength); 	    omp_unset_lock(&lock1);
+
+  [14] FOR  at line 264, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps / nthreads
+      Computation  : bitwise, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : omp_set_lock(&lock2); 	    delay(delaylength); 	    omp_unset_lock(&lock2);
+
+  [15] FOR  at line 279, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : bitwise, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : omp_set_lock(&lock1); 	    delay(delaylength); 	    omp_unset_lock(&lock1);
+
+  [16] FOR  at line 295, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : bitwise, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : omp_set_lock(&lock3); 	    delay(delaylength); 	    omp_unset_lock(&lock3);
+
+  [17] FOR  at line 307, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < (int)innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp ordered 	delay(delaylength);
+
+  [18] FOR  at line 323, col 6
+      Depth        : 0 (top-level)
+      Condition    : j < ub
+      Computation  : arithmetic
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp atomic 	    aaaa += b; 	    b *= c;
+
+  [19] FOR  at line 343, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < ub
+      Computation  : arithmetic
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp atomic seq_cst 	    aaaa += b; 	    b *= c;
+
+  [20] FOR  at line 356, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp parallel reduction(+:aaaa) 	{ 	    delay(delaylength); 	    aaaa += …
+
+========================================================================
+FILE: epcc-openmp-microbenchmarks-main/openmpbench_C_v40/schedbench.c
+------------------------------------------------------------------------
+  Total loops             : 27
+    While loops           : 7  (nested: 0,  canonicalizable: 0)
+    For loops             : 20  (nested: 10,  canonicalizable: 20)
+    Do-while loops        : 0
+  Nested loops (total)    : 10
+  Canonicalizability      : 20/27  (74.1%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    while         69   d=0  No          cksz <= itersperthr
+  2    while         78   d=0  No          cksz <= itersperthr
+  3    while         89   d=0  No          cksz <= itersperthr
+  4    while         98   d=0  No          cksz <= itersperthr
+  5    while        108   d=0  No          cksz <= itersperthr / nthreads
+  6    while        117   d=0  No          cksz <= itersperthr / nthreads
+  7    while        126   d=0  No          cksz <= itersperthr / nthreads
+  8    for          140   d=0  Yes         j < innerreps
+  9    for          141   d=1  Yes         i < itersperthr
+  10   for          152   d=0  Yes         j < innerreps
+  11   for          154   d=1  Yes         i < itersperthr * nthreads
+  12   for          165   d=0  Yes         j < innerreps
+  13   for          167   d=1  Yes         i < itersperthr * nthreads
+  14   for          178   d=0  Yes         j < innerreps
+  15   for          180   d=1  Yes         i < itersperthr * nthreads
+  16   for          191   d=0  Yes         j < innerreps
+  17   for          193   d=1  Yes         i < itersperthr * nthreads
+  18   for          205   d=0  Yes         j < innerreps
+  19   for          207   d=1  Yes         i < itersperthr * nthreads
+  20   for          218   d=0  Yes         j < innerreps
+  21   for          220   d=1  Yes         i < itersperthr * nthreads
+  22   for          231   d=0  Yes         j < innerreps
+  23   for          233   d=1  Yes         i < itersperthr * nthreads
+  24   for          243   d=0  Yes         j < innerreps
+  25   for          245   d=1  Yes         i < itersperthr * nthreads
+  26   for          258   d=0  Yes         j < innerreps
+  27   for          260   d=1  Yes         i < itersperthr * nthreads
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] WHILE  at line 69, col 7
+      Depth        : 0 (top-level)
+      Condition    : cksz <= itersperthr
+      Computation  : arithmetic, bitwise, function_call
+      Canonical    : NO  —  Counter variable 'cksz' is modified conditionally or with a data-dependent (runtime) stride — trip count is not statically predictable
+      Body snippet : sprintf(testName, "STATIC %d", cksz);         benchmark(testName, &teststaticn);…
+
+  [2] WHILE  at line 78, col 7
+      Depth        : 0 (top-level)
+      Condition    : cksz <= itersperthr
+      Computation  : arithmetic, bitwise, function_call
+      Canonical    : NO  —  Counter variable 'cksz' is modified conditionally or with a data-dependent (runtime) stride — trip count is not statically predictable
+      Body snippet : sprintf(testName, "STATIC_MONOTONIC %d", cksz);         benchmark(testName, &tes…
+
+  [3] WHILE  at line 89, col 7
+      Depth        : 0 (top-level)
+      Condition    : cksz <= itersperthr
+      Computation  : arithmetic, bitwise, function_call
+      Canonical    : NO  —  Counter variable 'cksz' is modified conditionally or with a data-dependent (runtime) stride — trip count is not statically predictable
+      Body snippet : sprintf(testName, "DYNAMIC %d", cksz);         benchmark(testName, &testdynamicn…
+
+  [4] WHILE  at line 98, col 7
+      Depth        : 0 (top-level)
+      Condition    : cksz <= itersperthr
+      Computation  : arithmetic, bitwise, function_call
+      Canonical    : NO  —  Counter variable 'cksz' is modified conditionally or with a data-dependent (runtime) stride — trip count is not statically predictable
+      Body snippet : sprintf(testName, "DYNAMIC_MONOTONIC %d", cksz);         benchmark(testName, &te…
+
+  [5] WHILE  at line 108, col 7
+      Depth        : 0 (top-level)
+      Condition    : cksz <= itersperthr / nthreads
+      Computation  : arithmetic, bitwise, function_call
+      Canonical    : NO  —  Counter variable 'cksz' is modified conditionally or with a data-dependent (runtime) stride — trip count is not statically predictable
+      Body snippet : sprintf(testName, "GUIDED %d", cksz);         benchmark(testName, &testguidedn);…
+
+  [6] WHILE  at line 117, col 7
+      Depth        : 0 (top-level)
+      Condition    : cksz <= itersperthr / nthreads
+      Computation  : arithmetic, bitwise, function_call
+      Canonical    : NO  —  Counter variable 'cksz' is modified conditionally or with a data-dependent (runtime) stride — trip count is not statically predictable
+      Body snippet : sprintf(testName, "GUIDED_MONOTONIC %d", cksz);         benchmark(testName, &tes…
+
+  [7] WHILE  at line 126, col 7
+      Depth        : 0 (top-level)
+      Condition    : cksz <= itersperthr / nthreads
+      Computation  : arithmetic, bitwise, function_call
+      Canonical    : NO  —  Counter variable 'cksz' is modified conditionally or with a data-dependent (runtime) stride — trip count is not statically predictable
+      Body snippet : sprintf(testName, "TASKLOOP %d", cksz);         benchmark(testName, &taskloopn);…
+
+  [8] FOR  at line 140, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (i = 0; i < itersperthr; i++) {         delay(delaylength);       }
+
+  [9] FOR  at line 141, col 7
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [10] FOR  at line 152, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp for schedule(static) 	    for (i = 0; i < itersperthr * nthreads; i+…
+
+  [11] FOR  at line 154, col 6
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [12] FOR  at line 165, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp for schedule(monotonic:static) 	    for (i = 0; i < itersperthr * nt…
+
+  [13] FOR  at line 167, col 6
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [14] FOR  at line 178, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp for schedule(static,cksz) 	    for (i = 0; i < itersperthr * nthread…
+
+  [15] FOR  at line 180, col 6
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [16] FOR  at line 191, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp for schedule(monotonic:static,cksz)         for (i = 0; i < itersper…
+
+  [17] FOR  at line 193, col 9
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [18] FOR  at line 205, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp for schedule(dynamic,cksz)         for (i = 0; i < itersperthr * nth…
+
+  [19] FOR  at line 207, col 9
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [20] FOR  at line 218, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp for schedule(monotonic:dynamic,cksz)         for (i = 0; i < iterspe…
+
+  [21] FOR  at line 220, col 9
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [22] FOR  at line 231, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp for schedule(guided,cksz)         for (i = 0; i < itersperthr * nthr…
+
+  [23] FOR  at line 233, col 9
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [24] FOR  at line 243, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp for schedule(monotonic:guided,cksz)         for (i = 0; i < itersper…
+
+  [25] FOR  at line 245, col 9
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [26] FOR  at line 258, col 7
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp taskloop num_tasks((itersperthr*nthreads)/cksz)         for (i = 0; …
+
+  [27] FOR  at line 260, col 9
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+========================================================================
+FILE: epcc-openmp-microbenchmarks-main/openmpbench_C_v40/common.c
+------------------------------------------------------------------------
+  Total loops             : 12
+    While loops           : 3  (nested: 1,  canonicalizable: 0)
+    For loops             : 7  (nested: 1,  canonicalizable: 7)
+    Do-while loops        : 2
+  Nested loops (total)    : 2
+  Canonicalizability      : 7/12  (58.3%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           87   d=0  Yes         arg < argc
+  2    while        146   d=0  No          lapsedtime < delaytime
+  3    for          149   d=1  Yes         i < reps
+  4    while        162   d=0  No          time < targettesttime
+  5    do-while     202   d=0  No          low < high
+  6    while        204   d=1  No          low < high && key <= a[high]
+  7    do-while     213   d=1  No          low < high && key >= a[low]
+  8    for          239   d=0  Yes         i < outerreps
+  9    for          250   d=0  Yes         i < outerreps
+  10   for          260   d=0  Yes         i < outerreps
+  11   for          371   d=0  Yes         k < outerreps
+  12   for          413   d=0  Yes         k<outerreps
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 87, col 5
+      Depth        : 0 (top-level)
+      Condition    : arg < argc
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (strcmp(argv[arg], "--delay-time") == 0.0) { 	    delaytime = atof(argv[++arg…
+
+  [2] WHILE  at line 146, col 5
+      Depth        : 0 (top-level)
+      Condition    : lapsedtime < delaytime
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : NO  —  No increment/decrement of 'lapsedtime' detected in body
+      Body snippet : delaylength = delaylength * 1.1 + 1; 	starttime = getclock(); 	for (i = 0; i < r…
+
+  [3] FOR  at line 149, col 2
+      Depth        : 1 (nested)
+      Condition    : i < reps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [4] WHILE  at line 162, col 5
+      Depth        : 0 (top-level)
+      Condition    : time < targettesttime
+      Computation  : pointer, arithmetic, function_call, io
+      Canonical    : NO  —  Body contains an early exit (return/break/goto) — loop may terminate before the condition is false
+      Body snippet : double start  = getclock(); 	test(); 	time = (getclock() - start) * 1.0e6; 	inne…
+
+  [5] DO-WHILE  at line 202, col 5
+      Depth        : 0 (top-level)
+      Condition    : low < high
+      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Canonical    : NO  —  Bound variable 'high' in condition is modified inside the loop body — the upper bound is not loop-invariant
+      Body snippet : while (low < high && key <= a[high])         {             --high;           }  …
+
+  [6] WHILE  at line 204, col 9
+      Depth        : 1 (nested)
+      Condition    : low < high && key <= a[high]
+      Computation  : arithmetic
+      Canonical    : NO  —  Condition is compound (&&/||) — loop has multiple termination variables and cannot be expressed as a single canonical counter
+      Body snippet : --high;
+
+  [7] DO-WHILE  at line 213, col 9
+      Depth        : 1 (nested)
+      Condition    : low < high && key >= a[low]
+      Computation  : arithmetic
+      Canonical    : NO  —  Condition is compound (&&/||) — loop has multiple termination variables and cannot be expressed as a single canonical counter
+      Body snippet : ++low;
+
+  [8] FOR  at line 239, col 5
+      Depth        : 0 (top-level)
+      Condition    : i < outerreps
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : mintime = (mintime < times[i]) ? mintime : times[i]; 	maxtime = (maxtime > times…
+
+  [9] FOR  at line 250, col 5
+      Depth        : 0 (top-level)
+      Condition    : i < outerreps
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : sumsq += (times[i] - meantime) * (times[i] - meantime);
+
+  [10] FOR  at line 260, col 5
+      Depth        : 0 (top-level)
+      Condition    : i < outerreps
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (fabs(times[i] - meantime) > cutoff) 	    nr++;
+
+  [11] FOR  at line 371, col 5
+      Depth        : 0 (top-level)
+      Condition    : k < outerreps
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : start = getclock(); 	refer(); 	times[k] = (getclock() - start) * 1.0e6 / (double…
+
+  [12] FOR  at line 413, col 5
+      Depth        : 0 (top-level)
+      Condition    : k<outerreps
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : start = getclock(); 	test(); 	times[k] = (getclock() - start) * 1.0e6 / (double)…
+
+========================================================================
+FILE: epcc-openmp-microbenchmarks-main/openmpbench_C_v40/arraybench.c
+------------------------------------------------------------------------
+  Total loops             : 5
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 5  (nested: 0,  canonicalizable: 5)
+    Do-while loops        : 0
+  Nested loops (total)    : 0
+  Canonicalizability      : 5/5  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           88   d=0  Yes         j < innerreps
+  2    for           95   d=0  Yes         j < innerreps
+  3    for          105   d=0  Yes         j < innerreps
+  4    for          117   d=0  Yes         j<innerreps
+  5    for          131   d=0  Yes         j < innerreps
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 88, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : array_delay(delaylength, a);
+
+  [2] FOR  at line 95, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp parallel private(atest) 	{ 	    array_delay(delaylength, atest); 	}
+
+  [3] FOR  at line 105, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp parallel firstprivate(atest) 	{ 	    array_delay(delaylength, atest)…
+
+  [4] FOR  at line 117, col 5
+      Depth        : 0 (top-level)
+      Condition    : j<innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp parallel private(atest) 	{ #pragma omp single copyprivate(atest) 		{…
+
+  [5] FOR  at line 131, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp parallel copyin(btest) 	{ 	    array_delay(delaylength, btest); 	}
+
+========================================================================
+FILE: epcc-openmp-microbenchmarks-main/openmpbench_C_v31/taskbench.c
+------------------------------------------------------------------------
+  Total loops             : 14
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 14  (nested: 2,  canonicalizable: 14)
+    Do-while loops        : 0
+  Nested loops (total)    : 2
+  Canonicalizability      : 14/14  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for          102   d=0  Yes         j < innerreps
+  2    for          111   d=0  Yes         j < (innerreps >> DEPTH) * (1 << DEPTH)
+  3    for          122   d=0  Yes         j < innerreps
+  4    for          142   d=0  Yes         j < innerreps * nthreads
+  5    for          161   d=0  Yes         j < innerreps
+  6    for          182   d=0  Yes         j < innerreps
+  7    for          198   d=0  Yes         j < innerreps / nthreads
+  8    for          201   d=1  Yes         i < nthreads
+  9    for          224   d=0  Yes         j < innerreps
+  10   for          227   d=1  Yes         i < nthreads
+  11   for          250   d=0  Yes         j < innerreps
+  12   for          267   d=0  Yes         j < innerreps
+  13   for          284   d=0  Yes         j < (innerreps >> DEPTH)
+  14   for          311   d=0  Yes         j < (innerreps >> DEPTH)
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 102, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [2] FOR  at line 111, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < (innerreps >> DEPTH) * (1 << DEPTH)
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [3] FOR  at line 122, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task 	    { 		delay( delaylength );  	    } // task
+
+  [4] FOR  at line 142, col 6
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task 		{ 		    delay(delaylength);  		}
+
+  [5] FOR  at line 161, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ( thread_num == 0 ) { #pragma omp task 		{ 		    delay( delaylength ); 		} //…
+
+  [6] FOR  at line 182, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task if(returnfalse()) 	    { 		delay( delaylength ); 	    }
+
+  [7] FOR  at line 198, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps / nthreads
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task private( i ) 	    { 		for ( i = 0; i < nthreads; i ++ ) { #prag…
+
+  [8] FOR  at line 201, col 3
+      Depth        : 1 (nested)
+      Condition    : i < nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task untied 		    { 			delay( delaylength );  		    } // task
+
+  [9] FOR  at line 224, col 6
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task private( i ) 		{ 		    for ( i = 0; i < nthreads; i ++ ) { #pra…
+
+  [10] FOR  at line 227, col 7
+      Depth        : 1 (nested)
+      Condition    : i < nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task 			{ 			    delay( delaylength );  			} // task
+
+  [11] FOR  at line 250, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task 	    { 		delay( delaylength );  	    } // task #pragma omp task…
+
+  [12] FOR  at line 267, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task 	    { 		delay( delaylength );  	    } // task #pragma omp barr…
+
+  [13] FOR  at line 284, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < (innerreps >> DEPTH)
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp task 	    { 		branchTaskTree(DEPTH); 		delay(delaylength); 	    }
+
+  [14] FOR  at line 311, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < (innerreps >> DEPTH)
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : leafTaskTree(DEPTH);
+
+========================================================================
+FILE: epcc-openmp-microbenchmarks-main/openmpbench_C_v31/syncbench.c
+------------------------------------------------------------------------
+  Total loops             : 15
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 15  (nested: 2,  canonicalizable: 15)
+    Do-while loops        : 0
+  Nested loops (total)    : 2
+  Canonicalizability      : 15/15  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for          104   d=0  Yes         j < innerreps
+  2    for          116   d=0  Yes         j < innerreps
+  3    for          127   d=0  Yes         j < innerreps
+  4    for          135   d=0  Yes         j < innerreps
+  5    for          147   d=0  Yes         j < innerreps
+  6    for          149   d=1  Yes         i < nthreads
+  7    for          158   d=0  Yes         j < innerreps
+  8    for          160   d=1  Yes         i < nthreads
+  9    for          170   d=0  Yes         j < innerreps
+  10   for          181   d=0  Yes         j < innerreps
+  11   for          192   d=0  Yes         j < innerreps / nthreads
+  12   for          206   d=0  Yes         j < innerreps / nthreads
+  13   for          217   d=0  Yes         j < (int)innerreps
+  14   for          232   d=0  Yes         j < innerreps / nthreads
+  15   for          245   d=0  Yes         j < innerreps
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 104, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [2] FOR  at line 116, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : arithmetic
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : aaaa += b; 	b *= c;
+
+  [3] FOR  at line 127, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength); 	aaaa += 1;
+
+  [4] FOR  at line 135, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp parallel 	{ 	    delay(delaylength); 	}
+
+  [5] FOR  at line 147, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp for 	    for (i = 0; i < nthreads; i++) { 		delay(delaylength); 	   …
+
+  [6] FOR  at line 149, col 6
+      Depth        : 1 (nested)
+      Condition    : i < nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [7] FOR  at line 158, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp parallel for 	for (i = 0; i < nthreads; i++) { 	    delay(delaylengt…
+
+  [8] FOR  at line 160, col 2
+      Depth        : 1 (nested)
+      Condition    : i < nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [9] FOR  at line 170, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength); #pragma omp barrier
+
+  [10] FOR  at line 181, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp single 	    delay(delaylength);
+
+  [11] FOR  at line 192, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps / nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp critical 	    { 		delay(delaylength); 	    }
+
+  [12] FOR  at line 206, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps / nthreads
+      Computation  : bitwise, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : omp_set_lock(&lock); 	    delay(delaylength); 	    omp_unset_lock(&lock);
+
+  [13] FOR  at line 217, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < (int)innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp ordered 	delay(delaylength);
+
+  [14] FOR  at line 232, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps / nthreads
+      Computation  : arithmetic
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp atomic	 	    aaaa += b; 	    b *= c;
+
+  [15] FOR  at line 245, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp parallel reduction(+:aaaa) 	{ 	    delay(delaylength); 	    aaaa += …
+
+========================================================================
+FILE: epcc-openmp-microbenchmarks-main/openmpbench_C_v31/schedbench.c
+------------------------------------------------------------------------
+  Total loops             : 13
+    While loops           : 3  (nested: 0,  canonicalizable: 0)
+    For loops             : 10  (nested: 5,  canonicalizable: 10)
+    Do-while loops        : 0
+  Nested loops (total)    : 5
+  Canonicalizability      : 10/13  (76.9%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    while         57   d=0  No          cksz <= itersperthr
+  2    while         65   d=0  No          cksz <= itersperthr
+  3    while         73   d=0  No          cksz <= itersperthr / nthreads
+  4    for           87   d=0  Yes         j < innerreps
+  5    for           88   d=1  Yes         i < itersperthr
+  6    for           99   d=0  Yes         j < innerreps
+  7    for          101   d=1  Yes         i < itersperthr * nthreads
+  8    for          112   d=0  Yes         j < innerreps
+  9    for          114   d=1  Yes         i < itersperthr * nthreads
+  10   for          125   d=0  Yes         j < innerreps
+  11   for          127   d=1  Yes         i < itersperthr * nthreads
+  12   for          138   d=0  Yes         j < innerreps
+  13   for          140   d=1  Yes         i < itersperthr * nthreads
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] WHILE  at line 57, col 5
+      Depth        : 0 (top-level)
+      Condition    : cksz <= itersperthr
+      Computation  : arithmetic, bitwise, function_call
+      Canonical    : NO  —  Counter variable 'cksz' is modified conditionally or with a data-dependent (runtime) stride — trip count is not statically predictable
+      Body snippet : sprintf(testName, "STATIC %d", cksz); 	benchmark(testName, &teststaticn); 	cksz …
+
+  [2] WHILE  at line 65, col 5
+      Depth        : 0 (top-level)
+      Condition    : cksz <= itersperthr
+      Computation  : arithmetic, bitwise, function_call
+      Canonical    : NO  —  Counter variable 'cksz' is modified conditionally or with a data-dependent (runtime) stride — trip count is not statically predictable
+      Body snippet : sprintf(testName, "DYNAMIC %d", cksz); 	benchmark(testName, &testdynamicn); 	cks…
+
+  [3] WHILE  at line 73, col 5
+      Depth        : 0 (top-level)
+      Condition    : cksz <= itersperthr / nthreads
+      Computation  : arithmetic, bitwise, function_call
+      Canonical    : NO  —  Counter variable 'cksz' is modified conditionally or with a data-dependent (runtime) stride — trip count is not statically predictable
+      Body snippet : sprintf(testName, "GUIDED %d", cksz); 	benchmark(testName, &testguidedn); 	cksz …
+
+  [4] FOR  at line 87, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (i = 0; i < itersperthr; i++) { 	    delay(delaylength); 	}
+
+  [5] FOR  at line 88, col 2
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [6] FOR  at line 99, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp for schedule(static) 	    for (i = 0; i < itersperthr * nthreads; i+…
+
+  [7] FOR  at line 101, col 6
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [8] FOR  at line 112, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp for schedule(static,cksz) 	    for (i = 0; i < itersperthr * nthread…
+
+  [9] FOR  at line 114, col 6
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [10] FOR  at line 125, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp for schedule(dynamic,cksz) 	    for (i = 0; i < itersperthr * nthrea…
+
+  [11] FOR  at line 127, col 6
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [12] FOR  at line 138, col 2
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp for schedule(guided,cksz) 	    for (i = 0; i < itersperthr * nthread…
+
+  [13] FOR  at line 140, col 6
+      Depth        : 1 (nested)
+      Condition    : i < itersperthr * nthreads
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+========================================================================
+FILE: epcc-openmp-microbenchmarks-main/openmpbench_C_v31/common.c
+------------------------------------------------------------------------
+  Total loops             : 9
+    While loops           : 2  (nested: 0,  canonicalizable: 0)
+    For loops             : 7  (nested: 1,  canonicalizable: 7)
+    Do-while loops        : 0
+  Nested loops (total)    : 1
+  Canonicalizability      : 7/9  (77.8%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           74   d=0  Yes         arg < argc
+  2    while        131   d=0  No          lapsedtime < delaytime
+  3    for          134   d=1  Yes         i < reps
+  4    while        147   d=0  No          time < targettesttime
+  5    for          179   d=0  Yes         i <= outerreps
+  6    for          188   d=0  Yes         i <= outerreps
+  7    for          197   d=0  Yes         i <= outerreps
+  8    for          284   d=0  Yes         k <= outerreps
+  9    for          322   d=0  Yes         k<=outerreps
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 74, col 5
+      Depth        : 0 (top-level)
+      Condition    : arg < argc
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (strcmp(argv[arg], "--delay-time") == 0.0) { 	    delaytime = atof(argv[++arg…
+
+  [2] WHILE  at line 131, col 5
+      Depth        : 0 (top-level)
+      Condition    : lapsedtime < delaytime
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : NO  —  No increment/decrement of 'lapsedtime' detected in body
+      Body snippet : delaylength = delaylength * 1.1 + 1; 	starttime = getclock(); 	for (i = 0; i < r…
+
+  [3] FOR  at line 134, col 2
+      Depth        : 1 (nested)
+      Condition    : i < reps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : delay(delaylength);
+
+  [4] WHILE  at line 147, col 5
+      Depth        : 0 (top-level)
+      Condition    : time < targettesttime
+      Computation  : pointer, arithmetic, function_call, io
+      Canonical    : NO  —  Body contains an early exit (return/break/goto) — loop may terminate before the condition is false
+      Body snippet : double start  = getclock(); 	test(); 	time = (getclock() - start) * 1.0e6; 	inne…
+
+  [5] FOR  at line 179, col 5
+      Depth        : 0 (top-level)
+      Condition    : i <= outerreps
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : mintime = (mintime < times[i]) ? mintime : times[i]; 	maxtime = (maxtime > times…
+
+  [6] FOR  at line 188, col 5
+      Depth        : 0 (top-level)
+      Condition    : i <= outerreps
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : sumsq += (times[i] - meantime) * (times[i] - meantime);
+
+  [7] FOR  at line 197, col 5
+      Depth        : 0 (top-level)
+      Condition    : i <= outerreps
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (fabs(times[i] - meantime) > cutoff) 	    nr++;
+
+  [8] FOR  at line 284, col 5
+      Depth        : 0 (top-level)
+      Condition    : k <= outerreps
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : start = getclock(); 	refer(); 	times[k] = (getclock() - start) * 1.0e6 / (double…
+
+  [9] FOR  at line 322, col 5
+      Depth        : 0 (top-level)
+      Condition    : k<=outerreps
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : start = getclock(); 	test(); 	times[k] = (getclock() - start) * 1.0e6 / (double)…
+
+========================================================================
+FILE: epcc-openmp-microbenchmarks-main/openmpbench_C_v31/arraybench.c
+------------------------------------------------------------------------
+  Total loops             : 5
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 5  (nested: 0,  canonicalizable: 5)
+    Do-while loops        : 0
+  Nested loops (total)    : 0
+  Canonicalizability      : 5/5  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           82   d=0  Yes         j < innerreps
+  2    for           89   d=0  Yes         j < innerreps
+  3    for           99   d=0  Yes         j < innerreps
+  4    for          111   d=0  Yes         j<innerreps
+  5    for          126   d=0  Yes         j < innerreps
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 82, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : array_delay(delaylength, a);
+
+  [2] FOR  at line 89, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp parallel firstprivate(atest) 	{ 	    array_delay(delaylength, atest)…
+
+  [3] FOR  at line 99, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp parallel private(atest) 	{ 	    array_delay(delaylength, atest); 	}
+
+  [4] FOR  at line 111, col 5
+      Depth        : 0 (top-level)
+      Condition    : j<innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp parallel private(atest) 	{ #pragma omp single copyprivate(atest) 		{…
+
+  [5] FOR  at line 126, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < innerreps
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #pragma omp parallel copyin(btest) 	{ 	    array_delay(delaylength, btest); 	}
+
+========================================================================
+  END OF REPORT
+========================================================================
