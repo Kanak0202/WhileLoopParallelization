@@ -1,0 +1,3326 @@
+========================================================================
+  LOOP STATIC ANALYSIS REPORT
+  Generated: 2026-03-25 15:48:56
+========================================================================
+
+GLOBAL SUMMARY
+------------------------------------------------------------------------
+  Files analysed          : 33
+  Total loops             : 351
+    While loops           : 1  (nested: 0)
+    For loops             : 350  (nested: 126)
+    Do-while loops        : 0
+  Nested loops (total)    : 126
+  Canonicalizable while   : 0
+  Canonicalizable for     : 347
+  Canonicalizability rate : 347/351  (98.9%)
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/utilities/template-for-new-benchmark.c
+------------------------------------------------------------------------
+  Total loops             : 6
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 6  (nested: 0,  canonicalizable: 6)
+    Do-while loops        : 0
+  Nested loops (total)    : 0
+  Canonicalizability      : 6/6  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           29   d=0  Yes         i < n
+  2    for           30   d=0  Yes         j < n
+  3    for           42   d=0  Yes         i < n
+  4    for           43   d=0  Yes         j < n
+  5    for           59   d=0  Yes         i < _PB_N
+  6    for           60   d=0  Yes         j < _PB_N
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 29, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++)       C[i][j] = 42;
+
+  [2] FOR  at line 30, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[i][j] = 42;
+
+  [3] FOR  at line 42, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) { 	fprintf (stderr, DATA_PRINTF_MODIFIER, C[i][j]); 	if …
+
+  [4] FOR  at line 43, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : fprintf (stderr, DATA_PRINTF_MODIFIER, C[i][j]); 	if (i % 20 == 0) fprintf (stde…
+
+  [5] FOR  at line 59, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_N; j++)       C[i][j] += 42;
+
+  [6] FOR  at line 60, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_N
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[i][j] += 42;
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/utilities/polybench.c
+------------------------------------------------------------------------
+  Total loops             : 5
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 5  (nested: 0,  canonicalizable: 2)
+    Do-while loops        : 0
+  Nested loops (total)    : 0
+  Canonicalizability      : 2/5  (40.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for          121   d=0  Yes         i < cs
+  2    for          213   d=0  No          _polybench_papi_eventlist[k]
+  3    for          334   d=0  No          polybench_papi_eventlist[evid] != 0
+  4    for          466   d=0  Yes         i < _polybench_alloc_table->nb_entries
+  5    for          473   d=0  No          i < _polybench_alloc_table->nb_entries - 1
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 121, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < cs
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : tmp += flush[i];
+
+  [2] FOR  at line 213, col 2
+      Depth        : 0 (top-level)
+      Condition    : _polybench_papi_eventlist[k]
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : NO  —  Condition does not reference init variable 'k'
+      Body snippet : if ((retval = 		 PAPI_event_name_to_code (_polybench_papi_eventlist[k], 					  &…
+
+  [3] FOR  at line 334, col 2
+      Depth        : 0 (top-level)
+      Condition    : polybench_papi_eventlist[evid] != 0
+      Computation  : function_call, io, array_access
+      Canonical    : NO  —  Condition does not reference init variable 'evid'
+      Body snippet : if (verbose) 	      printf ("%s=", _polybench_papi_eventlist[evid]); 	    printf…
+
+  [4] FOR  at line 466, col 7
+      Depth        : 0 (top-level)
+      Condition    : i < _polybench_alloc_table->nb_entries
+      Computation  : pointer, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (_polybench_alloc_table->user_view[i] == ptr || 	    _polybench_alloc_table->…
+
+  [5] FOR  at line 473, col 4
+      Depth        : 0 (top-level)
+      Condition    : i < _polybench_alloc_table->nb_entries - 1
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : NO  —  No initializer
+      Body snippet : _polybench_alloc_table->user_view[i] = 		_polybench_alloc_table->user_view[i + 1…
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/datamining/covariance/covariance.c
+------------------------------------------------------------------------
+  Total loops             : 11
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 11  (nested: 2,  canonicalizable: 11)
+    Do-while loops        : 0
+  Nested loops (total)    : 2
+  Canonicalizability      : 11/11  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           34   d=0  Yes         i < N
+  2    for           35   d=0  Yes         j < M
+  3    for           51   d=0  Yes         i < m
+  4    for           52   d=0  Yes         j < m
+  5    for           73   d=0  Yes         j < _PB_M
+  6    for           76   d=1  Yes         i < _PB_N
+  7    for           81   d=0  Yes         i < _PB_N
+  8    for           82   d=0  Yes         j < _PB_M
+  9    for           85   d=0  Yes         i < _PB_M
+  10   for           86   d=0  Yes         j < _PB_M
+  11   for           89   d=2  Yes         k < _PB_N
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 34, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < M; j++)       data[i][j] = ((DATA_TYPE) i*j) / M;
+
+  [2] FOR  at line 35, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < M
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : data[i][j] = ((DATA_TYPE) i*j) / M;
+
+  [3] FOR  at line 51, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < m
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < m; j++) {       if ((i * m + j) % 20 == 0) fprintf (POLYBENCH_DU…
+
+  [4] FOR  at line 52, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < m
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * m + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");       fprintf …
+
+  [5] FOR  at line 73, col 3
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_M
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : mean[j] = SCALAR_VAL(0.0);       for (i = 0; i < _PB_N; i++)         mean[j] += …
+
+  [6] FOR  at line 76, col 7
+      Depth        : 1 (nested)
+      Condition    : i < _PB_N
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : mean[j] += data[i][j];
+
+  [7] FOR  at line 81, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_M; j++)       data[i][j] -= mean[j];
+
+  [8] FOR  at line 82, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_M
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : data[i][j] -= mean[j];
+
+  [9] FOR  at line 85, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_M
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = i; j < _PB_M; j++)       {         cov[i][j] = SCALAR_VAL(0.0);        …
+
+  [10] FOR  at line 86, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_M
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : cov[i][j] = SCALAR_VAL(0.0);         for (k = 0; k < _PB_N; k++) 	  cov[i][j] +=…
+
+  [11] FOR  at line 89, col 9
+      Depth        : 2 (nested)
+      Condition    : k < _PB_N
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : cov[i][j] += data[k][i] * data[k][j];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/datamining/correlation/correlation.c
+------------------------------------------------------------------------
+  Total loops             : 13
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 13  (nested: 5,  canonicalizable: 13)
+    Do-while loops        : 0
+  Nested loops (total)    : 5
+  Canonicalizability      : 13/13  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           35   d=0  Yes         i < N
+  2    for           36   d=0  Yes         j < M
+  3    for           53   d=0  Yes         i < m
+  4    for           54   d=0  Yes         j < m
+  5    for           79   d=0  Yes         j < _PB_M
+  6    for           82   d=1  Yes         i < _PB_N
+  7    for           88   d=0  Yes         j < _PB_M
+  8    for           91   d=1  Yes         i < _PB_N
+  9    for          102   d=0  Yes         i < _PB_N
+  10   for          103   d=0  Yes         j < _PB_M
+  11   for          110   d=1  Yes         i < _PB_M-1
+  12   for          113   d=2  Yes         j < _PB_M
+  13   for          116   d=3  Yes         k < _PB_N
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 35, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < M; j++)       data[i][j] = (DATA_TYPE)(i*j)/M + i;
+
+  [2] FOR  at line 36, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < M
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : data[i][j] = (DATA_TYPE)(i*j)/M + i;
+
+  [3] FOR  at line 53, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < m
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < m; j++) {       if ((i * m + j) % 20 == 0) fprintf (POLYBENCH_DU…
+
+  [4] FOR  at line 54, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < m
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * m + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");       fprintf …
+
+  [5] FOR  at line 79, col 3
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_M
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : mean[j] = SCALAR_VAL(0.0);       for (i = 0; i < _PB_N; i++) 	mean[j] += data[i]…
+
+  [6] FOR  at line 82, col 7
+      Depth        : 1 (nested)
+      Condition    : i < _PB_N
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : mean[j] += data[i][j];
+
+  [7] FOR  at line 88, col 4
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_M
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : stddev[j] = SCALAR_VAL(0.0);       for (i = 0; i < _PB_N; i++)         stddev[j]…
+
+  [8] FOR  at line 91, col 7
+      Depth        : 1 (nested)
+      Condition    : i < _PB_N
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : stddev[j] += (data[i][j] - mean[j]) * (data[i][j] - mean[j]);
+
+  [9] FOR  at line 102, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_M; j++)       {         data[i][j] -= mean[j];         data[…
+
+  [10] FOR  at line 103, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_M
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : data[i][j] -= mean[j];         data[i][j] /= SQRT_FUN(float_n) * stddev[j];
+
+  [11] FOR  at line 110, col 3
+      Depth        : 1 (nested)
+      Condition    : i < _PB_M-1
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : corr[i][i] = SCALAR_VAL(1.0);       for (j = i+1; j < _PB_M; j++)         {     …
+
+  [12] FOR  at line 113, col 7
+      Depth        : 2 (nested)
+      Condition    : j < _PB_M
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : corr[i][j] = SCALAR_VAL(0.0);           for (k = 0; k < _PB_N; k++)             …
+
+  [13] FOR  at line 116, col 11
+      Depth        : 3 (nested)
+      Condition    : k < _PB_N
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : corr[i][j] += (data[k][i] * data[k][j]);
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/blas/trmm/trmm.c
+------------------------------------------------------------------------
+  Total loops             : 8
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 8  (nested: 3,  canonicalizable: 8)
+    Do-while loops        : 0
+  Nested loops (total)    : 3
+  Canonicalizability      : 8/8  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           34   d=0  Yes         i < m
+  2    for           35   d=1  Yes         j < i
+  3    for           39   d=1  Yes         j < n
+  4    for           57   d=0  Yes         i < m
+  5    for           58   d=0  Yes         j < n
+  6    for           86   d=0  Yes         i < _PB_M
+  7    for           87   d=0  Yes         j < _PB_N
+  8    for           88   d=2  Yes         k < _PB_M
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 34, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < m
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < i; j++) {       A[i][j] = (DATA_TYPE)((i+j) % m)/m;     }     A[…
+
+  [2] FOR  at line 35, col 5
+      Depth        : 1 (nested)
+      Condition    : j < i
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE)((i+j) % m)/m;
+
+  [3] FOR  at line 39, col 5
+      Depth        : 1 (nested)
+      Condition    : j < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : B[i][j] = (DATA_TYPE)((n+(i-j)) % n)/n;
+
+  [4] FOR  at line 57, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < m
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) { 	if ((i * m + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TA…
+
+  [5] FOR  at line 58, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * m + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n"); 	fprintf (POLY…
+
+  [6] FOR  at line 86, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_M
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_N; j++) {         for (k = i+1; k < _PB_M; k++)            B…
+
+  [7] FOR  at line 87, col 6
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (k = i+1; k < _PB_M; k++)            B[i][j] += A[k][i] * B[k][j];         B…
+
+  [8] FOR  at line 88, col 9
+      Depth        : 2 (nested)
+      Condition    : k < _PB_M
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : B[i][j] += A[k][i] * B[k][j];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/blas/syrk/syrk.c
+------------------------------------------------------------------------
+  Total loops             : 10
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 10  (nested: 3,  canonicalizable: 10)
+    Do-while loops        : 0
+  Nested loops (total)    : 3
+  Canonicalizability      : 10/10  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           36   d=0  Yes         i < n
+  2    for           37   d=0  Yes         j < m
+  3    for           39   d=0  Yes         i < n
+  4    for           40   d=0  Yes         j < n
+  5    for           55   d=0  Yes         i < n
+  6    for           56   d=0  Yes         j < n
+  7    for           83   d=0  Yes         i < _PB_N
+  8    for           84   d=1  Yes         j <= i
+  9    for           86   d=1  Yes         k < _PB_M
+  10   for           87   d=2  Yes         j <= i
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 36, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < m; j++)       A[i][j] = (DATA_TYPE) ((i*j+1)%n) / n;
+
+  [2] FOR  at line 37, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < m
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE) ((i*j+1)%n) / n;
+
+  [3] FOR  at line 39, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++)       C[i][j] = (DATA_TYPE) ((i*j+2)%m) / m;
+
+  [4] FOR  at line 40, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[i][j] = (DATA_TYPE) ((i*j+2)%m) / m;
+
+  [5] FOR  at line 55, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) { 	if ((i * n + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TA…
+
+  [6] FOR  at line 56, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * n + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n"); 	fprintf (POLY…
+
+  [7] FOR  at line 83, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j <= i; j++)       C[i][j] *= beta;     for (k = 0; k < _PB_M; k++) …
+
+  [8] FOR  at line 84, col 5
+      Depth        : 1 (nested)
+      Condition    : j <= i
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[i][j] *= beta;
+
+  [9] FOR  at line 86, col 5
+      Depth        : 1 (nested)
+      Condition    : k < _PB_M
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j <= i; j++)         C[i][j] += alpha * A[i][k] * A[j][k];
+
+  [10] FOR  at line 87, col 7
+      Depth        : 2 (nested)
+      Condition    : j <= i
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[i][j] += alpha * A[i][k] * A[j][k];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/blas/syr2k/syr2k.c
+------------------------------------------------------------------------
+  Total loops             : 9
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 9  (nested: 4,  canonicalizable: 9)
+    Do-while loops        : 0
+  Nested loops (total)    : 4
+  Canonicalizability      : 9/9  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           37   d=0  Yes         i < n
+  2    for           38   d=0  Yes         j < m
+  3    for           42   d=1  Yes         i < n
+  4    for           43   d=1  Yes         j < n
+  5    for           59   d=0  Yes         i < n
+  6    for           60   d=0  Yes         j < n
+  7    for           88   d=0  Yes         i < _PB_N
+  8    for           89   d=1  Yes         j <= i
+  9    for           92   d=1  Yes         j <= i
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 37, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < m; j++) {       A[i][j] = (DATA_TYPE) ((i*j+1)%n) / n;       B[i…
+
+  [2] FOR  at line 38, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < m
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE) ((i*j+1)%n) / n;       B[i][j] = (DATA_TYPE) ((i*j+2)%m) /…
+
+  [3] FOR  at line 42, col 3
+      Depth        : 1 (nested)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) {       C[i][j] = (DATA_TYPE) ((i*j+3)%n) / m;     } }  …
+
+  [4] FOR  at line 43, col 5
+      Depth        : 1 (nested)
+      Condition    : j < n
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[i][j] = (DATA_TYPE) ((i*j+3)%n) / m;
+
+  [5] FOR  at line 59, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) { 	if ((i * n + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TA…
+
+  [6] FOR  at line 60, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * n + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n"); 	fprintf (POLY…
+
+  [7] FOR  at line 88, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j <= i; j++)       C[i][j] *= beta;     for (k = 0; k < _PB_M; k++) …
+
+  [8] FOR  at line 89, col 5
+      Depth        : 1 (nested)
+      Condition    : j <= i
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[i][j] *= beta;
+
+  [9] FOR  at line 92, col 7
+      Depth        : 1 (nested)
+      Condition    : j <= i
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[i][j] += A[j][k]*alpha*B[i][k] + B[j][k]*alpha*A[i][k];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/blas/symm/symm.c
+------------------------------------------------------------------------
+  Total loops             : 10
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 10  (nested: 4,  canonicalizable: 10)
+    Do-while loops        : 0
+  Nested loops (total)    : 4
+  Canonicalizability      : 10/10  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           37   d=0  Yes         i < m
+  2    for           38   d=0  Yes         j < n
+  3    for           42   d=1  Yes         i < m
+  4    for           43   d=2  Yes         j <=i
+  5    for           45   d=2  Yes         j < m
+  6    for           61   d=0  Yes         i < m
+  7    for           62   d=0  Yes         j < n
+  8    for           93   d=0  Yes         i < _PB_M
+  9    for           94   d=0  Yes         j < _PB_N
+  10   for           97   d=2  Yes         k < i
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 37, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < m
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) {       C[i][j] = (DATA_TYPE) ((i+j) % 100) / m;       B…
+
+  [2] FOR  at line 38, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[i][j] = (DATA_TYPE) ((i+j) % 100) / m;       B[i][j] = (DATA_TYPE) ((n+i-j) % …
+
+  [3] FOR  at line 42, col 3
+      Depth        : 1 (nested)
+      Condition    : i < m
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j <=i; j++)       A[i][j] = (DATA_TYPE) ((i+j) % 100) / m;     for (…
+
+  [4] FOR  at line 43, col 5
+      Depth        : 2 (nested)
+      Condition    : j <=i
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE) ((i+j) % 100) / m;
+
+  [5] FOR  at line 45, col 5
+      Depth        : 2 (nested)
+      Condition    : j < m
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = -999;
+
+  [6] FOR  at line 61, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < m
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) { 	if ((i * m + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TA…
+
+  [7] FOR  at line 62, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * m + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n"); 	fprintf (POLY…
+
+  [8] FOR  at line 93, col 4
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_M
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_N; j++ )       {         temp2 = 0;         for (k = 0; k < …
+
+  [9] FOR  at line 94, col 7
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : temp2 = 0;         for (k = 0; k < i; k++) {            C[k][j] += alpha*B[i][j]…
+
+  [10] FOR  at line 97, col 9
+      Depth        : 2 (nested)
+      Condition    : k < i
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[k][j] += alpha*B[i][j] * A[i][k];            temp2 += B[k][j] * A[i][k];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/blas/gesummv/gesummv.c
+------------------------------------------------------------------------
+  Total loops             : 5
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 5  (nested: 2,  canonicalizable: 5)
+    Do-while loops        : 0
+  Nested loops (total)    : 2
+  Canonicalizability      : 5/5  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           37   d=0  Yes         i < n
+  2    for           40   d=1  Yes         j < n
+  3    for           59   d=0  Yes         i < n
+  4    for           83   d=0  Yes         i < _PB_N
+  5    for           87   d=1  Yes         j < _PB_N
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 37, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : x[i] = (DATA_TYPE)( i % n) / n;       for (j = 0; j < n; j++) { 	A[i][j] = (DATA…
+
+  [2] FOR  at line 40, col 7
+      Depth        : 1 (nested)
+      Condition    : j < n
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE) ((i*j+1) % n) / n; 	B[i][j] = (DATA_TYPE) ((i*j+2) % n) / …
+
+  [3] FOR  at line 59, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (i % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");     fprintf (POLYBENCH_D…
+
+  [4] FOR  at line 83, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : tmp[i] = SCALAR_VAL(0.0);       y[i] = SCALAR_VAL(0.0);       for (j = 0; j < _P…
+
+  [5] FOR  at line 87, col 7
+      Depth        : 1 (nested)
+      Condition    : j < _PB_N
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : tmp[i] = A[i][j] * x[j] + tmp[i]; 	  y[i] = B[i][j] * x[j] + y[i];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/blas/gemver/gemver.c
+------------------------------------------------------------------------
+  Total loops             : 10
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 10  (nested: 1,  canonicalizable: 10)
+    Do-while loops        : 0
+  Nested loops (total)    : 1
+  Canonicalizability      : 10/10  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           46   d=0  Yes         i < n
+  2    for           56   d=1  Yes         j < n
+  3    for           72   d=0  Yes         i < n
+  4    for          101   d=0  Yes         i < _PB_N
+  5    for          102   d=0  Yes         j < _PB_N
+  6    for          105   d=0  Yes         i < _PB_N
+  7    for          106   d=0  Yes         j < _PB_N
+  8    for          109   d=0  Yes         i < _PB_N
+  9    for          112   d=0  Yes         i < _PB_N
+  10   for          113   d=0  Yes         j < _PB_N
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 46, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : u1[i] = i;       u2[i] = ((i+1)/fn)/2.0;       v1[i] = ((i+1)/fn)/4.0;       v2[…
+
+  [2] FOR  at line 56, col 7
+      Depth        : 1 (nested)
+      Condition    : j < n
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE) (i*j % n) / n;
+
+  [3] FOR  at line 72, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (i % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");     fprintf (POLYBENCH_D…
+
+  [4] FOR  at line 101, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_N; j++)       A[i][j] = A[i][j] + u1[i] * v1[j] + u2[i] * v2…
+
+  [5] FOR  at line 102, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_N
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = A[i][j] + u1[i] * v1[j] + u2[i] * v2[j];
+
+  [6] FOR  at line 105, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_N; j++)       x[i] = x[i] + beta * A[j][i] * y[j];
+
+  [7] FOR  at line 106, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_N
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : x[i] = x[i] + beta * A[j][i] * y[j];
+
+  [8] FOR  at line 109, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : x[i] = x[i] + z[i];
+
+  [9] FOR  at line 112, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_N; j++)       w[i] = w[i] +  alpha * A[i][j] * x[j];
+
+  [10] FOR  at line 113, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_N
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : w[i] = w[i] +  alpha * A[i][j] * x[j];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/blas/gemm/gemm.c
+------------------------------------------------------------------------
+  Total loops             : 12
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 12  (nested: 3,  canonicalizable: 12)
+    Do-while loops        : 0
+  Nested loops (total)    : 3
+  Canonicalizability      : 12/12  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           37   d=0  Yes         i < ni
+  2    for           38   d=0  Yes         j < nj
+  3    for           40   d=0  Yes         i < ni
+  4    for           41   d=0  Yes         j < nk
+  5    for           43   d=0  Yes         i < nk
+  6    for           44   d=0  Yes         j < nj
+  7    for           59   d=0  Yes         i < ni
+  8    for           60   d=0  Yes         j < nj
+  9    for           89   d=0  Yes         i < _PB_NI
+  10   for           90   d=1  Yes         j < _PB_NJ
+  11   for           92   d=1  Yes         k < _PB_NK
+  12   for           93   d=2  Yes         j < _PB_NJ
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 37, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < ni
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nj; j++)       C[i][j] = (DATA_TYPE) ((i*j+1) % ni) / ni;
+
+  [2] FOR  at line 38, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nj
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[i][j] = (DATA_TYPE) ((i*j+1) % ni) / ni;
+
+  [3] FOR  at line 40, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < ni
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nk; j++)       A[i][j] = (DATA_TYPE) (i*(j+1) % nk) / nk;
+
+  [4] FOR  at line 41, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nk
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE) (i*(j+1) % nk) / nk;
+
+  [5] FOR  at line 43, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < nk
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nj; j++)       B[i][j] = (DATA_TYPE) (i*(j+2) % nj) / nj;
+
+  [6] FOR  at line 44, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nj
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : B[i][j] = (DATA_TYPE) (i*(j+2) % nj) / nj;
+
+  [7] FOR  at line 59, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < ni
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nj; j++) { 	if ((i * ni + j) % 20 == 0) fprintf (POLYBENCH_DUMP_…
+
+  [8] FOR  at line 60, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nj
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * ni + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n"); 	fprintf (POL…
+
+  [9] FOR  at line 89, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_NI
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_NJ; j++) 	C[i][j] *= beta;     for (k = 0; k < _PB_NK; k++) …
+
+  [10] FOR  at line 90, col 5
+      Depth        : 1 (nested)
+      Condition    : j < _PB_NJ
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[i][j] *= beta;
+
+  [11] FOR  at line 92, col 5
+      Depth        : 1 (nested)
+      Condition    : k < _PB_NK
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_NJ; j++) 	  C[i][j] += alpha * A[i][k] * B[k][j];
+
+  [12] FOR  at line 93, col 8
+      Depth        : 2 (nested)
+      Condition    : j < _PB_NJ
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[i][j] += alpha * A[i][k] * B[k][j];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/kernels/mvt/mvt.c
+------------------------------------------------------------------------
+  Total loops             : 8
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 8  (nested: 1,  canonicalizable: 8)
+    Do-while loops        : 0
+  Nested loops (total)    : 1
+  Canonicalizability      : 8/8  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           35   d=0  Yes         i < n
+  2    for           41   d=1  Yes         j < n
+  3    for           59   d=0  Yes         i < n
+  4    for           66   d=0  Yes         i < n
+  5    for           88   d=0  Yes         i < _PB_N
+  6    for           89   d=0  Yes         j < _PB_N
+  7    for           91   d=0  Yes         i < _PB_N
+  8    for           92   d=0  Yes         j < _PB_N
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 35, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : x1[i] = (DATA_TYPE) (i % n) / n;       x2[i] = (DATA_TYPE) ((i + 1) % n) / n;   …
+
+  [2] FOR  at line 41, col 7
+      Depth        : 1 (nested)
+      Condition    : j < n
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE) (i*j % n) / n;
+
+  [3] FOR  at line 59, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (i % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");     fprintf (POLYBENCH_D…
+
+  [4] FOR  at line 66, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (i % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");     fprintf (POLYBENCH_D…
+
+  [5] FOR  at line 88, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_N; j++)       x1[i] = x1[i] + A[i][j] * y_1[j];
+
+  [6] FOR  at line 89, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_N
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : x1[i] = x1[i] + A[i][j] * y_1[j];
+
+  [7] FOR  at line 91, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_N; j++)       x2[i] = x2[i] + A[j][i] * y_2[j];
+
+  [8] FOR  at line 92, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_N
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : x2[i] = x2[i] + A[j][i] * y_2[j];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/kernels/doitgen/doitgen.c
+------------------------------------------------------------------------
+  Total loops             : 13
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 13  (nested: 5,  canonicalizable: 13)
+    Do-while loops        : 0
+  Nested loops (total)    : 5
+  Canonicalizability      : 13/13  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           32   d=0  Yes         i < nr
+  2    for           33   d=0  Yes         j < nq
+  3    for           34   d=1  Yes         k < np
+  4    for           36   d=0  Yes         i < np
+  5    for           37   d=0  Yes         j < np
+  6    for           52   d=0  Yes         i < nr
+  7    for           53   d=0  Yes         j < nq
+  8    for           54   d=1  Yes         k < np
+  9    for           73   d=0  Yes         r < _PB_NR
+  10   for           74   d=0  Yes         q < _PB_NQ
+  11   for           75   d=2  Yes         p < _PB_NP
+  12   for           77   d=3  Yes         s < _PB_NP
+  13   for           80   d=2  Yes         p < _PB_NP
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 32, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < nr
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nq; j++)       for (k = 0; k < np; k++) 	A[i][j][k] = (DATA_TYPE…
+
+  [2] FOR  at line 33, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nq
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (k = 0; k < np; k++) 	A[i][j][k] = (DATA_TYPE) ((i*j + k)%np) / np;
+
+  [3] FOR  at line 34, col 7
+      Depth        : 1 (nested)
+      Condition    : k < np
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j][k] = (DATA_TYPE) ((i*j + k)%np) / np;
+
+  [4] FOR  at line 36, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < np
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < np; j++)       C4[i][j] = (DATA_TYPE) (i*j % np) / np;
+
+  [5] FOR  at line 37, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < np
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C4[i][j] = (DATA_TYPE) (i*j % np) / np;
+
+  [6] FOR  at line 52, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < nr
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nq; j++)       for (k = 0; k < np; k++) { 	if ((i*nq*np+j*np+k) …
+
+  [7] FOR  at line 53, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nq
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (k = 0; k < np; k++) { 	if ((i*nq*np+j*np+k) % 20 == 0) fprintf (POLYBENCH_D…
+
+  [8] FOR  at line 54, col 7
+      Depth        : 1 (nested)
+      Condition    : k < np
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i*nq*np+j*np+k) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n"); 	fprintf …
+
+  [9] FOR  at line 73, col 3
+      Depth        : 0 (top-level)
+      Condition    : r < _PB_NR
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (q = 0; q < _PB_NQ; q++)  {       for (p = 0; p < _PB_NP; p++)  { 	sum[p] = …
+
+  [10] FOR  at line 74, col 5
+      Depth        : 0 (top-level)
+      Condition    : q < _PB_NQ
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (p = 0; p < _PB_NP; p++)  { 	sum[p] = SCALAR_VAL(0.0); 	for (s = 0; s < _PB_…
+
+  [11] FOR  at line 75, col 7
+      Depth        : 2 (nested)
+      Condition    : p < _PB_NP
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : sum[p] = SCALAR_VAL(0.0); 	for (s = 0; s < _PB_NP; s++) 	  sum[p] += A[r][q][s] …
+
+  [12] FOR  at line 77, col 2
+      Depth        : 3 (nested)
+      Condition    : s < _PB_NP
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : sum[p] += A[r][q][s] * C4[s][p];
+
+  [13] FOR  at line 80, col 7
+      Depth        : 2 (nested)
+      Condition    : p < _PB_NP
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[r][q][p] = sum[p];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/kernels/bicg/bicg.c
+------------------------------------------------------------------------
+  Total loops             : 8
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 8  (nested: 2,  canonicalizable: 8)
+    Do-while loops        : 0
+  Nested loops (total)    : 2
+  Canonicalizability      : 8/8  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           33   d=0  Yes         i < m
+  2    for           35   d=0  Yes         i < n
+  3    for           37   d=1  Yes         j < m
+  4    for           55   d=0  Yes         i < m
+  5    for           61   d=0  Yes         i < n
+  6    for           83   d=0  Yes         i < _PB_M
+  7    for           85   d=0  Yes         i < _PB_N
+  8    for           88   d=1  Yes         j < _PB_M
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 33, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < m
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : p[i] = (DATA_TYPE)(i % m) / m;
+
+  [2] FOR  at line 35, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : r[i] = (DATA_TYPE)(i % n) / n;     for (j = 0; j < m; j++)       A[i][j] = (DATA…
+
+  [3] FOR  at line 37, col 5
+      Depth        : 1 (nested)
+      Condition    : j < m
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE) (i*(j+1) % n)/n;
+
+  [4] FOR  at line 55, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < m
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (i % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");     fprintf (POLYBENCH_D…
+
+  [5] FOR  at line 61, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (i % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");     fprintf (POLYBENCH_D…
+
+  [6] FOR  at line 83, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_M
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : s[i] = 0;
+
+  [7] FOR  at line 85, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : q[i] = SCALAR_VAL(0.0);       for (j = 0; j < _PB_M; j++) 	{ 	  s[j] = s[j] + r[…
+
+  [8] FOR  at line 88, col 7
+      Depth        : 1 (nested)
+      Condition    : j < _PB_M
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : s[j] = s[j] + r[i] * A[i][j]; 	  q[i] = q[i] + A[i][j] * p[j];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/kernels/atax/atax.c
+------------------------------------------------------------------------
+  Total loops             : 8
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 8  (nested: 2,  canonicalizable: 8)
+    Do-while loops        : 0
+  Nested loops (total)    : 2
+  Canonicalizability      : 8/8  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           34   d=0  Yes         i < n
+  2    for           36   d=0  Yes         i < m
+  3    for           37   d=0  Yes         j < n
+  4    for           53   d=0  Yes         i < n
+  5    for           74   d=0  Yes         i < _PB_N
+  6    for           76   d=0  Yes         i < _PB_M
+  7    for           79   d=1  Yes         j < _PB_N
+  8    for           81   d=1  Yes         j < _PB_N
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 34, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : x[i] = 1 + (i / fn);
+
+  [2] FOR  at line 36, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < m
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++)       A[i][j] = (DATA_TYPE) ((i+j) % n) / (5*m);
+
+  [3] FOR  at line 37, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE) ((i+j) % n) / (5*m);
+
+  [4] FOR  at line 53, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (i % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");     fprintf (POLYBENCH_D…
+
+  [5] FOR  at line 74, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : y[i] = 0;
+
+  [6] FOR  at line 76, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_M
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : tmp[i] = SCALAR_VAL(0.0);       for (j = 0; j < _PB_N; j++) 	tmp[i] = tmp[i] + A…
+
+  [7] FOR  at line 79, col 7
+      Depth        : 1 (nested)
+      Condition    : j < _PB_N
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : tmp[i] = tmp[i] + A[i][j] * x[j];
+
+  [8] FOR  at line 81, col 7
+      Depth        : 1 (nested)
+      Condition    : j < _PB_N
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : y[j] = y[j] + A[i][j] * tmp[i];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/kernels/3mm/3mm.c
+------------------------------------------------------------------------
+  Total loops             : 19
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 19  (nested: 7,  canonicalizable: 19)
+    Do-while loops        : 0
+  Nested loops (total)    : 7
+  Canonicalizability      : 19/19  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           34   d=0  Yes         i < ni
+  2    for           35   d=0  Yes         j < nk
+  3    for           37   d=0  Yes         i < nk
+  4    for           38   d=0  Yes         j < nj
+  5    for           40   d=0  Yes         i < nj
+  6    for           41   d=0  Yes         j < nm
+  7    for           43   d=0  Yes         i < nm
+  8    for           44   d=0  Yes         j < nl
+  9    for           59   d=0  Yes         i < ni
+  10   for           60   d=0  Yes         j < nl
+  11   for           85   d=0  Yes         i < _PB_NI
+  12   for           86   d=0  Yes         j < _PB_NJ
+  13   for           89   d=2  Yes         k < _PB_NK
+  14   for           93   d=1  Yes         i < _PB_NJ
+  15   for           94   d=1  Yes         j < _PB_NL
+  16   for           97   d=3  Yes         k < _PB_NM
+  17   for          101   d=2  Yes         i < _PB_NI
+  18   for          102   d=2  Yes         j < _PB_NL
+  19   for          105   d=4  Yes         k < _PB_NJ
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 34, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < ni
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nk; j++)       A[i][j] = (DATA_TYPE) ((i*j+1) % ni) / (5*ni);
+
+  [2] FOR  at line 35, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nk
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE) ((i*j+1) % ni) / (5*ni);
+
+  [3] FOR  at line 37, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < nk
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nj; j++)       B[i][j] = (DATA_TYPE) ((i*(j+1)+2) % nj) / (5*nj)…
+
+  [4] FOR  at line 38, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nj
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : B[i][j] = (DATA_TYPE) ((i*(j+1)+2) % nj) / (5*nj);
+
+  [5] FOR  at line 40, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < nj
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nm; j++)       C[i][j] = (DATA_TYPE) (i*(j+3) % nl) / (5*nl);
+
+  [6] FOR  at line 41, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nm
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[i][j] = (DATA_TYPE) (i*(j+3) % nl) / (5*nl);
+
+  [7] FOR  at line 43, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < nm
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nl; j++)       D[i][j] = (DATA_TYPE) ((i*(j+2)+2) % nk) / (5*nk)…
+
+  [8] FOR  at line 44, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nl
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : D[i][j] = (DATA_TYPE) ((i*(j+2)+2) % nk) / (5*nk);
+
+  [9] FOR  at line 59, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < ni
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nl; j++) { 	if ((i * ni + j) % 20 == 0) fprintf (POLYBENCH_DUMP_…
+
+  [10] FOR  at line 60, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nl
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * ni + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n"); 	fprintf (POL…
+
+  [11] FOR  at line 85, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_NI
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_NJ; j++)       { 	E[i][j] = SCALAR_VAL(0.0); 	for (k = 0; k …
+
+  [12] FOR  at line 86, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_NJ
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : E[i][j] = SCALAR_VAL(0.0); 	for (k = 0; k < _PB_NK; ++k) 	  E[i][j] += A[i][k] *…
+
+  [13] FOR  at line 89, col 2
+      Depth        : 2 (nested)
+      Condition    : k < _PB_NK
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : E[i][j] += A[i][k] * B[k][j];
+
+  [14] FOR  at line 93, col 3
+      Depth        : 1 (nested)
+      Condition    : i < _PB_NJ
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_NL; j++)       { 	F[i][j] = SCALAR_VAL(0.0); 	for (k = 0; k …
+
+  [15] FOR  at line 94, col 5
+      Depth        : 1 (nested)
+      Condition    : j < _PB_NL
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : F[i][j] = SCALAR_VAL(0.0); 	for (k = 0; k < _PB_NM; ++k) 	  F[i][j] += C[i][k] *…
+
+  [16] FOR  at line 97, col 2
+      Depth        : 3 (nested)
+      Condition    : k < _PB_NM
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : F[i][j] += C[i][k] * D[k][j];
+
+  [17] FOR  at line 101, col 3
+      Depth        : 2 (nested)
+      Condition    : i < _PB_NI
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_NL; j++)       { 	G[i][j] = SCALAR_VAL(0.0); 	for (k = 0; k …
+
+  [18] FOR  at line 102, col 5
+      Depth        : 2 (nested)
+      Condition    : j < _PB_NL
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : G[i][j] = SCALAR_VAL(0.0); 	for (k = 0; k < _PB_NJ; ++k) 	  G[i][j] += E[i][k] *…
+
+  [19] FOR  at line 105, col 2
+      Depth        : 4 (nested)
+      Condition    : k < _PB_NJ
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : G[i][j] += E[i][k] * F[k][j];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/kernels/2mm/2mm.c
+------------------------------------------------------------------------
+  Total loops             : 16
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 16  (nested: 4,  canonicalizable: 16)
+    Do-while loops        : 0
+  Nested loops (total)    : 4
+  Canonicalizability      : 16/16  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           38   d=0  Yes         i < ni
+  2    for           39   d=0  Yes         j < nk
+  3    for           41   d=0  Yes         i < nk
+  4    for           42   d=0  Yes         j < nj
+  5    for           44   d=0  Yes         i < nj
+  6    for           45   d=0  Yes         j < nl
+  7    for           47   d=0  Yes         i < ni
+  8    for           48   d=0  Yes         j < nl
+  9    for           63   d=0  Yes         i < ni
+  10   for           64   d=0  Yes         j < nl
+  11   for           89   d=0  Yes         i < _PB_NI
+  12   for           90   d=0  Yes         j < _PB_NJ
+  13   for           93   d=2  Yes         k < _PB_NK
+  14   for           96   d=1  Yes         i < _PB_NI
+  15   for           97   d=1  Yes         j < _PB_NL
+  16   for          100   d=3  Yes         k < _PB_NJ
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 38, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < ni
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nk; j++)       A[i][j] = (DATA_TYPE) ((i*j+1) % ni) / ni;
+
+  [2] FOR  at line 39, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nk
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE) ((i*j+1) % ni) / ni;
+
+  [3] FOR  at line 41, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < nk
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nj; j++)       B[i][j] = (DATA_TYPE) (i*(j+1) % nj) / nj;
+
+  [4] FOR  at line 42, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nj
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : B[i][j] = (DATA_TYPE) (i*(j+1) % nj) / nj;
+
+  [5] FOR  at line 44, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < nj
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nl; j++)       C[i][j] = (DATA_TYPE) ((i*(j+3)+1) % nl) / nl;
+
+  [6] FOR  at line 45, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nl
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : C[i][j] = (DATA_TYPE) ((i*(j+3)+1) % nl) / nl;
+
+  [7] FOR  at line 47, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < ni
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nl; j++)       D[i][j] = (DATA_TYPE) (i*(j+2) % nk) / nk;
+
+  [8] FOR  at line 48, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nl
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : D[i][j] = (DATA_TYPE) (i*(j+2) % nk) / nk;
+
+  [9] FOR  at line 63, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < ni
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < nl; j++) { 	if ((i * ni + j) % 20 == 0) fprintf (POLYBENCH_DUMP_…
+
+  [10] FOR  at line 64, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < nl
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * ni + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n"); 	fprintf (POL…
+
+  [11] FOR  at line 89, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_NI
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_NJ; j++)       { 	tmp[i][j] = SCALAR_VAL(0.0); 	for (k = 0; …
+
+  [12] FOR  at line 90, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < _PB_NJ
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : tmp[i][j] = SCALAR_VAL(0.0); 	for (k = 0; k < _PB_NK; ++k) 	  tmp[i][j] += alpha…
+
+  [13] FOR  at line 93, col 2
+      Depth        : 2 (nested)
+      Condition    : k < _PB_NK
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : tmp[i][j] += alpha * A[i][k] * B[k][j];
+
+  [14] FOR  at line 96, col 3
+      Depth        : 1 (nested)
+      Condition    : i < _PB_NI
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_NL; j++)       { 	D[i][j] *= beta; 	for (k = 0; k < _PB_NJ; …
+
+  [15] FOR  at line 97, col 5
+      Depth        : 1 (nested)
+      Condition    : j < _PB_NL
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : D[i][j] *= beta; 	for (k = 0; k < _PB_NJ; ++k) 	  D[i][j] += tmp[i][k] * C[k][j]…
+
+  [16] FOR  at line 100, col 2
+      Depth        : 3 (nested)
+      Condition    : k < _PB_NJ
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : D[i][j] += tmp[i][k] * C[k][j];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/solvers/trisolv/trisolv.c
+------------------------------------------------------------------------
+  Total loops             : 5
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 5  (nested: 2,  canonicalizable: 5)
+    Do-while loops        : 0
+  Nested loops (total)    : 2
+  Canonicalizability      : 5/5  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           33   d=0  Yes         i < n
+  2    for           37   d=1  Yes         j <= i
+  3    for           54   d=0  Yes         i < n
+  4    for           74   d=0  Yes         i < _PB_N
+  5    for           77   d=1  Yes         j <i
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 33, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : x[i] = - 999;       b[i] =  i ;       for (j = 0; j <= i; j++) 	L[i][j] = (DATA_…
+
+  [2] FOR  at line 37, col 7
+      Depth        : 1 (nested)
+      Condition    : j <= i
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : L[i][j] = (DATA_TYPE) (i+n-j+1)*2/n;
+
+  [3] FOR  at line 54, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : fprintf (POLYBENCH_DUMP_TARGET, DATA_PRINTF_MODIFIER, x[i]);     if (i % 20 == 0…
+
+  [4] FOR  at line 74, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : x[i] = b[i];       for (j = 0; j <i; j++)         x[i] -= L[i][j] * x[j];       …
+
+  [5] FOR  at line 77, col 7
+      Depth        : 1 (nested)
+      Condition    : j <i
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : x[i] -= L[i][j] * x[j];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/solvers/ludcmp/ludcmp.c
+------------------------------------------------------------------------
+  Total loops             : 21
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 21  (nested: 9,  canonicalizable: 21)
+    Do-while loops        : 0
+  Nested loops (total)    : 9
+  Canonicalizability      : 21/21  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           35   d=0  Yes         i < n
+  2    for           42   d=0  Yes         i < n
+  3    for           44   d=1  Yes         j <= i
+  4    for           46   d=1  Yes         j < n
+  5    for           56   d=0  Yes         r < n
+  6    for           57   d=0  Yes         s < n
+  7    for           59   d=0  Yes         t < n
+  8    for           60   d=0  Yes         r < n
+  9    for           61   d=1  Yes         s < n
+  10   for           63   d=0  Yes         r < n
+  11   for           64   d=0  Yes         s < n
+  12   for           82   d=0  Yes         i < n
+  13   for          105   d=0  Yes         i < _PB_N
+  14   for          106   d=1  Yes         j <i
+  15   for          108   d=2  Yes         k < j
+  16   for          113   d=1  Yes         j < _PB_N
+  17   for          115   d=2  Yes         k < i
+  18   for          122   d=0  Yes         i < _PB_N
+  19   for          124   d=1  Yes         j < i
+  20   for          129   d=0  Yes         i >=0
+  21   for          131   d=1  Yes         j < _PB_N
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 35, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : x[i] = 0;       y[i] = 0;       b[i] = (i+1)/fn/2.0 + 4;
+
+  [2] FOR  at line 42, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j <= i; j++) 	A[i][j] = (DATA_TYPE)(-j % n) / n + 1;       for (j = …
+
+  [3] FOR  at line 44, col 7
+      Depth        : 1 (nested)
+      Condition    : j <= i
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE)(-j % n) / n + 1;
+
+  [4] FOR  at line 46, col 7
+      Depth        : 1 (nested)
+      Condition    : j < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = 0;
+
+  [5] FOR  at line 56, col 3
+      Depth        : 0 (top-level)
+      Condition    : r < n
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (s = 0; s < n; ++s)       (POLYBENCH_ARRAY(B))[r][s] = 0;
+
+  [6] FOR  at line 57, col 5
+      Depth        : 0 (top-level)
+      Condition    : s < n
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : (POLYBENCH_ARRAY(B))[r][s] = 0;
+
+  [7] FOR  at line 59, col 3
+      Depth        : 0 (top-level)
+      Condition    : t < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (r = 0; r < n; ++r)       for (s = 0; s < n; ++s) 	(POLYBENCH_ARRAY(B))[r][s…
+
+  [8] FOR  at line 60, col 5
+      Depth        : 0 (top-level)
+      Condition    : r < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (s = 0; s < n; ++s) 	(POLYBENCH_ARRAY(B))[r][s] += A[r][t] * A[s][t];
+
+  [9] FOR  at line 61, col 7
+      Depth        : 1 (nested)
+      Condition    : s < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : (POLYBENCH_ARRAY(B))[r][s] += A[r][t] * A[s][t];
+
+  [10] FOR  at line 63, col 5
+      Depth        : 0 (top-level)
+      Condition    : r < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (s = 0; s < n; ++s) 	A[r][s] = (POLYBENCH_ARRAY(B))[r][s];
+
+  [11] FOR  at line 64, col 7
+      Depth        : 0 (top-level)
+      Condition    : s < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[r][s] = (POLYBENCH_ARRAY(B))[r][s];
+
+  [12] FOR  at line 82, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (i % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");     fprintf (POLYBENCH_D…
+
+  [13] FOR  at line 105, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j <i; j++) {        w = A[i][j];        for (k = 0; k < j; k++) {   …
+
+  [14] FOR  at line 106, col 5
+      Depth        : 1 (nested)
+      Condition    : j <i
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : w = A[i][j];        for (k = 0; k < j; k++) {           w -= A[i][k] * A[k][j]; …
+
+  [15] FOR  at line 108, col 8
+      Depth        : 2 (nested)
+      Condition    : k < j
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : w -= A[i][k] * A[k][j];
+
+  [16] FOR  at line 113, col 4
+      Depth        : 1 (nested)
+      Condition    : j < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : w = A[i][j];        for (k = 0; k < i; k++) {           w -= A[i][k] * A[k][j]; …
+
+  [17] FOR  at line 115, col 8
+      Depth        : 2 (nested)
+      Condition    : k < i
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : w -= A[i][k] * A[k][j];
+
+  [18] FOR  at line 122, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : w = b[i];      for (j = 0; j < i; j++)         w -= A[i][j] * y[j];      y[i] = …
+
+  [19] FOR  at line 124, col 6
+      Depth        : 1 (nested)
+      Condition    : j < i
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : w -= A[i][j] * y[j];
+
+  [20] FOR  at line 129, col 4
+      Depth        : 0 (top-level)
+      Condition    : i >=0
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : w = y[i];      for (j = i+1; j < _PB_N; j++)         w -= A[i][j] * x[j];      x…
+
+  [21] FOR  at line 131, col 6
+      Depth        : 1 (nested)
+      Condition    : j < _PB_N
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : w -= A[i][j] * x[j];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/solvers/lu/lu.c
+------------------------------------------------------------------------
+  Total loops             : 17
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 17  (nested: 7,  canonicalizable: 17)
+    Do-while loops        : 0
+  Nested loops (total)    : 7
+  Canonicalizability      : 17/17  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           31   d=0  Yes         i < n
+  2    for           33   d=1  Yes         j <= i
+  3    for           35   d=1  Yes         j < n
+  4    for           45   d=0  Yes         r < n
+  5    for           46   d=0  Yes         s < n
+  6    for           48   d=0  Yes         t < n
+  7    for           49   d=0  Yes         r < n
+  8    for           50   d=1  Yes         s < n
+  9    for           52   d=0  Yes         r < n
+  10   for           53   d=0  Yes         s < n
+  11   for           71   d=0  Yes         i < n
+  12   for           72   d=0  Yes         j < n
+  13   for           90   d=0  Yes         i < _PB_N
+  14   for           91   d=1  Yes         j <i
+  15   for           92   d=2  Yes         k < j
+  16   for           97   d=1  Yes         j < _PB_N
+  17   for           98   d=2  Yes         k < i
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 31, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j <= i; j++) 	A[i][j] = (DATA_TYPE)(-j % n) / n + 1;       for (j = …
+
+  [2] FOR  at line 33, col 7
+      Depth        : 1 (nested)
+      Condition    : j <= i
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE)(-j % n) / n + 1;
+
+  [3] FOR  at line 35, col 7
+      Depth        : 1 (nested)
+      Condition    : j < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = 0;
+
+  [4] FOR  at line 45, col 3
+      Depth        : 0 (top-level)
+      Condition    : r < n
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (s = 0; s < n; ++s)       (POLYBENCH_ARRAY(B))[r][s] = 0;
+
+  [5] FOR  at line 46, col 5
+      Depth        : 0 (top-level)
+      Condition    : s < n
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : (POLYBENCH_ARRAY(B))[r][s] = 0;
+
+  [6] FOR  at line 48, col 3
+      Depth        : 0 (top-level)
+      Condition    : t < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (r = 0; r < n; ++r)       for (s = 0; s < n; ++s) 	(POLYBENCH_ARRAY(B))[r][s…
+
+  [7] FOR  at line 49, col 5
+      Depth        : 0 (top-level)
+      Condition    : r < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (s = 0; s < n; ++s) 	(POLYBENCH_ARRAY(B))[r][s] += A[r][t] * A[s][t];
+
+  [8] FOR  at line 50, col 7
+      Depth        : 1 (nested)
+      Condition    : s < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : (POLYBENCH_ARRAY(B))[r][s] += A[r][t] * A[s][t];
+
+  [9] FOR  at line 52, col 5
+      Depth        : 0 (top-level)
+      Condition    : r < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (s = 0; s < n; ++s) 	A[r][s] = (POLYBENCH_ARRAY(B))[r][s];
+
+  [10] FOR  at line 53, col 7
+      Depth        : 0 (top-level)
+      Condition    : s < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[r][s] = (POLYBENCH_ARRAY(B))[r][s];
+
+  [11] FOR  at line 71, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) {       if ((i * n + j) % 20 == 0) fprintf (POLYBENCH_DU…
+
+  [12] FOR  at line 72, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * n + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");       fprintf …
+
+  [13] FOR  at line 90, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j <i; j++) {        for (k = 0; k < j; k++) {           A[i][j] -= A…
+
+  [14] FOR  at line 91, col 5
+      Depth        : 1 (nested)
+      Condition    : j <i
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (k = 0; k < j; k++) {           A[i][j] -= A[i][k] * A[k][j];        }      …
+
+  [15] FOR  at line 92, col 8
+      Depth        : 2 (nested)
+      Condition    : k < j
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] -= A[i][k] * A[k][j];
+
+  [16] FOR  at line 97, col 4
+      Depth        : 1 (nested)
+      Condition    : j < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (k = 0; k < i; k++) {           A[i][j] -= A[i][k] * A[k][j];        }
+
+  [17] FOR  at line 98, col 8
+      Depth        : 2 (nested)
+      Condition    : k < i
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] -= A[i][k] * A[k][j];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/solvers/gramschmidt/gramschmidt.c
+------------------------------------------------------------------------
+  Total loops             : 14
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 14  (nested: 7,  canonicalizable: 14)
+    Do-while loops        : 0
+  Nested loops (total)    : 7
+  Canonicalizability      : 14/14  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           33   d=0  Yes         i < m
+  2    for           34   d=0  Yes         j < n
+  3    for           38   d=1  Yes         i < n
+  4    for           39   d=1  Yes         j < n
+  5    for           56   d=0  Yes         i < n
+  6    for           57   d=0  Yes         j < n
+  7    for           64   d=0  Yes         i < m
+  8    for           65   d=0  Yes         j < n
+  9    for           89   d=0  Yes         k < _PB_N
+  10   for           92   d=1  Yes         i < _PB_M
+  11   for           95   d=1  Yes         i < _PB_M
+  12   for           97   d=1  Yes         j < _PB_N
+  13   for          100   d=2  Yes         i < _PB_M
+  14   for          102   d=2  Yes         i < _PB_M
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 33, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < m
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) {       A[i][j] = (((DATA_TYPE) ((i*j) % m) / m )*100) +…
+
+  [2] FOR  at line 34, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (((DATA_TYPE) ((i*j) % m) / m )*100) + 10;       Q[i][j] = 0.0;
+
+  [3] FOR  at line 38, col 3
+      Depth        : 1 (nested)
+      Condition    : i < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++)       R[i][j] = 0.0;
+
+  [4] FOR  at line 39, col 5
+      Depth        : 1 (nested)
+      Condition    : j < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : R[i][j] = 0.0;
+
+  [5] FOR  at line 56, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) { 	if ((i*n+j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET…
+
+  [6] FOR  at line 57, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i*n+j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n"); 	fprintf (POLYBENC…
+
+  [7] FOR  at line 64, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < m
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) { 	if ((i*n+j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET…
+
+  [8] FOR  at line 65, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i*n+j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n"); 	fprintf (POLYBENC…
+
+  [9] FOR  at line 89, col 3
+      Depth        : 0 (top-level)
+      Condition    : k < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : nrm = SCALAR_VAL(0.0);       for (i = 0; i < _PB_M; i++)         nrm += A[i][k] …
+
+  [10] FOR  at line 92, col 7
+      Depth        : 1 (nested)
+      Condition    : i < _PB_M
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : nrm += A[i][k] * A[i][k];
+
+  [11] FOR  at line 95, col 7
+      Depth        : 1 (nested)
+      Condition    : i < _PB_M
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : Q[i][k] = A[i][k] / R[k][k];
+
+  [12] FOR  at line 97, col 7
+      Depth        : 1 (nested)
+      Condition    : j < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : R[k][j] = SCALAR_VAL(0.0); 	  for (i = 0; i < _PB_M; i++) 	    R[k][j] += Q[i][k…
+
+  [13] FOR  at line 100, col 4
+      Depth        : 2 (nested)
+      Condition    : i < _PB_M
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : R[k][j] += Q[i][k] * A[i][j];
+
+  [14] FOR  at line 102, col 4
+      Depth        : 2 (nested)
+      Condition    : i < _PB_M
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = A[i][j] - Q[i][k] * R[k][j];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/solvers/durbin/durbin.c
+------------------------------------------------------------------------
+  Total loops             : 6
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 6  (nested: 3,  canonicalizable: 6)
+    Do-while loops        : 0
+  Nested loops (total)    : 3
+  Canonicalizability      : 6/6  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           31   d=0  Yes         i < n
+  2    for           49   d=0  Yes         i < n
+  3    for           77   d=0  Yes         k < _PB_N
+  4    for           80   d=1  Yes         i<k
+  5    for           85   d=1  Yes         i<k
+  6    for           88   d=1  Yes         i<k
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 31, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : r[i] = (n+1-i);
+
+  [2] FOR  at line 49, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (i % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");     fprintf (POLYBENCH_D…
+
+  [3] FOR  at line 77, col 2
+      Depth        : 0 (top-level)
+      Condition    : k < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : beta = (1-alpha*alpha)*beta;    sum = SCALAR_VAL(0.0);    for (i=0; i<k; i++) { …
+
+  [4] FOR  at line 80, col 4
+      Depth        : 1 (nested)
+      Condition    : i<k
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : sum += r[k-i-1]*y[i];
+
+  [5] FOR  at line 85, col 4
+      Depth        : 1 (nested)
+      Condition    : i<k
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : z[i] = y[i] + alpha*y[k-i-1];
+
+  [6] FOR  at line 88, col 4
+      Depth        : 1 (nested)
+      Condition    : i<k
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : y[i] = z[i];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/linear-algebra/solvers/cholesky/cholesky.c
+------------------------------------------------------------------------
+  Total loops             : 16
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 16  (nested: 6,  canonicalizable: 16)
+    Do-while loops        : 0
+  Nested loops (total)    : 6
+  Canonicalizability      : 16/16  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           31   d=0  Yes         i < n
+  2    for           33   d=1  Yes         j <= i
+  3    for           35   d=1  Yes         j < n
+  4    for           44   d=0  Yes         r < n
+  5    for           45   d=0  Yes         s < n
+  6    for           47   d=0  Yes         t < n
+  7    for           48   d=0  Yes         r < n
+  8    for           49   d=1  Yes         s < n
+  9    for           51   d=0  Yes         r < n
+  10   for           52   d=0  Yes         s < n
+  11   for           70   d=0  Yes         i < n
+  12   for           71   d=0  Yes         j <= i
+  13   for           90   d=0  Yes         i < _PB_N
+  14   for           92   d=1  Yes         j < i
+  15   for           93   d=2  Yes         k < j
+  16   for           99   d=1  Yes         k < i
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 31, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j <= i; j++) 	A[i][j] = (DATA_TYPE)(-j % n) / n + 1;       for (j = …
+
+  [2] FOR  at line 33, col 7
+      Depth        : 1 (nested)
+      Condition    : j <= i
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (DATA_TYPE)(-j % n) / n + 1;
+
+  [3] FOR  at line 35, col 7
+      Depth        : 1 (nested)
+      Condition    : j < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = 0;
+
+  [4] FOR  at line 44, col 3
+      Depth        : 0 (top-level)
+      Condition    : r < n
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (s = 0; s < n; ++s)       (POLYBENCH_ARRAY(B))[r][s] = 0;
+
+  [5] FOR  at line 45, col 5
+      Depth        : 0 (top-level)
+      Condition    : s < n
+      Computation  : arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : (POLYBENCH_ARRAY(B))[r][s] = 0;
+
+  [6] FOR  at line 47, col 3
+      Depth        : 0 (top-level)
+      Condition    : t < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (r = 0; r < n; ++r)       for (s = 0; s < n; ++s) 	(POLYBENCH_ARRAY(B))[r][s…
+
+  [7] FOR  at line 48, col 5
+      Depth        : 0 (top-level)
+      Condition    : r < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (s = 0; s < n; ++s) 	(POLYBENCH_ARRAY(B))[r][s] += A[r][t] * A[s][t];
+
+  [8] FOR  at line 49, col 7
+      Depth        : 1 (nested)
+      Condition    : s < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : (POLYBENCH_ARRAY(B))[r][s] += A[r][t] * A[s][t];
+
+  [9] FOR  at line 51, col 5
+      Depth        : 0 (top-level)
+      Condition    : r < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (s = 0; s < n; ++s) 	A[r][s] = (POLYBENCH_ARRAY(B))[r][s];
+
+  [10] FOR  at line 52, col 7
+      Depth        : 0 (top-level)
+      Condition    : s < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[r][s] = (POLYBENCH_ARRAY(B))[r][s];
+
+  [11] FOR  at line 70, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j <= i; j++) {     if ((i * n + j) % 20 == 0) fprintf (POLYBENCH_DUM…
+
+  [12] FOR  at line 71, col 5
+      Depth        : 0 (top-level)
+      Condition    : j <= i
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * n + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");     fprintf (P…
+
+  [13] FOR  at line 90, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < _PB_N
+      Computation  : pointer, arithmetic, function_call, array_access, control
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : //j<i      for (j = 0; j < i; j++) {         for (k = 0; k < j; k++) {          …
+
+  [14] FOR  at line 92, col 6
+      Depth        : 1 (nested)
+      Condition    : j < i
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (k = 0; k < j; k++) {            A[i][j] -= A[i][k] * A[j][k];         }    …
+
+  [15] FOR  at line 93, col 9
+      Depth        : 2 (nested)
+      Condition    : k < j
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] -= A[i][k] * A[j][k];
+
+  [16] FOR  at line 99, col 6
+      Depth        : 1 (nested)
+      Condition    : k < i
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][i] -= A[i][k] * A[i][k];
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/medley/nussinov/Nussinov.orig.c
+------------------------------------------------------------------------
+  Total loops             : 8
+    While loops           : 1  (nested: 0,  canonicalizable: 0)
+    For loops             : 7  (nested: 3,  canonicalizable: 7)
+    Do-while loops        : 0
+  Nested loops (total)    : 3
+  Canonicalizability      : 7/8  (87.5%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    while        178   d=0  No          fprintf(stderr, "     , prompt, terminate),
+	…
+  2    for          230   d=0  Yes         i < size
+  3    for          239   d=0  Yes         i >= 0
+  4    for          240   d=1  Yes         j<size
+  5    for          256   d=2  Yes         k<j
+  6    for          275   d=0  Yes         i<size
+  7    for          278   d=0  Yes         i < size
+  8    for          279   d=1  Yes         j < size
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] WHILE  at line 178, col 2
+      Depth        : 0 (top-level)
+      Condition    : fprintf(stderr, "     , prompt, terminate),
+		result = scanf("   , &i),
+		result
+      Computation  : function_call, io
+      Canonical    : NO  —  Condition is compound (&&/||) — loop has multiple termination variables and cannot be expressed as a single canonical counter
+      Body snippet : fprintf(stderr, "Sorry, I didn't understand that...\n");
+
+  [2] FOR  at line 230, col 2
+      Depth        : 0 (top-level)
+      Condition    : i < size
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : seq[i] = rand() % 4;
+
+  [3] FOR  at line 239, col 2
+      Depth        : 0 (top-level)
+      Condition    : i >= 0
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j=i+1; j<size; j++) { #if VERBOSE 			fprintf(VERBOSE_OUT, "i, j, k = %d, %d…
+
+  [4] FOR  at line 240, col 3
+      Depth        : 1 (nested)
+      Condition    : j<size
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #if VERBOSE 			fprintf(VERBOSE_OUT, "i, j, k = %d, %d, %d\n", i, j, k); /* outer…
+
+  [5] FOR  at line 256, col 4
+      Depth        : 2 (nested)
+      Condition    : k<j
+      Computation  : function_call, io
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : #if VERBOSE 				fprintf(VERBOSE_OUT, "i, j, k = %d, %d, %d\n", i, j, k); #endif …
+
+  [6] FOR  at line 275, col 3
+      Depth        : 0 (top-level)
+      Condition    : i<size
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : printf("%3s ", base_print[seq[i]]);
+
+  [7] FOR  at line 278, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < size
+      Computation  : arithmetic, function_call, io
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for(j = 0; j < size; j++) printf("%3d ", debug_N(i, j)); 			printf("\n");
+
+  [8] FOR  at line 279, col 4
+      Depth        : 1 (nested)
+      Condition    : j < size
+      Computation  : function_call, io
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : printf("%3d ", debug_N(i, j));
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/medley/nussinov/nussinov.c
+------------------------------------------------------------------------
+  Total loops             : 8
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 8  (nested: 3,  canonicalizable: 8)
+    Do-while loops        : 0
+  Nested loops (total)    : 3
+  Canonicalizability      : 8/8  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           38   d=0  Yes         i <n
+  2    for           42   d=0  Yes         i <n
+  3    for           43   d=0  Yes         j <n
+  4    for           60   d=0  Yes         i < n
+  5    for           61   d=1  Yes         j < n
+  6    for           86   d=0  Yes         i >= 0
+  7    for           87   d=1  Yes         j<_PB_N
+  8    for          102   d=2  Yes         k<j
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 38, col 3
+      Depth        : 0 (top-level)
+      Condition    : i <n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : seq[i] = (base)((i+1)%4);
+
+  [2] FOR  at line 42, col 3
+      Depth        : 0 (top-level)
+      Condition    : i <n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j=0; j <n; j++)        table[i][j] = 0;
+
+  [3] FOR  at line 43, col 6
+      Depth        : 0 (top-level)
+      Condition    : j <n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : table[i][j] = 0;
+
+  [4] FOR  at line 60, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = i; j < n; j++) {       if (t % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET,…
+
+  [5] FOR  at line 61, col 5
+      Depth        : 1 (nested)
+      Condition    : j < n
+      Computation  : arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (t % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");       fprintf (POLYBENCH…
+
+  [6] FOR  at line 86, col 2
+      Depth        : 0 (top-level)
+      Condition    : i >= 0
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j=i+1; j<_PB_N; j++) {     if (j-1>=0)       table[i][j] = max_score(table[…
+
+  [7] FOR  at line 87, col 3
+      Depth        : 1 (nested)
+      Condition    : j<_PB_N
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (j-1>=0)       table[i][j] = max_score(table[i][j], table[i][j-1]);    if (i+…
+
+  [8] FOR  at line 102, col 4
+      Depth        : 2 (nested)
+      Condition    : k<j
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : table[i][j] = max_score(table[i][j], table[i][k] + table[k+1][j]);
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/medley/floyd-warshall/floyd-warshall.c
+------------------------------------------------------------------------
+  Total loops             : 7
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 7  (nested: 2,  canonicalizable: 7)
+    Do-while loops        : 0
+  Nested loops (total)    : 2
+  Canonicalizability      : 7/7  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           31   d=0  Yes         i < n
+  2    for           32   d=0  Yes         j < n
+  3    for           51   d=0  Yes         i < n
+  4    for           52   d=0  Yes         j < n
+  5    for           70   d=0  Yes         k < _PB_N
+  6    for           72   d=1  Yes         i < _PB_N
+  7    for           73   d=1  Yes         j < _PB_N
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 31, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) {       path[i][j] = i*j%7+1;       if ((i+j)%13 == 0 ||…
+
+  [2] FOR  at line 32, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : path[i][j] = i*j%7+1;       if ((i+j)%13 == 0 || (i+j)%7==0 || (i+j)%11 == 0)   …
+
+  [3] FOR  at line 51, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) {       if ((i * n + j) % 20 == 0) fprintf (POLYBENCH_DU…
+
+  [4] FOR  at line 52, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * n + j) % 20 == 0) fprintf (POLYBENCH_DUMP_TARGET, "\n");       fprintf …
+
+  [5] FOR  at line 70, col 3
+      Depth        : 0 (top-level)
+      Condition    : k < _PB_N
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for(i = 0; i < _PB_N; i++) 	for (j = 0; j < _PB_N; j++) 	  path[i][j] = path[i][…
+
+  [6] FOR  at line 72, col 7
+      Depth        : 1 (nested)
+      Condition    : i < _PB_N
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_N; j++) 	  path[i][j] = path[i][j] < path[i][k] + path[k][j]…
+
+  [7] FOR  at line 73, col 2
+      Depth        : 1 (nested)
+      Condition    : j < _PB_N
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : path[i][j] = path[i][j] < path[i][k] + path[k][j] ? 	    path[i][j] : path[i][k]…
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/medley/deriche/deriche.c
+------------------------------------------------------------------------
+  Total loops             : 16
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 16  (nested: 8,  canonicalizable: 16)
+    Do-while loops        : 0
+  Nested loops (total)    : 8
+  Canonicalizability      : 16/16  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           35   d=0  Yes         i < w
+  2    for           36   d=0  Yes         j < h
+  3    for           52   d=0  Yes         i < w
+  4    for           53   d=0  Yes         j < h
+  5    for           92   d=0  Yes         i<_PB_W
+  6    for           96   d=1  Yes         j<_PB_H
+  7    for          104   d=0  Yes         i<_PB_W
+  8    for          109   d=1  Yes         j>=0
+  9    for          118   d=0  Yes         i<_PB_W
+  10   for          119   d=0  Yes         j<_PB_H
+  11   for          123   d=1  Yes         j<_PB_H
+  12   for          127   d=2  Yes         i<_PB_W
+  13   for          136   d=1  Yes         j<_PB_H
+  14   for          141   d=2  Yes         i>=0
+  15   for          150   d=1  Yes         i<_PB_W
+  16   for          151   d=1  Yes         j<_PB_H
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 35, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < w
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < h; j++) 	imgIn[i][j] = (DATA_TYPE) ((313*i+991*j)%65536) / 65535…
+
+  [2] FOR  at line 36, col 6
+      Depth        : 0 (top-level)
+      Condition    : j < h
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : imgIn[i][j] = (DATA_TYPE) ((313*i+991*j)%65536) / 65535.0f;
+
+  [3] FOR  at line 52, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < w
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < h; j++) {       if ((i * h + j) % 20 == 0) fprintf(POLYBENCH_DUM…
+
+  [4] FOR  at line 53, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < h
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * h + j) % 20 == 0) fprintf(POLYBENCH_DUMP_TARGET, "\n");       fprintf(P…
+
+  [5] FOR  at line 92, col 4
+      Depth        : 0 (top-level)
+      Condition    : i<_PB_W
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : ym1 = SCALAR_VAL(0.0);         ym2 = SCALAR_VAL(0.0);         xm1 = SCALAR_VAL(0…
+
+  [6] FOR  at line 96, col 9
+      Depth        : 1 (nested)
+      Condition    : j<_PB_H
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : y1[i][j] = a1*imgIn[i][j] + a2*xm1 + b1*ym1 + b2*ym2;             xm1 = imgIn[i]…
+
+  [7] FOR  at line 104, col 5
+      Depth        : 0 (top-level)
+      Condition    : i<_PB_W
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : yp1 = SCALAR_VAL(0.0);         yp2 = SCALAR_VAL(0.0);         xp1 = SCALAR_VAL(0…
+
+  [8] FOR  at line 109, col 9
+      Depth        : 1 (nested)
+      Condition    : j>=0
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : y2[i][j] = a3*xp1 + a4*xp2 + b1*yp1 + b2*yp2;             xp2 = xp1;            …
+
+  [9] FOR  at line 118, col 5
+      Depth        : 0 (top-level)
+      Condition    : i<_PB_W
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j=0; j<_PB_H; j++) {             imgOut[i][j] = c1 * (y1[i][j] + y2[i][j]);…
+
+  [10] FOR  at line 119, col 9
+      Depth        : 0 (top-level)
+      Condition    : j<_PB_H
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : imgOut[i][j] = c1 * (y1[i][j] + y2[i][j]);
+
+  [11] FOR  at line 123, col 5
+      Depth        : 1 (nested)
+      Condition    : j<_PB_H
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : tm1 = SCALAR_VAL(0.0);         ym1 = SCALAR_VAL(0.0);         ym2 = SCALAR_VAL(0…
+
+  [12] FOR  at line 127, col 9
+      Depth        : 2 (nested)
+      Condition    : i<_PB_W
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : y1[i][j] = a5*imgOut[i][j] + a6*tm1 + b1*ym1 + b2*ym2;             tm1 = imgOut[…
+
+  [13] FOR  at line 136, col 5
+      Depth        : 1 (nested)
+      Condition    : j<_PB_H
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : tp1 = SCALAR_VAL(0.0);         tp2 = SCALAR_VAL(0.0);         yp1 = SCALAR_VAL(0…
+
+  [14] FOR  at line 141, col 9
+      Depth        : 2 (nested)
+      Condition    : i>=0
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : y2[i][j] = a7*tp1 + a8*tp2 + b1*yp1 + b2*yp2;             tp2 = tp1;            …
+
+  [15] FOR  at line 150, col 5
+      Depth        : 1 (nested)
+      Condition    : i<_PB_W
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j=0; j<_PB_H; j++)             imgOut[i][j] = c2*(y1[i][j] + y2[i][j]);
+
+  [16] FOR  at line 151, col 9
+      Depth        : 1 (nested)
+      Condition    : j<_PB_H
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : imgOut[i][j] = c2*(y1[i][j] + y2[i][j]);
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/stencils/seidel-2d/seidel-2d.c
+------------------------------------------------------------------------
+  Total loops             : 7
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 7  (nested: 1,  canonicalizable: 7)
+    Do-while loops        : 0
+  Nested loops (total)    : 1
+  Canonicalizability      : 7/7  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           31   d=0  Yes         i < n
+  2    for           32   d=0  Yes         j < n
+  3    for           48   d=0  Yes         i < n
+  4    for           49   d=0  Yes         j < n
+  5    for           68   d=0  Yes         t <= _PB_TSTEPS - 1
+  6    for           69   d=0  Yes         i<= _PB_N - 2
+  7    for           70   d=1  Yes         j <= _PB_N - 2
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 31, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++)       A[i][j] = ((DATA_TYPE) i*(j+2) + 2) / n;
+
+  [2] FOR  at line 32, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = ((DATA_TYPE) i*(j+2) + 2) / n;
+
+  [3] FOR  at line 48, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) {       if ((i * n + j) % 20 == 0) fprintf(POLYBENCH_DUM…
+
+  [4] FOR  at line 49, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * n + j) % 20 == 0) fprintf(POLYBENCH_DUMP_TARGET, "\n");       fprintf(P…
+
+  [5] FOR  at line 68, col 3
+      Depth        : 0 (top-level)
+      Condition    : t <= _PB_TSTEPS - 1
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (i = 1; i<= _PB_N - 2; i++)       for (j = 1; j <= _PB_N - 2; j++) 	A[i][j] …
+
+  [6] FOR  at line 69, col 5
+      Depth        : 0 (top-level)
+      Condition    : i<= _PB_N - 2
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 1; j <= _PB_N - 2; j++) 	A[i][j] = (A[i-1][j-1] + A[i-1][j] + A[i-1][j+…
+
+  [7] FOR  at line 70, col 7
+      Depth        : 1 (nested)
+      Condition    : j <= _PB_N - 2
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = (A[i-1][j-1] + A[i-1][j] + A[i-1][j+1] 		   + A[i][j-1] + A[i][j] + A[…
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/stencils/jacobi-2d/jacobi-2d.c
+------------------------------------------------------------------------
+  Total loops             : 9
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 9  (nested: 4,  canonicalizable: 9)
+    Do-while loops        : 0
+  Nested loops (total)    : 4
+  Canonicalizability      : 9/9  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           32   d=0  Yes         i < n
+  2    for           33   d=0  Yes         j < n
+  3    for           52   d=0  Yes         i < n
+  4    for           53   d=0  Yes         j < n
+  5    for           73   d=0  Yes         t < _PB_TSTEPS
+  6    for           75   d=1  Yes         i < _PB_N - 1
+  7    for           76   d=1  Yes         j < _PB_N - 1
+  8    for           78   d=1  Yes         i < _PB_N - 1
+  9    for           79   d=1  Yes         j < _PB_N - 1
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 32, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++)       { 	A[i][j] = ((DATA_TYPE) i*(j+2) + 2) / n; 	B[i][…
+
+  [2] FOR  at line 33, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = ((DATA_TYPE) i*(j+2) + 2) / n; 	B[i][j] = ((DATA_TYPE) i*(j+3) + 3) / …
+
+  [3] FOR  at line 52, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) {       if ((i * n + j) % 20 == 0) fprintf(POLYBENCH_DUM…
+
+  [4] FOR  at line 53, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * n + j) % 20 == 0) fprintf(POLYBENCH_DUMP_TARGET, "\n");       fprintf(P…
+
+  [5] FOR  at line 73, col 3
+      Depth        : 0 (top-level)
+      Condition    : t < _PB_TSTEPS
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (i = 1; i < _PB_N - 1; i++) 	for (j = 1; j < _PB_N - 1; j++) 	  B[i][j] = SC…
+
+  [6] FOR  at line 75, col 7
+      Depth        : 1 (nested)
+      Condition    : i < _PB_N - 1
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 1; j < _PB_N - 1; j++) 	  B[i][j] = SCALAR_VAL(0.2) * (A[i][j] + A[i][j…
+
+  [7] FOR  at line 76, col 2
+      Depth        : 1 (nested)
+      Condition    : j < _PB_N - 1
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : B[i][j] = SCALAR_VAL(0.2) * (A[i][j] + A[i][j-1] + A[i][1+j] + A[1+i][j] + A[i-1…
+
+  [8] FOR  at line 78, col 7
+      Depth        : 1 (nested)
+      Condition    : i < _PB_N - 1
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 1; j < _PB_N - 1; j++) 	  A[i][j] = SCALAR_VAL(0.2) * (B[i][j] + B[i][j…
+
+  [9] FOR  at line 79, col 2
+      Depth        : 1 (nested)
+      Condition    : j < _PB_N - 1
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j] = SCALAR_VAL(0.2) * (B[i][j] + B[i][j-1] + B[i][1+j] + B[1+i][j] + B[i-1…
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/stencils/jacobi-1d/jacobi-1d.c
+------------------------------------------------------------------------
+  Total loops             : 5
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 5  (nested: 2,  canonicalizable: 5)
+    Do-while loops        : 0
+  Nested loops (total)    : 2
+  Canonicalizability      : 5/5  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           32   d=0  Yes         i < n
+  2    for           51   d=0  Yes         i < n
+  3    for           72   d=0  Yes         t < _PB_TSTEPS
+  4    for           74   d=1  Yes         i < _PB_N - 1
+  5    for           76   d=1  Yes         i < _PB_N - 1
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 32, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i] = ((DATA_TYPE) i+ 2) / n; 	B[i] = ((DATA_TYPE) i+ 3) / n;
+
+  [2] FOR  at line 51, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (i % 20 == 0) fprintf(POLYBENCH_DUMP_TARGET, "\n");       fprintf(POLYBENCH_D…
+
+  [3] FOR  at line 72, col 3
+      Depth        : 0 (top-level)
+      Condition    : t < _PB_TSTEPS
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (i = 1; i < _PB_N - 1; i++) 	B[i] = 0.33333 * (A[i-1] + A[i] + A[i + 1]);   …
+
+  [4] FOR  at line 74, col 7
+      Depth        : 1 (nested)
+      Condition    : i < _PB_N - 1
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : B[i] = 0.33333 * (A[i-1] + A[i] + A[i + 1]);
+
+  [5] FOR  at line 76, col 7
+      Depth        : 1 (nested)
+      Condition    : i < _PB_N - 1
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i] = 0.33333 * (B[i-1] + B[i] + B[i + 1]);
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/stencils/heat-3d/heat-3d.c
+------------------------------------------------------------------------
+  Total loops             : 13
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 13  (nested: 8,  canonicalizable: 13)
+    Do-while loops        : 0
+  Nested loops (total)    : 8
+  Canonicalizability      : 13/13  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           32   d=0  Yes         i < n
+  2    for           33   d=0  Yes         j < n
+  3    for           34   d=1  Yes         k < n
+  4    for           50   d=0  Yes         i < n
+  5    for           51   d=0  Yes         j < n
+  6    for           52   d=1  Yes         k < n
+  7    for           72   d=0  Yes         t <= TSTEPS
+  8    for           73   d=1  Yes         i < _PB_N-1
+  9    for           74   d=2  Yes         j < _PB_N-1
+  10   for           75   d=3  Yes         k < _PB_N-1
+  11   for           83   d=1  Yes         i < _PB_N-1
+  12   for           84   d=2  Yes         j < _PB_N-1
+  13   for           85   d=3  Yes         k < _PB_N-1
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 32, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++)       for (k = 0; k < n; k++)         A[i][j][k] = B[i][…
+
+  [2] FOR  at line 33, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (k = 0; k < n; k++)         A[i][j][k] = B[i][j][k] = (DATA_TYPE) (i + j + (…
+
+  [3] FOR  at line 34, col 7
+      Depth        : 1 (nested)
+      Condition    : k < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j][k] = B[i][j][k] = (DATA_TYPE) (i + j + (n-k))* 10 / (n);
+
+  [4] FOR  at line 50, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++)       for (k = 0; k < n; k++) {          if ((i * n * n …
+
+  [5] FOR  at line 51, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (k = 0; k < n; k++) {          if ((i * n * n + j * n + k) % 20 == 0) fprint…
+
+  [6] FOR  at line 52, col 7
+      Depth        : 1 (nested)
+      Condition    : k < n
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * n * n + j * n + k) % 20 == 0) fprintf(POLYBENCH_DUMP_TARGET, "\n");    …
+
+  [7] FOR  at line 72, col 5
+      Depth        : 0 (top-level)
+      Condition    : t <= TSTEPS
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (i = 1; i < _PB_N-1; i++) {             for (j = 1; j < _PB_N-1; j++) {     …
+
+  [8] FOR  at line 73, col 9
+      Depth        : 1 (nested)
+      Condition    : i < _PB_N-1
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 1; j < _PB_N-1; j++) {                 for (k = 1; k < _PB_N-1; k++) { …
+
+  [9] FOR  at line 74, col 13
+      Depth        : 2 (nested)
+      Condition    : j < _PB_N-1
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (k = 1; k < _PB_N-1; k++) {                     B[i][j][k] =   SCALAR_VAL(0.…
+
+  [10] FOR  at line 75, col 17
+      Depth        : 3 (nested)
+      Condition    : k < _PB_N-1
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : B[i][j][k] =   SCALAR_VAL(0.125) * (A[i+1][j][k] - SCALAR_VAL(2.0) * A[i][j][k] …
+
+  [11] FOR  at line 83, col 9
+      Depth        : 1 (nested)
+      Condition    : i < _PB_N-1
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 1; j < _PB_N-1; j++) {                for (k = 1; k < _PB_N-1; k++) {  …
+
+  [12] FOR  at line 84, col 12
+      Depth        : 2 (nested)
+      Condition    : j < _PB_N-1
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (k = 1; k < _PB_N-1; k++) {                    A[i][j][k] =   SCALAR_VAL(0.1…
+
+  [13] FOR  at line 85, col 16
+      Depth        : 3 (nested)
+      Condition    : k < _PB_N-1
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : A[i][j][k] =   SCALAR_VAL(0.125) * (B[i+1][j][k] - SCALAR_VAL(2.0) * B[i][j][k] …
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/stencils/fdtd-2d/fdtd-2d.c
+------------------------------------------------------------------------
+  Total loops             : 17
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 17  (nested: 7,  canonicalizable: 17)
+    Do-while loops        : 0
+  Nested loops (total)    : 7
+  Canonicalizability      : 17/17  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           36   d=0  Yes         i < tmax
+  2    for           38   d=0  Yes         i < nx
+  3    for           39   d=0  Yes         j < ny
+  4    for           61   d=0  Yes         i < nx
+  5    for           62   d=0  Yes         j < ny
+  6    for           70   d=0  Yes         i < nx
+  7    for           71   d=0  Yes         j < ny
+  8    for           78   d=0  Yes         i < nx
+  9    for           79   d=0  Yes         j < ny
+  10   for          102   d=0  Yes         t < _PB_TMAX
+  11   for          104   d=1  Yes         j < _PB_NY
+  12   for          106   d=1  Yes         i < _PB_NX
+  13   for          107   d=1  Yes         j < _PB_NY
+  14   for          109   d=1  Yes         i < _PB_NX
+  15   for          110   d=1  Yes         j < _PB_NY
+  16   for          112   d=1  Yes         i < _PB_NX - 1
+  17   for          113   d=1  Yes         j < _PB_NY - 1
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 36, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < tmax
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : _fict_[i] = (DATA_TYPE) i;
+
+  [2] FOR  at line 38, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < nx
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < ny; j++)       { 	ex[i][j] = ((DATA_TYPE) i*(j+1)) / nx; 	ey[i][…
+
+  [3] FOR  at line 39, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < ny
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : ex[i][j] = ((DATA_TYPE) i*(j+1)) / nx; 	ey[i][j] = ((DATA_TYPE) i*(j+2)) / ny; 	…
+
+  [4] FOR  at line 61, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < nx
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < ny; j++) {       if ((i * nx + j) % 20 == 0) fprintf(POLYBENCH_D…
+
+  [5] FOR  at line 62, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < ny
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * nx + j) % 20 == 0) fprintf(POLYBENCH_DUMP_TARGET, "\n");       fprintf(…
+
+  [6] FOR  at line 70, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < nx
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < ny; j++) {       if ((i * nx + j) % 20 == 0) fprintf(POLYBENCH_D…
+
+  [7] FOR  at line 71, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < ny
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * nx + j) % 20 == 0) fprintf(POLYBENCH_DUMP_TARGET, "\n");       fprintf(…
+
+  [8] FOR  at line 78, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < nx
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < ny; j++) {       if ((i * nx + j) % 20 == 0) fprintf(POLYBENCH_D…
+
+  [9] FOR  at line 79, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < ny
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * nx + j) % 20 == 0) fprintf(POLYBENCH_DUMP_TARGET, "\n");       fprintf(…
+
+  [10] FOR  at line 102, col 3
+      Depth        : 0 (top-level)
+      Condition    : t < _PB_TMAX
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_NY; j++) 	ey[0][j] = _fict_[t];       for (i = 1; i < _PB_NX…
+
+  [11] FOR  at line 104, col 7
+      Depth        : 1 (nested)
+      Condition    : j < _PB_NY
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : ey[0][j] = _fict_[t];
+
+  [12] FOR  at line 106, col 7
+      Depth        : 1 (nested)
+      Condition    : i < _PB_NX
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_NY; j++) 	  ey[i][j] = ey[i][j] - SCALAR_VAL(0.5)*(hz[i][j]-…
+
+  [13] FOR  at line 107, col 2
+      Depth        : 1 (nested)
+      Condition    : j < _PB_NY
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : ey[i][j] = ey[i][j] - SCALAR_VAL(0.5)*(hz[i][j]-hz[i-1][j]);
+
+  [14] FOR  at line 109, col 7
+      Depth        : 1 (nested)
+      Condition    : i < _PB_NX
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 1; j < _PB_NY; j++) 	  ex[i][j] = ex[i][j] - SCALAR_VAL(0.5)*(hz[i][j]-…
+
+  [15] FOR  at line 110, col 2
+      Depth        : 1 (nested)
+      Condition    : j < _PB_NY
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : ex[i][j] = ex[i][j] - SCALAR_VAL(0.5)*(hz[i][j]-hz[i][j-1]);
+
+  [16] FOR  at line 112, col 7
+      Depth        : 1 (nested)
+      Condition    : i < _PB_NX - 1
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < _PB_NY - 1; j++) 	  hz[i][j] = hz[i][j] - SCALAR_VAL(0.7)*  (ex[…
+
+  [17] FOR  at line 113, col 2
+      Depth        : 1 (nested)
+      Condition    : j < _PB_NY - 1
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : hz[i][j] = hz[i][j] - SCALAR_VAL(0.7)*  (ex[i][j+1] - ex[i][j] + 				       ey[i…
+
+========================================================================
+FILE: PolyBenchC-4.2.1-master/stencils/adi/adi.c
+------------------------------------------------------------------------
+  Total loops             : 11
+    While loops           : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 11  (nested: 6,  canonicalizable: 11)
+    Do-while loops        : 0
+  Nested loops (total)    : 6
+  Canonicalizability      : 11/11  (100.0%)
+
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           31   d=0  Yes         i < n
+  2    for           32   d=0  Yes         j < n
+  3    for           50   d=0  Yes         i < n
+  4    for           51   d=0  Yes         j < n
+  5    for           96   d=0  Yes         t<=_PB_TSTEPS
+  6    for           98   d=1  Yes         i<_PB_N-1
+  7    for          102   d=2  Yes         j<_PB_N-1
+  8    for          108   d=2  Yes         j>=1
+  9    for          113   d=1  Yes         i<_PB_N-1
+  10   for          117   d=2  Yes         j<_PB_N-1
+  11   for          122   d=2  Yes         j>=1
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 31, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++)       { 	u[i][j] =  (DATA_TYPE)(i + n-j) / n;       } } …
+
+  [2] FOR  at line 32, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : u[i][j] =  (DATA_TYPE)(i + n-j) / n;
+
+  [3] FOR  at line 50, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < n
+      Computation  : pointer, arithmetic, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (j = 0; j < n; j++) {       if ((i * n + j) % 20 == 0) fprintf(POLYBENCH_DUM…
+
+  [4] FOR  at line 51, col 5
+      Depth        : 0 (top-level)
+      Condition    : j < n
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if ((i * n + j) % 20 == 0) fprintf(POLYBENCH_DUMP_TARGET, "\n");       fprintf (…
+
+  [5] FOR  at line 96, col 2
+      Depth        : 0 (top-level)
+      Condition    : t<=_PB_TSTEPS
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : //Column Sweep     for (i=1; i<_PB_N-1; i++) {       v[0][i] = SCALAR_VAL(1.0); …
+
+  [6] FOR  at line 98, col 5
+      Depth        : 1 (nested)
+      Condition    : i<_PB_N-1
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : v[0][i] = SCALAR_VAL(1.0);       p[i][0] = SCALAR_VAL(0.0);       q[i][0] = v[0]…
+
+  [7] FOR  at line 102, col 7
+      Depth        : 2 (nested)
+      Condition    : j<_PB_N-1
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : p[i][j] = -c / (a*p[i][j-1]+b);         q[i][j] = (-d*u[j][i-1]+(SCALAR_VAL(1.0)…
+
+  [8] FOR  at line 108, col 7
+      Depth        : 2 (nested)
+      Condition    : j>=1
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : v[j][i] = p[i][j] * v[j+1][i] + q[i][j];
+
+  [9] FOR  at line 113, col 5
+      Depth        : 1 (nested)
+      Condition    : i<_PB_N-1
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : u[i][0] = SCALAR_VAL(1.0);       p[i][0] = SCALAR_VAL(0.0);       q[i][0] = u[i]…
+
+  [10] FOR  at line 117, col 7
+      Depth        : 2 (nested)
+      Condition    : j<_PB_N-1
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : p[i][j] = -f / (d*p[i][j-1]+e);         q[i][j] = (-a*v[i-1][j]+(SCALAR_VAL(1.0)…
+
+  [11] FOR  at line 122, col 7
+      Depth        : 2 (nested)
+      Condition    : j>=1
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : u[i][j] = p[i][j] * u[i][j+1] + q[i][j];
+
+========================================================================
+  END OF REPORT
+========================================================================

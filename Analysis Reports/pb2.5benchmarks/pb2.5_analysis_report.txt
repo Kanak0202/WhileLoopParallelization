@@ -1,19 +1,19 @@
 ========================================================================
   LOOP STATIC ANALYSIS REPORT
-  Generated: 2026-03-24 11:53:09
+  Generated: 2026-03-25 15:45:12
 ========================================================================
 
 GLOBAL SUMMARY
 ------------------------------------------------------------------------
   Files analysed          : 218
-  Total loops             : 573
+  Total loops             : 637
     While loops           : 28  (nested: 0)
-    For loops             : 545  (nested: 247)
-    Do-while loops        : 0
-  Nested loops (total)    : 247
+    For loops             : 602  (nested: 265)
+    Do-while loops        : 7
+  Nested loops (total)    : 265
   Canonicalizable while   : 1
-  Canonicalizable for     : 525
-  Canonicalizability rate : 526/573  (91.8%)
+  Canonicalizable for     : 575
+  Canonicalizability rate : 576/637  (90.4%)
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_nvidia/readatom.c
@@ -35,27 +35,39 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_nvidia/readatom.c
   [1] WHILE  at line 44, col 3
       Depth        : 0 (top-level)
       Condition    : fgets(line, LINELEN, file) != NULL
-      Computation  : pointer, arithmetic, bitwise, function_call, memory_alloc, io, array_access
+      Computation  : pointer, arithmetic, function_call, memory_alloc, io, array_access
       Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
       Body snippet : if (strncmp(line, "ATOM  ", 6) != 0 && strncmp(line, "HETATM", 6) != 0) {       …
 
   [2] FOR  at line 118, col 3
       Depth        : 0 (top-level)
       Condition    : n < natoms
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lo.x = fminf(lo.x, atoms[n].x);     hi.x = fmaxf(hi.x, atoms[n].x);     lo.y = f…
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_nvidia/output.c
 ------------------------------------------------------------------------
-  Total loops             : 0
+  Total loops             : 1
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 1  (nested: 0,  canonicalizable: 1)
     Do-while loops        : 0
   Nested loops (total)    : 0
+  Canonicalizability      : 1/1  (100.0%)
 
-  (no loops found)
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           40   d=0  Yes         i < nx * ny * nz
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 40, col 5
+      Depth        : 0 (top-level)
+      Condition    : i < nx * ny * nz
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : abspotential += fabs((double) lattice_data[i]);
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_nvidia/ocl.c
@@ -105,14 +117,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_nvidia/excl.c
   [1] FOR  at line 74, col 3
       Depth        : 0 (top-level)
       Condition    : gindex < ncell
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : first[gindex] = -1;
 
   [2] FOR  at line 78, col 3
       Depth        : 0 (top-level)
       Condition    : n < atoms->size
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : next[n] = -1;
 
@@ -237,14 +249,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_nvidia/cutoff6overlap.c
   [7] FOR  at line 181, col 5
       Depth        : 0 (top-level)
       Condition    : n < natoms
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : cl_float4 p;       p.x = atom[n].x - xlo;       p.y = atom[n].y - ylo;       p.z…
 
   [8] FOR  at line 226, col 3
       Depth        : 0 (top-level)
       Condition    : n < nbins
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : binHistoFull[ bincntBaseAddr[n] ]++;     sum += bincntBaseAddr[n];     total += …
 
@@ -272,14 +284,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_nvidia/cutoff6overlap.c
   [12] FOR  at line 270, col 5
       Depth        : 0 (top-level)
       Condition    : n <= BIN_DEPTH
-      Computation  : pointer, arithmetic, function_call, io, array_access
+      Computation  : arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : printf("     number of bins with %d atoms:  %d\n", n, binHistoFull[n]);       su…
 
   [13] FOR  at line 279, col 5
       Depth        : 0 (top-level)
       Condition    : n <= BIN_DEPTH
-      Computation  : pointer, arithmetic, function_call, io, array_access
+      Computation  : arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : printf("     number of bins with %d atoms:  %d\n", n, binHistoCover[n]);       s…
 
@@ -300,7 +312,7 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_nvidia/cutoff6overlap.c
   [16] FOR  at line 410, col 3
       Depth        : 0 (top-level)
       Condition    : zRegionIndex < zRegionDim
-      Computation  : arithmetic, bitwise, function_call, io
+      Computation  : arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : printf("  computing plane %d\r", zRegionIndex);     fflush(stdout);          clS…
 
@@ -352,14 +364,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_nvidia/cutcpu.c
   [1] FOR  at line 87, col 3
       Depth        : 0 (top-level)
       Condition    : gindex < ncell
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : first[gindex] = -1;
 
   [2] FOR  at line 91, col 3
       Depth        : 0 (top-level)
       Condition    : n < natoms
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : next[n] = -1;
 
@@ -432,27 +444,39 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_base/readatom.c
   [1] WHILE  at line 44, col 3
       Depth        : 0 (top-level)
       Condition    : fgets(line, LINELEN, file) != NULL
-      Computation  : pointer, arithmetic, bitwise, function_call, memory_alloc, io, array_access
+      Computation  : pointer, arithmetic, function_call, memory_alloc, io, array_access
       Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
       Body snippet : if (strncmp(line, "ATOM  ", 6) != 0 && strncmp(line, "HETATM", 6) != 0) {       …
 
   [2] FOR  at line 118, col 3
       Depth        : 0 (top-level)
       Condition    : n < natoms
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lo.x = fminf(lo.x, atoms[n].x);     hi.x = fmaxf(hi.x, atoms[n].x);     lo.y = f…
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_base/output.c
 ------------------------------------------------------------------------
-  Total loops             : 0
+  Total loops             : 1
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 1  (nested: 0,  canonicalizable: 1)
     Do-while loops        : 0
   Nested loops (total)    : 0
+  Canonicalizability      : 1/1  (100.0%)
 
-  (no loops found)
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           40   d=0  Yes         i < nx * ny * nz
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 40, col 5
+      Depth        : 0 (top-level)
+      Condition    : i < nx * ny * nz
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : abspotential += fabs((double) lattice_data[i]);
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_base/ocl.c
@@ -502,14 +526,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_base/excl.c
   [1] FOR  at line 74, col 3
       Depth        : 0 (top-level)
       Condition    : gindex < ncell
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : first[gindex] = -1;
 
   [2] FOR  at line 78, col 3
       Depth        : 0 (top-level)
       Condition    : n < atoms->size
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : next[n] = -1;
 
@@ -634,14 +658,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_base/cutoff.c
   [7] FOR  at line 165, col 5
       Depth        : 0 (top-level)
       Condition    : n < natoms
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : cl_float4 p;       p.x = atom[n].x - xlo;       p.y = atom[n].y - ylo;       p.z…
 
   [8] FOR  at line 210, col 3
       Depth        : 0 (top-level)
       Condition    : n < nbins
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : binHistoFull[ bincntBaseAddr[n] ]++;     sum += bincntBaseAddr[n];     total += …
 
@@ -669,14 +693,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_base/cutoff.c
   [12] FOR  at line 254, col 5
       Depth        : 0 (top-level)
       Condition    : n <= BIN_DEPTH
-      Computation  : pointer, arithmetic, function_call, io, array_access
+      Computation  : arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : printf("     number of bins with %d atoms:  %d\n", n, binHistoFull[n]);       su…
 
   [13] FOR  at line 263, col 5
       Depth        : 0 (top-level)
       Condition    : n <= BIN_DEPTH
-      Computation  : pointer, arithmetic, function_call, io, array_access
+      Computation  : arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : printf("     number of bins with %d atoms:  %d\n", n, binHistoCover[n]);       s…
 
@@ -697,7 +721,7 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_base/cutoff.c
   [16] FOR  at line 392, col 3
       Depth        : 0 (top-level)
       Condition    : zRegionIndex < zRegionDim
-      Computation  : arithmetic, bitwise, function_call, io
+      Computation  : arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : printf("  computing plane %d\r", zRegionIndex);     fflush(stdout);      clStatu…
 
@@ -749,14 +773,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/opencl_base/cutcpu.c
   [1] FOR  at line 86, col 3
       Depth        : 0 (top-level)
       Condition    : gindex < ncell
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : first[gindex] = -1;
 
   [2] FOR  at line 90, col 3
       Depth        : 0 (top-level)
       Condition    : n < natoms
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : next[n] = -1;
 
@@ -829,27 +853,39 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/omp_base/readatom.c
   [1] WHILE  at line 44, col 3
       Depth        : 0 (top-level)
       Condition    : fgets(line, LINELEN, file) != NULL
-      Computation  : pointer, arithmetic, bitwise, function_call, memory_alloc, io, array_access
+      Computation  : pointer, arithmetic, function_call, memory_alloc, io, array_access
       Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
       Body snippet : if (strncmp(line, "ATOM  ", 6) != 0 && strncmp(line, "HETATM", 6) != 0) {       …
 
   [2] FOR  at line 118, col 3
       Depth        : 0 (top-level)
       Condition    : n < natoms
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lo.x = fminf(lo.x, atoms[n].x);     hi.x = fmaxf(hi.x, atoms[n].x);     lo.y = f…
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/cutcp/src/omp_base/output.c
 ------------------------------------------------------------------------
-  Total loops             : 0
+  Total loops             : 1
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 1  (nested: 0,  canonicalizable: 1)
     Do-while loops        : 0
   Nested loops (total)    : 0
+  Canonicalizability      : 1/1  (100.0%)
 
-  (no loops found)
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           38   d=0  Yes         i < nx * ny * nz
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 38, col 5
+      Depth        : 0 (top-level)
+      Condition    : i < nx * ny * nz
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : abspotential += fabs((double) lattice_data[i]);
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/cutcp/src/omp_base/main.c
@@ -888,14 +924,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/omp_base/excl.c
   [1] FOR  at line 72, col 3
       Depth        : 0 (top-level)
       Condition    : gindex < ncell
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : first[gindex] = -1;
 
   [2] FOR  at line 76, col 3
       Depth        : 0 (top-level)
       Condition    : n < atoms->size
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : next[n] = -1;
 
@@ -968,14 +1004,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/omp_base/cutcpu.c
   [1] FOR  at line 85, col 3
       Depth        : 0 (top-level)
       Condition    : gindex < ncell
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : first[gindex] = -1;
 
   [2] FOR  at line 89, col 3
       Depth        : 0 (top-level)
       Condition    : n < natoms
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : next[n] = -1;
 
@@ -1048,27 +1084,39 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/cuda_base/readatom.c
   [1] WHILE  at line 44, col 3
       Depth        : 0 (top-level)
       Condition    : fgets(line, LINELEN, file) != NULL
-      Computation  : pointer, arithmetic, bitwise, function_call, memory_alloc, io, array_access
+      Computation  : pointer, arithmetic, function_call, memory_alloc, io, array_access
       Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
       Body snippet : if (strncmp(line, "ATOM  ", 6) != 0 && strncmp(line, "HETATM", 6) != 0) {       …
 
   [2] FOR  at line 118, col 3
       Depth        : 0 (top-level)
       Condition    : n < natoms
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lo.x = fminf(lo.x, atoms[n].x);     hi.x = fmaxf(hi.x, atoms[n].x);     lo.y = f…
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/cutcp/src/cuda_base/output.c
 ------------------------------------------------------------------------
-  Total loops             : 0
+  Total loops             : 1
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 1  (nested: 0,  canonicalizable: 1)
     Do-while loops        : 0
   Nested loops (total)    : 0
+  Canonicalizability      : 1/1  (100.0%)
 
-  (no loops found)
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           38   d=0  Yes         i < nx * ny * nz
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 38, col 5
+      Depth        : 0 (top-level)
+      Condition    : i < nx * ny * nz
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : abspotential += fabs((double) lattice_data[i]);
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/cutcp/src/cuda_base/main.c
@@ -1107,14 +1155,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/cuda_base/excl.c
   [1] FOR  at line 72, col 3
       Depth        : 0 (top-level)
       Condition    : gindex < ncell
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : first[gindex] = -1;
 
   [2] FOR  at line 76, col 3
       Depth        : 0 (top-level)
       Condition    : n < atoms->size
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : next[n] = -1;
 
@@ -1187,14 +1235,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/cuda_base/cutcpu.c
   [1] FOR  at line 86, col 3
       Depth        : 0 (top-level)
       Condition    : gindex < ncell
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : first[gindex] = -1;
 
   [2] FOR  at line 90, col 3
       Depth        : 0 (top-level)
       Condition    : n < natoms
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : next[n] = -1;
 
@@ -1267,27 +1315,39 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/cuda/readatom.c
   [1] WHILE  at line 44, col 3
       Depth        : 0 (top-level)
       Condition    : fgets(line, LINELEN, file) != NULL
-      Computation  : pointer, arithmetic, bitwise, function_call, memory_alloc, io, array_access
+      Computation  : pointer, arithmetic, function_call, memory_alloc, io, array_access
       Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
       Body snippet : if (strncmp(line, "ATOM  ", 6) != 0 && strncmp(line, "HETATM", 6) != 0) {       …
 
   [2] FOR  at line 118, col 3
       Depth        : 0 (top-level)
       Condition    : n < natoms
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lo.x = fminf(lo.x, atoms[n].x);     hi.x = fmaxf(hi.x, atoms[n].x);     lo.y = f…
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/cutcp/src/cuda/output.c
 ------------------------------------------------------------------------
-  Total loops             : 0
+  Total loops             : 1
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 1  (nested: 0,  canonicalizable: 1)
     Do-while loops        : 0
   Nested loops (total)    : 0
+  Canonicalizability      : 1/1  (100.0%)
 
-  (no loops found)
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           38   d=0  Yes         i < nx * ny * nz
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 38, col 5
+      Depth        : 0 (top-level)
+      Condition    : i < nx * ny * nz
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : abspotential += fabs((double) lattice_data[i]);
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/cutcp/src/cuda/main.c
@@ -1326,14 +1386,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/cuda/excl.c
   [1] FOR  at line 72, col 3
       Depth        : 0 (top-level)
       Condition    : gindex < ncell
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : first[gindex] = -1;
 
   [2] FOR  at line 76, col 3
       Depth        : 0 (top-level)
       Condition    : n < atoms->size
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : next[n] = -1;
 
@@ -1406,14 +1466,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/cuda/cutcpu.c
   [1] FOR  at line 85, col 3
       Depth        : 0 (top-level)
       Condition    : gindex < ncell
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : first[gindex] = -1;
 
   [2] FOR  at line 89, col 3
       Depth        : 0 (top-level)
       Condition    : n < natoms
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : next[n] = -1;
 
@@ -1486,27 +1546,39 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/base/readatom.c
   [1] WHILE  at line 44, col 3
       Depth        : 0 (top-level)
       Condition    : fgets(line, LINELEN, file) != NULL
-      Computation  : pointer, arithmetic, bitwise, function_call, memory_alloc, io, array_access
+      Computation  : pointer, arithmetic, function_call, memory_alloc, io, array_access
       Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
       Body snippet : if (strncmp(line, "ATOM  ", 6) != 0 && strncmp(line, "HETATM", 6) != 0) {       …
 
   [2] FOR  at line 118, col 3
       Depth        : 0 (top-level)
       Condition    : n < natoms
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lo.x = fminf(lo.x, atoms[n].x);     hi.x = fmaxf(hi.x, atoms[n].x);     lo.y = f…
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/cutcp/src/base/output.c
 ------------------------------------------------------------------------
-  Total loops             : 0
+  Total loops             : 1
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 1  (nested: 0,  canonicalizable: 1)
     Do-while loops        : 0
   Nested loops (total)    : 0
+  Canonicalizability      : 1/1  (100.0%)
 
-  (no loops found)
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for           38   d=0  Yes         i < nx * ny * nz
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 38, col 5
+      Depth        : 0 (top-level)
+      Condition    : i < nx * ny * nz
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : abspotential += fabs((double) lattice_data[i]);
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/cutcp/src/base/main.c
@@ -1545,14 +1617,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/base/excl.c
   [1] FOR  at line 72, col 3
       Depth        : 0 (top-level)
       Condition    : gindex < ncell
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : first[gindex] = -1;
 
   [2] FOR  at line 76, col 3
       Depth        : 0 (top-level)
       Condition    : n < atoms->size
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : next[n] = -1;
 
@@ -1625,14 +1697,14 @@ FILE: pb2.5benchmarks/benchmarks/cutcp/src/base/cutcpu.c
   [1] FOR  at line 85, col 3
       Depth        : 0 (top-level)
       Condition    : gindex < ncell
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : first[gindex] = -1;
 
   [2] FOR  at line 89, col 3
       Depth        : 0 (top-level)
       Condition    : n < natoms
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : next[n] = -1;
 
@@ -1775,14 +1847,14 @@ FILE: pb2.5benchmarks/benchmarks/histo/src/threaded/main.c
   [5] FOR  at line 105, col 5
       Depth        : 0 (top-level)
       Condition    : i < end
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : __m128i acc = _mm_load_si128(((__m128i*)(bins[0]))+i);         for (j=1; j<numTh…
 
   [6] FOR  at line 107, col 9
       Depth        : 1 (nested)
       Condition    : j<numThreads
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : __m128i b = _mm_load_si128(((__m128i*)(bins[j]))+i);             acc = _mm_adds_…
 
@@ -1796,7 +1868,7 @@ FILE: pb2.5benchmarks/benchmarks/histo/src/threaded/main.c
   [8] FOR  at line 189, col 5
       Depth        : 1 (nested)
       Condition    : i < img_width*img_height
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : const unsigned int value = img[i];       if (histo[value] < UINT8_MAX) {        …
 
@@ -1810,67 +1882,75 @@ FILE: pb2.5benchmarks/benchmarks/histo/src/threaded/main.c
   [10] FOR  at line 206, col 3
       Depth        : 0 (top-level)
       Condition    : iter < 1000
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : memset(out, 0, new_size);      faux_block_run (blk,numThreads);      for (i=1;i<…
 
   [11] FOR  at line 211, col 5
       Depth        : 1 (nested)
       Condition    : i<numThreads
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : Min[0] = min(Min[0],Min[i]);       Max[0] = max(Max[0],Max[i]);
 
   [12] FOR  at line 222, col 3
       Depth        : 0 (top-level)
       Condition    : i < histo_height*histo_width
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : histo[i] = ((unsigned char*)out)[i];
 
   [13] FOR  at line 226, col 3
       Depth        : 0 (top-level)
       Condition    : i<numThreads
-      Computation  : pointer, function_call, memory_alloc, array_access
+      Computation  : function_call, memory_alloc, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : free(bins[i]);
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/histo/src/threaded/FauxBlock.c
 ------------------------------------------------------------------------
-  Total loops             : 3
+  Total loops             : 4
     While loops           : 1  (nested: 0,  canonicalizable: 1)
     For loops             : 2  (nested: 0,  canonicalizable: 2)
-    Do-while loops        : 0
+    Do-while loops        : 1
   Nested loops (total)    : 0
-  Canonicalizability      : 3/3  (100.0%)
+  Canonicalizability      : 3/4  (75.0%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
-  1    while        198   d=0  Yes         next >= 0
-  2    for          229   d=0  Yes         i < len
-  3    for          251   d=0  Yes         i < len
+  1    do-while      73   d=0  No          1
+  2    while        198   d=0  Yes         next >= 0
+  3    for          229   d=0  Yes         i < len
+  4    for          251   d=0  Yes         i < len
 
   LOOP DETAILS
   ------------------------------------------------------------------------
-  [1] WHILE  at line 198, col 5
+  [1] DO-WHILE  at line 73, col 5
+      Depth        : 0 (top-level)
+      Condition    : 1
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
+      Body snippet : // Only wait if we don't have ready signaled.  If we don't         // have the p…
+
+  [2] WHILE  at line 198, col 5
       Depth        : 0 (top-level)
       Condition    : next >= 0
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Counter variable 'next' is modified unconditionally with a constant stride
       Body snippet : async_runner_t *r = runner_stack[next];         pthread_cond_signal(&(r->go));  …
 
-  [2] FOR  at line 229, col 5
+  [3] FOR  at line 229, col 5
       Depth        : 0 (top-level)
       Condition    : i < len
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : async_runner_t *r = run_async (exec_faux_block, block + i);         block[i].tid…
 
-  [3] FOR  at line 251, col 5
+  [4] FOR  at line 251, col 5
       Depth        : 0 (top-level)
       Condition    : i < len
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : join ((async_runner_t*) block[i].tid);         block[i].tid = 0;                …
 
@@ -1932,7 +2012,7 @@ FILE: pb2.5benchmarks/benchmarks/histo/src/omp_base/main.c
   [2] FOR  at line 98, col 5
       Depth        : 1 (nested)
       Condition    : i < img_width*img_height
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : const unsigned int value = img[i];  #pragma omp critical       if (histo[value] …
 
@@ -1994,7 +2074,7 @@ FILE: pb2.5benchmarks/benchmarks/histo/src/base/main.c
   [2] FOR  at line 96, col 5
       Depth        : 1 (nested)
       Condition    : i < img_width*img_height
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : const unsigned int value = img[i];       if (histo[value] < UINT8_MAX) {        …
 
@@ -2035,12 +2115,12 @@ FILE: pb2.5benchmarks/benchmarks/lbm/src/opencl_nvidia/main.c
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/lbm/src/opencl_nvidia/lbm.c
 ------------------------------------------------------------------------
-  Total loops             : 6
+  Total loops             : 8
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 6  (nested: 4,  canonicalizable: 6)
+    For loops             : 8  (nested: 4,  canonicalizable: 8)
     Do-while loops        : 0
   Nested loops (total)    : 4
-  Canonicalizability      : 6/6  (100.0%)
+  Canonicalizability      : 8/8  (100.0%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
@@ -2050,50 +2130,66 @@ FILE: pb2.5benchmarks/benchmarks/lbm/src/opencl_nvidia/lbm.c
   4    for          166   d=0  Yes         z < SIZE_Z+2
   5    for          167   d=1  Yes         y < SIZE_Y
   6    for          168   d=2  Yes         x < SIZE_X
+  7    for          264   d=0  Yes         i < sizeof( OUTPUT_PRECISION )
+  8    for          285   d=0  Yes         i < sizeof( OUTPUT_PRECISION )
 
   LOOP DETAILS
   ------------------------------------------------------------------------
   [1] FOR  at line 148, col 2
       Depth        : 0 (top-level)
       Condition    : z < SIZE_Z
-      Computation  : arithmetic, function_call
+      Computation  : arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( y = 0; y < SIZE_Y; y++ ) { 			for( x = 0; x < SIZE_X; x++ ) { 				if( fgetc…
 
   [2] FOR  at line 149, col 3
       Depth        : 1 (nested)
       Condition    : y < SIZE_Y
-      Computation  : arithmetic, function_call
+      Computation  : arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( x = 0; x < SIZE_X; x++ ) { 				if( fgetc( file ) != '.' ) SET_FLAG( grid, x…
 
   [3] FOR  at line 150, col 4
       Depth        : 2 (nested)
       Condition    : x < SIZE_X
-      Computation  : function_call
+      Computation  : function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if( fgetc( file ) != '.' ) SET_FLAG( grid, x, y, z, OBSTACLE );
 
   [4] FOR  at line 166, col 2
       Depth        : 0 (top-level)
       Condition    : z < SIZE_Z+2
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( y = 0; y < SIZE_Y; y++ ) { 			for( x = 0; x < SIZE_X; x++ ) { 				if( x == …
 
   [5] FOR  at line 167, col 3
       Depth        : 1 (nested)
       Condition    : y < SIZE_Y
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( x = 0; x < SIZE_X; x++ ) { 				if( x == 0 || x == SIZE_X-1 || 						y == 0 …
 
   [6] FOR  at line 168, col 4
       Depth        : 2 (nested)
       Condition    : x < SIZE_X
-      Computation  : bitwise, function_call
+      Computation  : function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if( x == 0 || x == SIZE_X-1 || 						y == 0 || y == SIZE_Y-1 || 						z == 0 || …
+
+  [7] FOR  at line 264, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < sizeof( OUTPUT_PRECISION )
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : buffer[i] = vPtr[sizeof( OUTPUT_PRECISION ) - i - 1];
+
+  [8] FOR  at line 285, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < sizeof( OUTPUT_PRECISION )
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : vPtr[i] = buffer[sizeof( OUTPUT_PRECISION ) - i - 1];
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/lbm/src/opencl_base/ocl.c
@@ -2132,12 +2228,12 @@ FILE: pb2.5benchmarks/benchmarks/lbm/src/opencl_base/main.c
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/lbm/src/opencl_base/lbm.c
 ------------------------------------------------------------------------
-  Total loops             : 6
+  Total loops             : 8
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 6  (nested: 4,  canonicalizable: 6)
+    For loops             : 8  (nested: 4,  canonicalizable: 8)
     Do-while loops        : 0
   Nested loops (total)    : 4
-  Canonicalizability      : 6/6  (100.0%)
+  Canonicalizability      : 8/8  (100.0%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
@@ -2147,50 +2243,66 @@ FILE: pb2.5benchmarks/benchmarks/lbm/src/opencl_base/lbm.c
   4    for          174   d=0  Yes         z < SIZE_Z+2
   5    for          175   d=1  Yes         y < SIZE_Y
   6    for          176   d=2  Yes         x < SIZE_X
+  7    for          272   d=0  Yes         i < sizeof( OUTPUT_PRECISION )
+  8    for          293   d=0  Yes         i < sizeof( OUTPUT_PRECISION )
 
   LOOP DETAILS
   ------------------------------------------------------------------------
   [1] FOR  at line 156, col 2
       Depth        : 0 (top-level)
       Condition    : z < SIZE_Z
-      Computation  : arithmetic, function_call
+      Computation  : arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( y = 0; y < SIZE_Y; y++ ) { 			for( x = 0; x < SIZE_X; x++ ) { 				if( fgetc…
 
   [2] FOR  at line 157, col 3
       Depth        : 1 (nested)
       Condition    : y < SIZE_Y
-      Computation  : arithmetic, function_call
+      Computation  : arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( x = 0; x < SIZE_X; x++ ) { 				if( fgetc( file ) != '.' ) SET_FLAG( grid, x…
 
   [3] FOR  at line 158, col 4
       Depth        : 2 (nested)
       Condition    : x < SIZE_X
-      Computation  : function_call
+      Computation  : function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if( fgetc( file ) != '.' ) SET_FLAG( grid, x, y, z, OBSTACLE );
 
   [4] FOR  at line 174, col 2
       Depth        : 0 (top-level)
       Condition    : z < SIZE_Z+2
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( y = 0; y < SIZE_Y; y++ ) { 			for( x = 0; x < SIZE_X; x++ ) { 				if( x == …
 
   [5] FOR  at line 175, col 3
       Depth        : 1 (nested)
       Condition    : y < SIZE_Y
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( x = 0; x < SIZE_X; x++ ) { 				if( x == 0 || x == SIZE_X-1 || 						y == 0 …
 
   [6] FOR  at line 176, col 4
       Depth        : 2 (nested)
       Condition    : x < SIZE_X
-      Computation  : bitwise, function_call
+      Computation  : function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if( x == 0 || x == SIZE_X-1 || 						y == 0 || y == SIZE_Y-1 || 						z == 0 || …
+
+  [7] FOR  at line 272, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < sizeof( OUTPUT_PRECISION )
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : buffer[i] = vPtr[sizeof( OUTPUT_PRECISION ) - i - 1];
+
+  [8] FOR  at line 293, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < sizeof( OUTPUT_PRECISION )
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : vPtr[i] = buffer[sizeof( OUTPUT_PRECISION ) - i - 1];
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/lbm/src/omp_cpu/main.c
@@ -2218,12 +2330,12 @@ FILE: pb2.5benchmarks/benchmarks/lbm/src/omp_cpu/main.c
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/lbm/src/omp_cpu/lbm.c
 ------------------------------------------------------------------------
-  Total loops             : 15
+  Total loops             : 17
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 15  (nested: 10,  canonicalizable: 15)
+    For loops             : 17  (nested: 10,  canonicalizable: 17)
     Do-while loops        : 0
   Nested loops (total)    : 10
-  Canonicalizability      : 15/15  (100.0%)
+  Canonicalizability      : 17/17  (100.0%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
@@ -2236,117 +2348,133 @@ FILE: pb2.5benchmarks/benchmarks/lbm/src/omp_cpu/lbm.c
   7    for          157   d=0  Yes         z < SIZE_Z+2
   8    for          158   d=1  Yes         y < SIZE_Y
   9    for          159   d=2  Yes         x < SIZE_X
-  10   for          561   d=0  Yes         z < SIZE_Z
-  11   for          562   d=1  Yes         y < SIZE_Y
-  12   for          563   d=2  Yes         x < SIZE_X
-  13   for          624   d=0  Yes         z < SIZE_Z
-  14   for          625   d=1  Yes         y < SIZE_Y
-  15   for          626   d=2  Yes         x < SIZE_X
+  10   for          523   d=0  Yes         i < sizeof( OUTPUT_PRECISION )
+  11   for          544   d=0  Yes         i < sizeof( OUTPUT_PRECISION )
+  12   for          561   d=0  Yes         z < SIZE_Z
+  13   for          562   d=1  Yes         y < SIZE_Y
+  14   for          563   d=2  Yes         x < SIZE_X
+  15   for          624   d=0  Yes         z < SIZE_Z
+  16   for          625   d=1  Yes         y < SIZE_Y
+  17   for          626   d=2  Yes         x < SIZE_X
 
   LOOP DETAILS
   ------------------------------------------------------------------------
   [1] FOR  at line 102, col 2
       Depth        : 0 (top-level)
       Condition    : z < SIZE_Z
-      Computation  : arithmetic, function_call
+      Computation  : arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( y = 0; y < SIZE_Y; y++ ) { 			for( x = 0; x < SIZE_X; x++ ) { 				if( fgetc…
 
   [2] FOR  at line 103, col 3
       Depth        : 1 (nested)
       Condition    : y < SIZE_Y
-      Computation  : arithmetic, function_call
+      Computation  : arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( x = 0; x < SIZE_X; x++ ) { 				if( fgetc( file ) != '.' ) SET_FLAG( grid, x…
 
   [3] FOR  at line 104, col 4
       Depth        : 2 (nested)
       Condition    : x < SIZE_X
-      Computation  : function_call
+      Computation  : function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if( fgetc( file ) != '.' ) SET_FLAG( grid, x, y, z, OBSTACLE );
 
   [4] FOR  at line 126, col 2
       Depth        : 0 (top-level)
       Condition    : z < SIZE_Z+2
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( y = 0; y < SIZE_Y; y++ ) { 			for( x = 0; x < SIZE_X; x++ ) { 				if( x == …
 
   [5] FOR  at line 127, col 3
       Depth        : 1 (nested)
       Condition    : y < SIZE_Y
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( x = 0; x < SIZE_X; x++ ) { 				if( x == 0 || x == SIZE_X-1 || 				    y == …
 
   [6] FOR  at line 128, col 4
       Depth        : 2 (nested)
       Condition    : x < SIZE_X
-      Computation  : bitwise, function_call
+      Computation  : function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if( x == 0 || x == SIZE_X-1 || 				    y == 0 || y == SIZE_Y-1 || 				    z == 0…
 
   [7] FOR  at line 157, col 2
       Depth        : 0 (top-level)
       Condition    : z < SIZE_Z+2
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( y = 0; y < SIZE_Y; y++ ) { 			for( x = 0; x < SIZE_X; x++ ) { 				if( x == …
 
   [8] FOR  at line 158, col 3
       Depth        : 1 (nested)
       Condition    : y < SIZE_Y
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( x = 0; x < SIZE_X; x++ ) { 				if( x == 0 || x == SIZE_X-1 || 				    y == …
 
   [9] FOR  at line 159, col 4
       Depth        : 2 (nested)
       Condition    : x < SIZE_X
-      Computation  : bitwise, function_call
+      Computation  : function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if( x == 0 || x == SIZE_X-1 || 				    y == 0 || y == SIZE_Y-1 ) { 					SET_FLAG…
 
-  [10] FOR  at line 561, col 2
+  [10] FOR  at line 523, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < sizeof( OUTPUT_PRECISION )
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : buffer[i] = vPtr[sizeof( OUTPUT_PRECISION ) - i - 1];
+
+  [11] FOR  at line 544, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < sizeof( OUTPUT_PRECISION )
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : vPtr[i] = buffer[sizeof( OUTPUT_PRECISION ) - i - 1];
+
+  [12] FOR  at line 561, col 2
       Depth        : 0 (top-level)
       Condition    : z < SIZE_Z
-      Computation  : pointer, arithmetic, bitwise, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( y = 0; y < SIZE_Y; y++ ) { 			for( x = 0; x < SIZE_X; x++ ) { 				rho = + G…
 
-  [11] FOR  at line 562, col 3
+  [13] FOR  at line 562, col 3
       Depth        : 1 (nested)
       Condition    : y < SIZE_Y
-      Computation  : pointer, arithmetic, bitwise, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( x = 0; x < SIZE_X; x++ ) { 				rho = + GRID_ENTRY( grid, x, y, z, C  ) + GR…
 
-  [12] FOR  at line 563, col 4
+  [14] FOR  at line 563, col 4
       Depth        : 2 (nested)
       Condition    : x < SIZE_X
-      Computation  : pointer, arithmetic, bitwise, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rho = + GRID_ENTRY( grid, x, y, z, C  ) + GRID_ENTRY( grid, x, y, z, N  ) 				  …
 
-  [13] FOR  at line 624, col 2
+  [15] FOR  at line 624, col 2
       Depth        : 0 (top-level)
       Condition    : z < SIZE_Z
-      Computation  : pointer, arithmetic, bitwise, function_call
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( y = 0; y < SIZE_Y; y++ ) { 			for( x = 0; x < SIZE_X; x++ ) { 				rho = + G…
 
-  [14] FOR  at line 625, col 3
+  [16] FOR  at line 625, col 3
       Depth        : 1 (nested)
       Condition    : y < SIZE_Y
-      Computation  : pointer, arithmetic, bitwise, function_call
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( x = 0; x < SIZE_X; x++ ) { 				rho = + GRID_ENTRY( grid, x, y, z, C  ) + GR…
 
-  [15] FOR  at line 626, col 4
+  [17] FOR  at line 626, col 4
       Depth        : 2 (nested)
       Condition    : x < SIZE_X
-      Computation  : pointer, arithmetic, bitwise, function_call
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rho = + GRID_ENTRY( grid, x, y, z, C  ) + GRID_ENTRY( grid, x, y, z, N  ) 				  …
 
@@ -2376,12 +2504,12 @@ FILE: pb2.5benchmarks/benchmarks/lbm/src/cpu/main.c
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/lbm/src/cpu/lbm.c
 ------------------------------------------------------------------------
-  Total loops             : 15
+  Total loops             : 17
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 15  (nested: 10,  canonicalizable: 15)
+    For loops             : 17  (nested: 10,  canonicalizable: 17)
     Do-while loops        : 0
   Nested loops (total)    : 10
-  Canonicalizability      : 15/15  (100.0%)
+  Canonicalizability      : 17/17  (100.0%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
@@ -2394,117 +2522,133 @@ FILE: pb2.5benchmarks/benchmarks/lbm/src/cpu/lbm.c
   7    for          157   d=0  Yes         z < SIZE_Z+2
   8    for          158   d=1  Yes         y < SIZE_Y
   9    for          159   d=2  Yes         x < SIZE_X
-  10   for          561   d=0  Yes         z < SIZE_Z
-  11   for          562   d=1  Yes         y < SIZE_Y
-  12   for          563   d=2  Yes         x < SIZE_X
-  13   for          624   d=0  Yes         z < SIZE_Z
-  14   for          625   d=1  Yes         y < SIZE_Y
-  15   for          626   d=2  Yes         x < SIZE_X
+  10   for          523   d=0  Yes         i < sizeof( OUTPUT_PRECISION )
+  11   for          544   d=0  Yes         i < sizeof( OUTPUT_PRECISION )
+  12   for          561   d=0  Yes         z < SIZE_Z
+  13   for          562   d=1  Yes         y < SIZE_Y
+  14   for          563   d=2  Yes         x < SIZE_X
+  15   for          624   d=0  Yes         z < SIZE_Z
+  16   for          625   d=1  Yes         y < SIZE_Y
+  17   for          626   d=2  Yes         x < SIZE_X
 
   LOOP DETAILS
   ------------------------------------------------------------------------
   [1] FOR  at line 102, col 2
       Depth        : 0 (top-level)
       Condition    : z < SIZE_Z
-      Computation  : arithmetic, function_call
+      Computation  : arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( y = 0; y < SIZE_Y; y++ ) { 			for( x = 0; x < SIZE_X; x++ ) { 				if( fgetc…
 
   [2] FOR  at line 103, col 3
       Depth        : 1 (nested)
       Condition    : y < SIZE_Y
-      Computation  : arithmetic, function_call
+      Computation  : arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( x = 0; x < SIZE_X; x++ ) { 				if( fgetc( file ) != '.' ) SET_FLAG( grid, x…
 
   [3] FOR  at line 104, col 4
       Depth        : 2 (nested)
       Condition    : x < SIZE_X
-      Computation  : function_call
+      Computation  : function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if( fgetc( file ) != '.' ) SET_FLAG( grid, x, y, z, OBSTACLE );
 
   [4] FOR  at line 126, col 2
       Depth        : 0 (top-level)
       Condition    : z < SIZE_Z+2
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( y = 0; y < SIZE_Y; y++ ) { 			for( x = 0; x < SIZE_X; x++ ) { 				if( x == …
 
   [5] FOR  at line 127, col 3
       Depth        : 1 (nested)
       Condition    : y < SIZE_Y
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( x = 0; x < SIZE_X; x++ ) { 				if( x == 0 || x == SIZE_X-1 || 				    y == …
 
   [6] FOR  at line 128, col 4
       Depth        : 2 (nested)
       Condition    : x < SIZE_X
-      Computation  : bitwise, function_call
+      Computation  : function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if( x == 0 || x == SIZE_X-1 || 				    y == 0 || y == SIZE_Y-1 || 				    z == 0…
 
   [7] FOR  at line 157, col 2
       Depth        : 0 (top-level)
       Condition    : z < SIZE_Z+2
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( y = 0; y < SIZE_Y; y++ ) { 			for( x = 0; x < SIZE_X; x++ ) { 				if( x == …
 
   [8] FOR  at line 158, col 3
       Depth        : 1 (nested)
       Condition    : y < SIZE_Y
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( x = 0; x < SIZE_X; x++ ) { 				if( x == 0 || x == SIZE_X-1 || 				    y == …
 
   [9] FOR  at line 159, col 4
       Depth        : 2 (nested)
       Condition    : x < SIZE_X
-      Computation  : bitwise, function_call
+      Computation  : function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if( x == 0 || x == SIZE_X-1 || 				    y == 0 || y == SIZE_Y-1 ) { 					SET_FLAG…
 
-  [10] FOR  at line 561, col 2
+  [10] FOR  at line 523, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < sizeof( OUTPUT_PRECISION )
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : buffer[i] = vPtr[sizeof( OUTPUT_PRECISION ) - i - 1];
+
+  [11] FOR  at line 544, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < sizeof( OUTPUT_PRECISION )
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : vPtr[i] = buffer[sizeof( OUTPUT_PRECISION ) - i - 1];
+
+  [12] FOR  at line 561, col 2
       Depth        : 0 (top-level)
       Condition    : z < SIZE_Z
-      Computation  : pointer, arithmetic, bitwise, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( y = 0; y < SIZE_Y; y++ ) { 			for( x = 0; x < SIZE_X; x++ ) { 				rho = + G…
 
-  [11] FOR  at line 562, col 3
+  [13] FOR  at line 562, col 3
       Depth        : 1 (nested)
       Condition    : y < SIZE_Y
-      Computation  : pointer, arithmetic, bitwise, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( x = 0; x < SIZE_X; x++ ) { 				rho = + GRID_ENTRY( grid, x, y, z, C  ) + GR…
 
-  [12] FOR  at line 563, col 4
+  [14] FOR  at line 563, col 4
       Depth        : 2 (nested)
       Condition    : x < SIZE_X
-      Computation  : pointer, arithmetic, bitwise, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rho = + GRID_ENTRY( grid, x, y, z, C  ) + GRID_ENTRY( grid, x, y, z, N  ) 				  …
 
-  [13] FOR  at line 624, col 2
+  [15] FOR  at line 624, col 2
       Depth        : 0 (top-level)
       Condition    : z < SIZE_Z
-      Computation  : pointer, arithmetic, bitwise, function_call
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( y = 0; y < SIZE_Y; y++ ) { 			for( x = 0; x < SIZE_X; x++ ) { 				rho = + G…
 
-  [14] FOR  at line 625, col 3
+  [16] FOR  at line 625, col 3
       Depth        : 1 (nested)
       Condition    : y < SIZE_Y
-      Computation  : pointer, arithmetic, bitwise, function_call
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for( x = 0; x < SIZE_X; x++ ) { 				rho = + GRID_ENTRY( grid, x, y, z, C  ) + GR…
 
-  [15] FOR  at line 626, col 4
+  [17] FOR  at line 626, col 4
       Depth        : 2 (nested)
       Condition    : x < SIZE_X
-      Computation  : pointer, arithmetic, bitwise, function_call
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rho = + GRID_ENTRY( grid, x, y, z, C  ) + GRID_ENTRY( grid, x, y, z, N  ) 				  …
 
@@ -2742,7 +2886,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-gridding/src/omp_base/main.c
   [1] FOR  at line 54, col 3
       Depth        : 0 (top-level)
       Condition    : i<params.numSamples
-      Computation  : pointer, bitwise, function_call, io, array_access
+      Computation  : function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (feof(uksdata_f)){       break;     }     fread((void*) &(samples[i]), sizeof…
 
@@ -3066,7 +3210,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-gridding/src/base/main.c
   [1] FOR  at line 54, col 3
       Depth        : 0 (top-level)
       Condition    : i<params.numSamples
-      Computation  : pointer, bitwise, function_call, io, array_access
+      Computation  : function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (feof(uksdata_f)){       break;     }     fread((void*) &(samples[i]), sizeof…
 
@@ -3175,7 +3319,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-q/recycle/base/main.c
   [1] FOR  at line 101, col 3
       Depth        : 0 (top-level)
       Condition    : k < numK
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : kVals[k].Kx = kx[k];     kVals[k].Ky = ky[k];     kVals[k].Kz = kz[k];     kVals…
 
@@ -3209,7 +3353,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-q/src/opencl_nvidia/main.c
   [1] FOR  at line 188, col 3
       Depth        : 0 (top-level)
       Condition    : k < numK
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : kVals[k].Kx = kx[k];     kVals[k].Ky = ky[k];     kVals[k].Kz = kz[k];     kVals…
 
@@ -3232,7 +3376,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-q/src/opencl_nvidia/computeQ.c
   [1] FOR  at line 57, col 3
       Depth        : 0 (top-level)
       Condition    : QGrid < QGrids
-      Computation  : pointer, arithmetic, bitwise, function_call
+      Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : // Put the tile of K values into constant mem     int QGridBase = QGrid * KERNEL…
 
@@ -3266,7 +3410,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-q/src/opencl/main.c
   [1] FOR  at line 193, col 3
       Depth        : 0 (top-level)
       Condition    : k < numK
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : kVals[k].Kx = kx[k];     kVals[k].Ky = ky[k];     kVals[k].Kz = kz[k];     kVals…
 
@@ -3289,7 +3433,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-q/src/opencl/computeQ.c
   [1] FOR  at line 75, col 3
       Depth        : 0 (top-level)
       Condition    : QGrid < QGrids
-      Computation  : pointer, arithmetic, bitwise, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : // Put the tile of K values into constant mem     int QGridBase = QGrid * KERNEL…
 
@@ -3312,7 +3456,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-q/src/omp_base/main.c
   [1] FOR  at line 102, col 3
       Depth        : 0 (top-level)
       Condition    : k < numK
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : kVals[k].Kx = kx[k];     kVals[k].Ky = ky[k];     kVals[k].Kz = kz[k];     kVals…
 
@@ -3335,7 +3479,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-q/src/cpu/main.c
   [1] FOR  at line 101, col 3
       Depth        : 0 (top-level)
       Condition    : k < numK
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : kVals[k].Kx = kx[k];     kVals[k].Ky = ky[k];     kVals[k].Kz = kz[k];     kVals…
 
@@ -3430,28 +3574,33 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/cuda/file.c
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/sad/src/cpu/sad_cpu.c
 ------------------------------------------------------------------------
-  Total loops             : 13
+  Total loops             : 18
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 13  (nested: 10,  canonicalizable: 12)
+    For loops             : 18  (nested: 10,  canonicalizable: 14)
     Do-while loops        : 0
   Nested loops (total)    : 10
-  Canonicalizability      : 12/13  (92.3%)
+  Canonicalizability      : 14/18  (77.8%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
   1    for           40   d=0  No          mb_y < mb_height
   2    for           44   d=1  Yes         mb_x < mb_width
-  3    for           93   d=0  Yes         pos_y <= SEARCH_RANGE
-  4    for           94   d=1  Yes         pos_x <= SEARCH_RANGE
-  5    for          109   d=2  Yes         blky < 4
-  6    for          113   d=3  Yes         y < 4
-  7    for          200   d=0  Yes         macroblock < mbs
-  8    for          203   d=1  Yes         block_y < 2
-  9    for          204   d=1  Yes         block_x < 4
-  10   for          218   d=1  Yes         block_y < 4
-  11   for          219   d=1  Yes         block_x < 2
-  12   for          233   d=1  Yes         block_y < 2
-  13   for          234   d=1  Yes         block_x < 2
+  3    for           80   d=0  Yes         y < 16
+  4    for           81   d=0  Yes         x < 16
+  5    for           93   d=0  Yes         pos_y <= SEARCH_RANGE
+  6    for           94   d=1  Yes         pos_x <= SEARCH_RANGE
+  7    for          109   d=2  Yes         blky < 4
+  8    for          113   d=3  Yes         y < 4
+  9    for          169   d=0  No          (x < 0) && (i < 16)
+  10   for          173   d=0  No          (x < width) && (i < 16)
+  11   for          177   d=0  No          i < 16
+  12   for          200   d=0  Yes         macroblock < mbs
+  13   for          203   d=1  Yes         block_y < 2
+  14   for          204   d=1  Yes         block_x < 4
+  15   for          218   d=2  Yes         block_y < 4
+  16   for          219   d=2  Yes         block_x < 2
+  17   for          233   d=3  Yes         block_y < 2
+  18   for          234   d=3  Yes         block_x < 2
 
   LOOP DETAILS
   ------------------------------------------------------------------------
@@ -3469,78 +3618,113 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/cpu/sad_cpu.c
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : sad4_one_macroblock 	    (blk_sad + (mb_y * mb_width + mb_x) * (SAD_TYPE_7_CT * …
 
-  [3] FOR  at line 93, col 3
+  [3] FOR  at line 80, col 5
+      Depth        : 0 (top-level)
+      Condition    : y < 16
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : for (x = 0; x < 16; x++) 	frame_mb[16*y+x] = frame[width * y + x];
+
+  [4] FOR  at line 81, col 7
+      Depth        : 0 (top-level)
+      Condition    : x < 16
+      Computation  : pointer, arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : frame_mb[16*y+x] = frame[width * y + x];
+
+  [5] FOR  at line 93, col 3
       Depth        : 0 (top-level)
       Condition    : pos_y <= SEARCH_RANGE
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (pos_x = -SEARCH_RANGE; pos_x <= SEARCH_RANGE; pos_x++, pos++) {       int y…
 
-  [4] FOR  at line 94, col 5
+  [6] FOR  at line 94, col 5
       Depth        : 1 (nested)
       Condition    : pos_x <= SEARCH_RANGE
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : int y;       int abs_x, abs_y;       int do_bounds_check;       short *curptr = …
 
-  [5] FOR  at line 109, col 7
+  [7] FOR  at line 109, col 7
       Depth        : 2 (nested)
       Condition    : blky < 4
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : int sad0 = 0, sad1 = 0, sad2 = 0, sad3 = 0;  	  for (y = 0; y < 4; y++) 	    { 	…
 
-  [6] FOR  at line 113, col 4
+  [8] FOR  at line 113, col 4
       Depth        : 3 (nested)
       Condition    : y < 4
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : refptr = do_bounds_check 		? create_padded_row(ref, abs_y, abs_x, height, width)…
 
-  [7] FOR  at line 200, col 3
+  [9] FOR  at line 169, col 3
+      Depth        : 0 (top-level)
+      Condition    : (x < 0) && (i < 16)
+      Computation  : arithmetic, array_access
+      Canonical    : NO  —  No initializer
+      Body snippet : line[i] = row[0];
+
+  [10] FOR  at line 173, col 3
+      Depth        : 0 (top-level)
+      Condition    : (x < width) && (i < 16)
+      Computation  : arithmetic, array_access
+      Canonical    : NO  —  No initializer
+      Body snippet : line[i] = row[x];
+
+  [11] FOR  at line 177, col 3
+      Depth        : 0 (top-level)
+      Condition    : i < 16
+      Computation  : arithmetic, array_access
+      Canonical    : NO  —  No initializer
+      Body snippet : line[i] = row[width - 1];
+
+  [12] FOR  at line 200, col 3
       Depth        : 0 (top-level)
       Condition    : macroblock < mbs
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : /* Block type 6 */       for (block_y = 0; block_y < 2; block_y++) 	for (block_x…
 
-  [8] FOR  at line 203, col 7
+  [13] FOR  at line 203, col 7
       Depth        : 1 (nested)
       Condition    : block_y < 2
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
-      Body snippet : x = sads + SAD_TYPE_7_IX(mbs) + 	      macroblock * SAD_TYPE_7_CT * MAX_POS_PADD…
+      Body snippet : for (block_x = 0; block_x < 4; block_x++) 	  { 	    x = sads + SAD_TYPE_7_IX(mbs…
 
-  [9] FOR  at line 204, col 2
+  [14] FOR  at line 204, col 2
       Depth        : 1 (nested)
       Condition    : block_x < 4
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x = sads + SAD_TYPE_7_IX(mbs) + 	      macroblock * SAD_TYPE_7_CT * MAX_POS_PADD…
 
-  [10] FOR  at line 218, col 7
-      Depth        : 1 (nested)
+  [15] FOR  at line 218, col 7
+      Depth        : 2 (nested)
       Condition    : block_y < 4
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
-      Body snippet : x = sads + SAD_TYPE_7_IX(mbs) + 	      macroblock * SAD_TYPE_7_CT * MAX_POS_PADD…
+      Body snippet : for (block_x = 0; block_x < 2; block_x++) 	  { 	    x = sads + SAD_TYPE_7_IX(mbs…
 
-  [11] FOR  at line 219, col 2
-      Depth        : 1 (nested)
+  [16] FOR  at line 219, col 2
+      Depth        : 2 (nested)
       Condition    : block_x < 2
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x = sads + SAD_TYPE_7_IX(mbs) + 	      macroblock * SAD_TYPE_7_CT * MAX_POS_PADD…
 
-  [12] FOR  at line 233, col 7
-      Depth        : 1 (nested)
+  [17] FOR  at line 233, col 7
+      Depth        : 3 (nested)
       Condition    : block_y < 2
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
-      Body snippet : x = sads + SAD_TYPE_5_IX(mbs) + 	      macroblock * SAD_TYPE_5_CT * MAX_POS_PADD…
+      Body snippet : for (block_x = 0; block_x < 2; block_x++) 	  { 	    x = sads + SAD_TYPE_5_IX(mbs…
 
-  [13] FOR  at line 234, col 2
-      Depth        : 1 (nested)
+  [18] FOR  at line 234, col 2
+      Depth        : 3 (nested)
       Condition    : block_x < 2
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
@@ -3549,12 +3733,12 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/cpu/sad_cpu.c
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/sad/src/cpu/main.c
 ------------------------------------------------------------------------
-  Total loops             : 8
+  Total loops             : 11
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 8  (nested: 3,  canonicalizable: 8)
+    For loops             : 11  (nested: 5,  canonicalizable: 11)
     Do-while loops        : 0
-  Nested loops (total)    : 3
-  Canonicalizability      : 8/8  (100.0%)
+  Nested loops (total)    : 5
+  Canonicalizability      : 11/11  (100.0%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
@@ -3562,10 +3746,13 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/cpu/main.c
   2    for           84   d=1  Yes         subblock < 16
   3    for           88   d=2  Yes         sad_index < MAX_POS
   4    for          122   d=0  Yes         block < count
-  5    for          164   d=0  Yes         row_indir < 6
-  6    for          170   d=1  Yes         block < mb_width * (row + 1)
-  7    for          199   d=0  Yes         n < 41 * MAX_POS_PADDED * (width * height)
-  8    for          221   d=0  Yes         blocktype <= 7
+  5    for          128   d=1  Yes         pos < MAX_POS
+  6    for          164   d=0  Yes         row_indir < 6
+  7    for          170   d=1  Yes         block < mb_width * (row + 1)
+  8    for          175   d=2  Yes         blocktype <= 7
+  9    for          199   d=0  Yes         n < 41 * MAX_POS_PADDED * (width * height)
+  10   for          210   d=0  Yes         n < count
+  11   for          221   d=0  Yes         blocktype <= 7
 
   LOOP DETAILS
   ------------------------------------------------------------------------
@@ -3597,28 +3784,49 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/cpu/main.c
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : unsigned short *vec = subblock_array + 	(block + macroblock * count) * MAX_POS_P…
 
-  [5] FOR  at line 164, col 3
+  [5] FOR  at line 128, col 7
+      Depth        : 1 (nested)
+      Condition    : pos < MAX_POS
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : write16u(outfile, *vec++);
+
+  [6] FOR  at line 164, col 3
       Depth        : 0 (top-level)
       Condition    : row_indir < 6
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : int row = row_indices[row_indir];        /* Each block in row */       int block…
 
-  [6] FOR  at line 170, col 7
+  [7] FOR  at line 170, col 7
       Depth        : 1 (nested)
       Condition    : block < mb_width * (row + 1)
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : int blocktype;  	  /* Write SADs for all sub-block types */ 	  for (blocktype = …
 
-  [7] FOR  at line 199, col 3
+  [8] FOR  at line 175, col 4
+      Depth        : 2 (nested)
+      Condition    : blocktype <= 7
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : write_subblocks(outfile, 			    sads + SAD_TYPE_IX(blocktype, mbs), 			    block…
+
+  [9] FOR  at line 199, col 3
       Depth        : 0 (top-level)
       Condition    : n < 41 * MAX_POS_PADDED * (width * height)
-      Computation  : pointer, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : write16u(f, sads[n]);
 
-  [8] FOR  at line 221, col 3
+  [10] FOR  at line 210, col 3
+      Depth        : 0 (top-level)
+      Condition    : n < count
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : printf(" %d", base[(count * macroblock + n) * MAX_POS_PADDED + searchpos]);
+
+  [11] FOR  at line 221, col 3
       Depth        : 0 (top-level)
       Condition    : blocktype <= 7
       Computation  : function_call, io
@@ -3650,12 +3858,12 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/cpu/file.c
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/sad/src/base/sad_cpu.c
 ------------------------------------------------------------------------
-  Total loops             : 15
+  Total loops             : 23
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 15  (nested: 12,  canonicalizable: 14)
+    For loops             : 23  (nested: 20,  canonicalizable: 22)
     Do-while loops        : 0
-  Nested loops (total)    : 12
-  Canonicalizability      : 14/15  (93.3%)
+  Nested loops (total)    : 20
+  Canonicalizability      : 22/23  (95.7%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
@@ -3670,10 +3878,18 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/base/sad_cpu.c
   9    for          118   d=0  Yes         macroblock < mbs
   10   for          121   d=1  Yes         block_y < 2
   11   for          122   d=1  Yes         block_x < 4
-  12   for          136   d=1  Yes         block_y < 4
-  13   for          137   d=1  Yes         block_x < 2
-  14   for          151   d=1  Yes         block_y < 2
-  15   for          152   d=1  Yes         block_x < 2
+  12   for          132   d=3  Yes         count < MAX_POS
+  13   for          136   d=2  Yes         block_y < 4
+  14   for          137   d=2  Yes         block_x < 2
+  15   for          147   d=4  Yes         count < MAX_POS
+  16   for          151   d=3  Yes         block_y < 2
+  17   for          152   d=3  Yes         block_x < 2
+  18   for          162   d=5  Yes         count < MAX_POS
+  19   for          172   d=1  Yes         count < MAX_POS
+  20   for          182   d=1  Yes         count < MAX_POS
+  21   for          191   d=1  Yes         count < MAX_POS
+  22   for          201   d=1  Yes         count < MAX_POS
+  23   for          210   d=1  Yes         count < MAX_POS
 
   LOOP DETAILS
   ------------------------------------------------------------------------
@@ -3745,7 +3961,7 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/base/sad_cpu.c
       Condition    : block_y < 2
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
-      Body snippet : x = sads + SAD_TYPE_7_IX(mbs) + 	      macroblock * SAD_TYPE_7_CT * MAX_POS_PADD…
+      Body snippet : for (block_x = 0; block_x < 4; block_x++) 	  { 	    x = sads + SAD_TYPE_7_IX(mbs…
 
   [11] FOR  at line 122, col 2
       Depth        : 1 (nested)
@@ -3754,43 +3970,99 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/base/sad_cpu.c
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x = sads + SAD_TYPE_7_IX(mbs) + 	      macroblock * SAD_TYPE_7_CT * MAX_POS_PADD…
 
-  [12] FOR  at line 136, col 7
-      Depth        : 1 (nested)
+  [12] FOR  at line 132, col 6
+      Depth        : 3 (nested)
+      Condition    : count < MAX_POS
+      Computation  : pointer, arithmetic
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : *z++ = *x++ + *y++;
+
+  [13] FOR  at line 136, col 7
+      Depth        : 2 (nested)
       Condition    : block_y < 4
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
-      Body snippet : x = sads + SAD_TYPE_7_IX(mbs) + 	      macroblock * SAD_TYPE_7_CT * MAX_POS_PADD…
+      Body snippet : for (block_x = 0; block_x < 2; block_x++) 	  { 	    x = sads + SAD_TYPE_7_IX(mbs…
 
-  [13] FOR  at line 137, col 2
-      Depth        : 1 (nested)
+  [14] FOR  at line 137, col 2
+      Depth        : 2 (nested)
       Condition    : block_x < 2
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x = sads + SAD_TYPE_7_IX(mbs) + 	      macroblock * SAD_TYPE_7_CT * MAX_POS_PADD…
 
-  [14] FOR  at line 151, col 7
-      Depth        : 1 (nested)
+  [15] FOR  at line 147, col 6
+      Depth        : 4 (nested)
+      Condition    : count < MAX_POS
+      Computation  : pointer, arithmetic
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : *z++ = *x++ + *y++;
+
+  [16] FOR  at line 151, col 7
+      Depth        : 3 (nested)
       Condition    : block_y < 2
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
-      Body snippet : x = sads + SAD_TYPE_5_IX(mbs) + 	      macroblock * SAD_TYPE_5_CT * MAX_POS_PADD…
+      Body snippet : for (block_x = 0; block_x < 2; block_x++) 	  { 	    x = sads + SAD_TYPE_5_IX(mbs…
 
-  [15] FOR  at line 152, col 2
-      Depth        : 1 (nested)
+  [17] FOR  at line 152, col 2
+      Depth        : 3 (nested)
       Condition    : block_x < 2
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x = sads + SAD_TYPE_5_IX(mbs) + 	      macroblock * SAD_TYPE_5_CT * MAX_POS_PADD…
+
+  [18] FOR  at line 162, col 6
+      Depth        : 5 (nested)
+      Condition    : count < MAX_POS
+      Computation  : pointer, arithmetic
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : *z++ = *x++ + *y++;
+
+  [19] FOR  at line 172, col 7
+      Depth        : 1 (nested)
+      Condition    : count < MAX_POS
+      Computation  : pointer, arithmetic
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : *z++ = *x++ + *y++;
+
+  [20] FOR  at line 182, col 7
+      Depth        : 1 (nested)
+      Condition    : count < MAX_POS
+      Computation  : pointer, arithmetic
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : *z++ = *x++ + *y++;
+
+  [21] FOR  at line 191, col 7
+      Depth        : 1 (nested)
+      Condition    : count < MAX_POS
+      Computation  : pointer, arithmetic
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : *z++ = *x++ + *y++;
+
+  [22] FOR  at line 201, col 7
+      Depth        : 1 (nested)
+      Condition    : count < MAX_POS
+      Computation  : pointer, arithmetic
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : *z++ = *x++ + *y++;
+
+  [23] FOR  at line 210, col 7
+      Depth        : 1 (nested)
+      Condition    : count < MAX_POS
+      Computation  : pointer, arithmetic
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : *z++ = *x++ + *y++;
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/sad/src/base/main.c
 ------------------------------------------------------------------------
-  Total loops             : 8
+  Total loops             : 11
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 8  (nested: 3,  canonicalizable: 8)
+    For loops             : 11  (nested: 5,  canonicalizable: 11)
     Do-while loops        : 0
-  Nested loops (total)    : 3
-  Canonicalizability      : 8/8  (100.0%)
+  Nested loops (total)    : 5
+  Canonicalizability      : 11/11  (100.0%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
@@ -3798,10 +4070,13 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/base/main.c
   2    for           84   d=1  Yes         subblock < 16
   3    for           88   d=2  Yes         sad_index < MAX_POS
   4    for          122   d=0  Yes         block < count
-  5    for          164   d=0  Yes         row_indir < 6
-  6    for          170   d=1  Yes         block < mb_width * (row + 1)
-  7    for          199   d=0  Yes         n < 41 * MAX_POS_PADDED * (width * height)
-  8    for          221   d=0  Yes         blocktype <= 7
+  5    for          128   d=1  Yes         pos < MAX_POS
+  6    for          164   d=0  Yes         row_indir < 6
+  7    for          170   d=1  Yes         block < mb_width * (row + 1)
+  8    for          175   d=2  Yes         blocktype <= 7
+  9    for          199   d=0  Yes         n < 41 * MAX_POS_PADDED * (width * height)
+  10   for          210   d=0  Yes         n < count
+  11   for          221   d=0  Yes         blocktype <= 7
 
   LOOP DETAILS
   ------------------------------------------------------------------------
@@ -3833,28 +4108,49 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/base/main.c
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : unsigned short *vec = subblock_array + 	(block + macroblock * count) * MAX_POS_P…
 
-  [5] FOR  at line 164, col 3
+  [5] FOR  at line 128, col 7
+      Depth        : 1 (nested)
+      Condition    : pos < MAX_POS
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : write16u(outfile, *vec++);
+
+  [6] FOR  at line 164, col 3
       Depth        : 0 (top-level)
       Condition    : row_indir < 6
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : int row = row_indices[row_indir];        /* Each block in row */       int block…
 
-  [6] FOR  at line 170, col 7
+  [7] FOR  at line 170, col 7
       Depth        : 1 (nested)
       Condition    : block < mb_width * (row + 1)
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : int blocktype;  	  /* Write SADs for all sub-block types */ 	  for (blocktype = …
 
-  [7] FOR  at line 199, col 3
+  [8] FOR  at line 175, col 4
+      Depth        : 2 (nested)
+      Condition    : blocktype <= 7
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : write_subblocks(outfile, 			    sads + SAD_TYPE_IX(blocktype, mbs), 			    block…
+
+  [9] FOR  at line 199, col 3
       Depth        : 0 (top-level)
       Condition    : n < 41 * MAX_POS_PADDED * (width * height)
-      Computation  : pointer, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : write16u(f, sads[n]);
 
-  [8] FOR  at line 221, col 3
+  [10] FOR  at line 210, col 3
+      Depth        : 0 (top-level)
+      Condition    : n < count
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : printf(" %d", base[(count * macroblock + n) * MAX_POS_PADDED + searchpos]);
+
+  [11] FOR  at line 221, col 3
       Depth        : 0 (top-level)
       Condition    : blocktype <= 7
       Computation  : function_call, io
@@ -3897,33 +4193,137 @@ FILE: pb2.5benchmarks/benchmarks/spmv/common_src/convert-dataset/test.c
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/spmv/common_src/convert-dataset/mmio.c
 ------------------------------------------------------------------------
-  Total loops             : 2
+  Total loops             : 15
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 2  (nested: 0,  canonicalizable: 2)
-    Do-while loops        : 0
+    For loops             : 11  (nested: 0,  canonicalizable: 7)
+    Do-while loops        : 4
   Nested loops (total)    : 0
-  Canonicalizability      : 2/2  (100.0%)
+  Canonicalizability      : 7/15  (46.7%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
   1    for           75   d=0  Yes         i<nz
-  2    for          277   d=0  Yes         i<nz
+  2    for          116   d=0  No          *p!='
+  3    for          117   d=0  No          *p!='
+  4    for          118   d=0  No          *p!='
+  5    for          119   d=0  No          *p!='
+  6    do-while     198   d=0  No          line[0] == '
+  7    do-while     209   d=0  No          num_items_read != 3
+  8    do-while     228   d=0  No          line[0] == '
+  9    do-while     239   d=0  No          num_items_read != 2
+  10   for          271   d=0  Yes         i<nz
+  11   for          277   d=0  Yes         i<nz
+  12   for          287   d=0  Yes         i<nz
+  13   for          420   d=0  Yes         i<nz
+  14   for          424   d=0  Yes         i<nz
+  15   for          428   d=0  Yes         i<nz
 
   LOOP DETAILS
   ------------------------------------------------------------------------
   [1] FOR  at line 75, col 5
       Depth        : 0 (top-level)
       Condition    : i<nz
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fscanf(f, "%d %d %lg\n", &I[i], &J[i], &val[i]);         I[i]--;  /* adjust from…
 
-  [2] FOR  at line 277, col 9
+  [2] FOR  at line 116, col 5
+      Depth        : 0 (top-level)
+      Condition    : *p!='
+      Computation  : none_detected
+      Canonical    : NO  —  Condition does not reference init variable 'p'
+      Body snippet : ;
+
+  [3] FOR  at line 117, col 5
+      Depth        : 0 (top-level)
+      Condition    : *p!='
+      Computation  : none_detected
+      Canonical    : NO  —  Condition does not reference init variable 'p'
+      Body snippet : ;
+
+  [4] FOR  at line 118, col 5
+      Depth        : 0 (top-level)
+      Condition    : *p!='
+      Computation  : none_detected
+      Canonical    : NO  —  Condition does not reference init variable 'p'
+      Body snippet : ;
+
+  [5] FOR  at line 119, col 5
+      Depth        : 0 (top-level)
+      Condition    : *p!='
+      Computation  : none_detected
+      Canonical    : NO  —  Condition does not reference init variable 'p'
+      Body snippet : ;
+
+  [6] DO-WHILE  at line 198, col 5
+      Depth        : 0 (top-level)
+      Condition    : line[0] == '
+      Computation  : function_call, io
+      Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
+      Body snippet : if (fgets(line,MM_MAX_LINE_LENGTH,f) == NULL)              return MM_PREMATURE_E…
+
+  [7] DO-WHILE  at line 209, col 5
+      Depth        : 0 (top-level)
+      Condition    : num_items_read != 3
+      Computation  : arithmetic, function_call, io
+      Canonical    : NO  —  Body contains an early exit (return/break/goto) — loop may terminate before the condition is false
+      Body snippet : num_items_read = fscanf(f, "%d %d %d", M, N, nz);          if (num_items_read ==…
+
+  [8] DO-WHILE  at line 228, col 5
+      Depth        : 0 (top-level)
+      Condition    : line[0] == '
+      Computation  : function_call, io
+      Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
+      Body snippet : if (fgets(line,MM_MAX_LINE_LENGTH,f) == NULL)              return MM_PREMATURE_E…
+
+  [9] DO-WHILE  at line 239, col 5
+      Depth        : 0 (top-level)
+      Condition    : num_items_read != 2
+      Computation  : arithmetic, function_call, io
+      Canonical    : NO  —  Body contains an early exit (return/break/goto) — loop may terminate before the condition is false
+      Body snippet : num_items_read = fscanf(f, "%d %d", M, N);          if (num_items_read == EOF) r…
+
+  [10] FOR  at line 271, col 9
       Depth        : 0 (top-level)
       Condition    : i<nz
-      Computation  : pointer, bitwise, function_call, array_access
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (fscanf(f, "%d %d %lg %lg", &I[i], &J[i], &val[2*i], &val[2*i+1])            …
+
+  [11] FOR  at line 277, col 9
+      Depth        : 0 (top-level)
+      Condition    : i<nz
+      Computation  : function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (fscanf(f, "%d %d %lg\n", &I[i], &J[i], &val[i])                 != 3) return…
+
+  [12] FOR  at line 287, col 9
+      Depth        : 0 (top-level)
+      Condition    : i<nz
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if (fscanf(f, "%d %d", &I[i], &J[i])                 != 2) return MM_PREMATURE_E…
+
+  [13] FOR  at line 420, col 9
+      Depth        : 0 (top-level)
+      Condition    : i<nz
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : fprintf(f, "%d %d\n", I[i], J[i]);
+
+  [14] FOR  at line 424, col 9
+      Depth        : 0 (top-level)
+      Condition    : i<nz
+      Computation  : function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : fprintf(f, "%d %d %20.16g\n", I[i], J[i], val[i]);
+
+  [15] FOR  at line 428, col 9
+      Depth        : 0 (top-level)
+      Condition    : i<nz
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : fprintf(f, "%d %d %20.16g %20.16g\n", I[i], J[i], val[2*i],                     …
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/spmv/common_src/convert-dataset/convert_dataset.c
@@ -3949,14 +4349,14 @@ FILE: pb2.5benchmarks/benchmarks/spmv/common_src/convert-dataset/convert_dataset
   [1] FOR  at line 133, col 5
       Depth        : 0 (top-level)
       Condition    : i<nz
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (!binary) { 	    fscanf(f, "%d %d %f\n", &entries[cur_i].row, &entries[cur_i]…
 
   [2] FOR  at line 190, col 5
       Depth        : 0 (top-level)
       Condition    : i<nz
-      Computation  : pointer, arithmetic, bitwise, function_call, memory_alloc, io, array_access
+      Computation  : arithmetic, function_call, memory_alloc, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : // loop through each sorted entry 	if (entries[i].row != irow || i == nz-1) { //…
 
@@ -4019,14 +4419,14 @@ FILE: pb2.5benchmarks/benchmarks/spmv/src/opencl_tex_nvidia/main.c
   [1] FOR  at line 24, col 2
       Depth        : 0 (top-level)
       Condition    : i<dim
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x_vector[i] = (rand() / (float) RAND_MAX);
 
   [2] FOR  at line 232, col 2
       Depth        : 0 (top-level)
       Condition    : i<50
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : clStatus = clEnqueueNDRangeKernel(clCommandQueue,clKernel,1,NULL,&grid,&block,0,…
 
@@ -4083,14 +4483,14 @@ FILE: pb2.5benchmarks/benchmarks/spmv/src/opencl_tex/main.c
   [1] FOR  at line 24, col 2
       Depth        : 0 (top-level)
       Condition    : i<dim
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x_vector[i] = (rand() / (float) RAND_MAX);
 
   [2] FOR  at line 229, col 2
       Depth        : 0 (top-level)
       Condition    : i<50
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : clStatus = clEnqueueNDRangeKernel(clCommandQueue,clKernel,1,NULL,&grid,&block,0,…
 
@@ -4147,14 +4547,14 @@ FILE: pb2.5benchmarks/benchmarks/spmv/src/opencl_nvidia/main.c
   [1] FOR  at line 25, col 2
       Depth        : 0 (top-level)
       Condition    : i<dim
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x_vector[i] = (rand() / (float) RAND_MAX);
 
   [2] FOR  at line 211, col 2
       Depth        : 0 (top-level)
       Condition    : i<50
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : clStatus = clEnqueueNDRangeKernel(clCommandQueue,clKernel,1,NULL,&grid,&block,0,…
 
@@ -4211,14 +4611,14 @@ FILE: pb2.5benchmarks/benchmarks/spmv/src/opencl_base/main.c
   [1] FOR  at line 26, col 2
       Depth        : 0 (top-level)
       Condition    : i<dim
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x_vector[i] = (rand() / (float) RAND_MAX);
 
   [2] FOR  at line 213, col 2
       Depth        : 0 (top-level)
       Condition    : i<50
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : clStatus = clEnqueueNDRangeKernel(clCommandQueue,clKernel,1,NULL,&grid,&block,0,…
 
@@ -4275,14 +4675,14 @@ FILE: pb2.5benchmarks/benchmarks/spmv/src/opencl_ati_vec/main.c
   [1] FOR  at line 26, col 2
       Depth        : 0 (top-level)
       Condition    : i<dim
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x_vector[i] = (rand() / (float) RAND_MAX); 		 		//x_vector[i] = 1.0;
 
   [2] FOR  at line 228, col 2
       Depth        : 0 (top-level)
       Condition    : i<50
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : clStatus = clEnqueueNDRangeKernel(clCommandQueue,clKernel,1,NULL,&grid,&block,0,…
 
@@ -4339,14 +4739,14 @@ FILE: pb2.5benchmarks/benchmarks/spmv/src/opencl_ati/main.c
   [1] FOR  at line 26, col 2
       Depth        : 0 (top-level)
       Condition    : i<dim
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x_vector[i] = (rand() / (float) RAND_MAX); 		 		//x_vector[i] = 1.0;
 
   [2] FOR  at line 228, col 2
       Depth        : 0 (top-level)
       Condition    : i<50
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : clStatus = clEnqueueNDRangeKernel(clCommandQueue,clKernel,1,NULL,&grid,&block,0,…
 
@@ -4394,7 +4794,7 @@ FILE: pb2.5benchmarks/benchmarks/spmv/src/omp_base/main.c
   [1] FOR  at line 20, col 2
       Depth        : 0 (top-level)
       Condition    : i<dim
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x_vector[i] = (rand() / (float) RAND_MAX);
 
@@ -4511,14 +4911,14 @@ FILE: pb2.5benchmarks/benchmarks/spmv/src/opencl_tex_nvidia/opencl_tex/main.c
   [1] FOR  at line 23, col 2
       Depth        : 0 (top-level)
       Condition    : i<dim
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x_vector[i] = (rand() / (float) RAND_MAX);
 
   [2] FOR  at line 215, col 2
       Depth        : 0 (top-level)
       Condition    : i<50
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : clStatus = clEnqueueNDRangeKernel(clCommandQueue,clKernel,1,NULL,&grid,&block,0,…
 
@@ -4564,14 +4964,14 @@ FILE: pb2.5benchmarks/benchmarks/spmv/src/opencl_tex_nvidia/opencl_nvidia/main.c
   [1] FOR  at line 23, col 2
       Depth        : 0 (top-level)
       Condition    : i<dim
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x_vector[i] = (rand() / (float) RAND_MAX);
 
   [2] FOR  at line 193, col 2
       Depth        : 0 (top-level)
       Condition    : i<50
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : clStatus = clEnqueueNDRangeKernel(clCommandQueue,clKernel,1,NULL,&grid,&block,0,…
 
@@ -4617,14 +5017,14 @@ FILE: pb2.5benchmarks/benchmarks/spmv/src/opencl_tex_nvidia/opencl_base/main.c
   [1] FOR  at line 23, col 2
       Depth        : 0 (top-level)
       Condition    : i<dim
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x_vector[i] = (rand() / (float) RAND_MAX);
 
   [2] FOR  at line 194, col 2
       Depth        : 0 (top-level)
       Condition    : i<50
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : clStatus = clEnqueueNDRangeKernel(clCommandQueue,clKernel,1,NULL,&grid,&block,0,…
 
@@ -4661,28 +5061,28 @@ FILE: pb2.5benchmarks/benchmarks/stencil/src/opencl_nvidia/main.c
   [1] FOR  at line 31, col 2
       Depth        : 0 (top-level)
       Condition    : i<nz
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for(j=0;j<ny;j++) 		{ 			for(k=0;k<nx;k++) 			{                                 …
 
   [2] FOR  at line 33, col 3
       Depth        : 1 (nested)
       Condition    : j<ny
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for(k=0;k<nx;k++) 			{                                 fread(A0+s,sizeof(float),…
 
   [3] FOR  at line 35, col 4
       Depth        : 2 (nested)
       Condition    : k<nx
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fread(A0+s,sizeof(float),1,fp); 				s++;
 
   [4] FOR  at line 176, col 2
       Depth        : 0 (top-level)
       Condition    : t<iteration
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : clStatus = clEnqueueNDRangeKernel(clCommandQueue,clKernel,3,NULL,grid,block,0,NU…
 
@@ -4708,28 +5108,28 @@ FILE: pb2.5benchmarks/benchmarks/stencil/src/opencl_fermi/main.c
   [1] FOR  at line 31, col 2
       Depth        : 0 (top-level)
       Condition    : i<nz
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for(j=0;j<ny;j++) 		{ 			for(k=0;k<nx;k++) 			{                                 …
 
   [2] FOR  at line 33, col 3
       Depth        : 1 (nested)
       Condition    : j<ny
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for(k=0;k<nx;k++) 			{                                 fread(A0+s,sizeof(float),…
 
   [3] FOR  at line 35, col 4
       Depth        : 2 (nested)
       Condition    : k<nx
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fread(A0+s,sizeof(float),1,fp); 				s++;
 
   [4] FOR  at line 173, col 2
       Depth        : 0 (top-level)
       Condition    : t<iteration
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : clStatus = clEnqueueNDRangeKernel(clCommandQueue,clKernel,3,NULL,grid,block,0,NU…
 
@@ -4755,28 +5155,28 @@ FILE: pb2.5benchmarks/benchmarks/stencil/src/opencl_base/main.c
   [1] FOR  at line 31, col 2
       Depth        : 0 (top-level)
       Condition    : i<nz
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for(j=0;j<ny;j++) 		{ 			for(k=0;k<nx;k++) 			{                                 …
 
   [2] FOR  at line 33, col 3
       Depth        : 1 (nested)
       Condition    : j<ny
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for(k=0;k<nx;k++) 			{                                 fread(A0+s,sizeof(float),…
 
   [3] FOR  at line 35, col 4
       Depth        : 2 (nested)
       Condition    : k<nx
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fread(A0+s,sizeof(float),1,fp); 				s++;
 
   [4] FOR  at line 175, col 2
       Depth        : 0 (top-level)
       Condition    : t<iteration
-      Computation  : arithmetic, bitwise, function_call, io
+      Computation  : arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : clStatus = clEnqueueNDRangeKernel(clCommandQueue,clKernel,3,NULL,grid,block,0,NU…
 
@@ -4802,21 +5202,21 @@ FILE: pb2.5benchmarks/benchmarks/stencil/src/omp_base/main.c
   [1] FOR  at line 23, col 2
       Depth        : 0 (top-level)
       Condition    : i<nz
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for(j=0;j<ny;j++) 		{ 			for(k=0;k<nx;k++) 			{                                 …
 
   [2] FOR  at line 25, col 3
       Depth        : 1 (nested)
       Condition    : j<ny
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for(k=0;k<nx;k++) 			{                                 fread(A0+s,sizeof(float),…
 
   [3] FOR  at line 27, col 4
       Depth        : 2 (nested)
       Condition    : k<nx
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fread(A0+s,sizeof(float),1,fp); 				s++;
 
@@ -4862,7 +5262,7 @@ FILE: pb2.5benchmarks/benchmarks/stencil/src/omp_base/kernels.c
   [3] FOR  at line 21, col 4
       Depth        : 2 (nested)
       Condition    : k<nz-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : pointer, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : //i      #pragma omp critical 				Anext[Index3D (nx, ny, i, j, k)] =  				(A0[In…
 
@@ -4899,21 +5299,21 @@ FILE: pb2.5benchmarks/benchmarks/stencil/src/cpu/main.c
   [1] FOR  at line 23, col 2
       Depth        : 0 (top-level)
       Condition    : i<nz
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for(j=0;j<ny;j++) 		{ 			for(k=0;k<nx;k++) 			{                                 …
 
   [2] FOR  at line 25, col 3
       Depth        : 1 (nested)
       Condition    : j<ny
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for(k=0;k<nx;k++) 			{                                 fread(A0+s,sizeof(float),…
 
   [3] FOR  at line 27, col 4
       Depth        : 2 (nested)
       Condition    : k<nx
-      Computation  : arithmetic, function_call, io
+      Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fread(A0+s,sizeof(float),1,fp); 				s++;
 
@@ -4959,7 +5359,7 @@ FILE: pb2.5benchmarks/benchmarks/stencil/src/cpu/kernels.c
   [3] FOR  at line 19, col 4
       Depth        : 2 (nested)
       Condition    : k<nz-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : pointer, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : Anext[Index3D (nx, ny, i, j, k)] =  				(A0[Index3D (nx, ny, i, j, k + 1)] + 			…
 
@@ -4993,7 +5393,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/omp_base/model_io.c
   [1] FOR  at line 28, col 3
       Depth        : 0 (top-level)
       Condition    : lcount < npoints
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (fscanf(infile, "%f %f", &ra, &dec) != 2) 	break;          {           // dat…
 
@@ -5032,7 +5432,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/omp_base/model_compute_cpu.c
   [3] WHILE  at line 44, col 4
       Depth        : 0 (top-level)
       Condition    : max > min+1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : NO  —  Bound variable 'min' in condition is modified inside the loop body — the upper bound is not loop-invariant
       Body snippet : k = (min + max) / 2; 	      if (dot >= binb[k])  		max = k; 	      else  		min =…
 
@@ -5064,14 +5464,14 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/omp_base/main.c
   [2] FOR  at line 122, col 3
       Depth        : 0 (top-level)
       Condition    : rf < args.random_count
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : // read random file       pb_SwitchToTimer( &timers, pb_TimerID_IO );       npr …
 
   [3] FOR  at line 153, col 3
       Depth        : 0 (top-level)
       Condition    : k < nbins+1
-      Computation  : pointer, function_call, io, array_access
+      Computation  : function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fprintf(outfile, "%d\n%d\n%d\n", DD[k], DRS[k], RRS[k]);
 
@@ -5094,7 +5494,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/omp_base/args.c
   [1] WHILE  at line 32, col 3
       Depth        : 0 (top-level)
       Condition    : (c = getopt(argc, argv, "           )) != EOF
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : pointer, function_call, array_access, control
       Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
       Body snippet : switch (c) 	{         case 'd':           args->data_name = optarg;           br…
 
@@ -5117,7 +5517,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/base/model_io.c
   [1] FOR  at line 28, col 3
       Depth        : 0 (top-level)
       Condition    : lcount < npoints
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (fscanf(infile, "%f %f", &ra, &dec) != 2) 	break;          {           // dat…
 
@@ -5156,7 +5556,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/base/model_compute_cpu.c
   [3] WHILE  at line 42, col 4
       Depth        : 0 (top-level)
       Condition    : max > min+1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : NO  —  Bound variable 'min' in condition is modified inside the loop body — the upper bound is not loop-invariant
       Body snippet : k = (min + max) / 2; 	      if (dot >= binb[k])  		max = k; 	      else  		min =…
 
@@ -5188,14 +5588,14 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/base/main.c
   [2] FOR  at line 122, col 3
       Depth        : 0 (top-level)
       Condition    : rf < args.random_count
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : // read random file       pb_SwitchToTimer( &timers, pb_TimerID_IO );       npr …
 
   [3] FOR  at line 153, col 3
       Depth        : 0 (top-level)
       Condition    : k < nbins+1
-      Computation  : pointer, function_call, io, array_access
+      Computation  : function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fprintf(outfile, "%d\n%d\n%d\n", DD[k], DRS[k], RRS[k]);
 
@@ -5218,7 +5618,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/base/args.c
   [1] WHILE  at line 32, col 3
       Depth        : 0 (top-level)
       Condition    : (c = getopt(argc, argv, "           )) != EOF
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : pointer, function_call, array_access, control
       Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
       Body snippet : switch (c) 	{         case 'd':           args->data_name = optarg;           br…
 
@@ -5243,62 +5643,78 @@ FILE: pb2.5benchmarks/benchmarks/bfs/src/opencl_nvidia/OpenCL_common.cpp
   [1] FOR  at line 27, col 3
       Depth        : 0 (top-level)
       Condition    : ip < numPlatforms && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : cl_platform_id clPlatform = clPlatforms[ip];          OCL_SIMPLE_ERRCK_RETVAL ( …
 
   [2] FOR  at line 34, col 5
       Depth        : 1 (nested)
       Condition    : (id < numDevices) && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : NO  —  Condition does not reference init variable 'id'
       Body snippet : cl_device_id clDevice = clDevices[id];       cl_device_type clDeviceType;       …
 
   [3] FOR  at line 51, col 7
       Depth        : 2 (nested)
       Condition    : (i < numRequests) && canSatisfy
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : NO  —  Condition does not reference init variable 'i'
       Body snippet : cl_device_info devReq = va_arg( paramList, cl_device_info );           cl_bool c…
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/bfs/src/opencl_nvidia/main.cpp
 ------------------------------------------------------------------------
-  Total loops             : 3
+  Total loops             : 5
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 3  (nested: 0,  canonicalizable: 3)
-    Do-while loops        : 0
+    For loops             : 4  (nested: 0,  canonicalizable: 4)
+    Do-while loops        : 1
   Nested loops (total)    : 0
-  Canonicalizability      : 3/3  (100.0%)
+  Canonicalizability      : 4/5  (80.0%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
   1    for          131   d=0  Yes         i < num_of_nodes
   2    for          143   d=0  Yes         i < num_of_edges
   3    for          155   d=0  Yes         i < num_of_nodes
+  4    do-while     293   d=0  No          1
+  5    for          443   d=0  Yes         j<num_of_nodes
 
   LOOP DETAILS
   ------------------------------------------------------------------------
   [1] FOR  at line 131, col 3
       Depth        : 0 (top-level)
       Condition    : i < num_of_nodes
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fscanf(fp,"%d %d",&start,&edgeno);     h_graph_nodes[i].x = start;     h_graph_n…
 
   [2] FOR  at line 143, col 3
       Depth        : 0 (top-level)
       Condition    : i < num_of_edges
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fscanf(fp,"%d",&id);     fscanf(fp,"%d",&cost);     h_graph_edges[i].x = id;    …
 
   [3] FOR  at line 155, col 3
       Depth        : 0 (top-level)
       Condition    : i < num_of_nodes
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : h_cost[i] = INF;
+
+  [4] DO-WHILE  at line 293, col 3
+      Depth        : 0 (top-level)
+      Condition    : 1
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
+      Body snippet : OCL_ERRCK_RETVAL(clEnqueueReadBuffer(clCommandQueue,tail,CL_TRUE,0,sizeof(int),&…
+
+  [5] FOR  at line 443, col 3
+      Depth        : 0 (top-level)
+      Condition    : j<num_of_nodes
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : fprintf(fp,"%d %d\n",j,h_cost[j]);
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/bfs/src/opencl_base/OpenCL_common.cpp
@@ -5321,62 +5737,78 @@ FILE: pb2.5benchmarks/benchmarks/bfs/src/opencl_base/OpenCL_common.cpp
   [1] FOR  at line 27, col 3
       Depth        : 0 (top-level)
       Condition    : ip < numPlatforms && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : cl_platform_id clPlatform = clPlatforms[ip];          OCL_SIMPLE_ERRCK_RETVAL ( …
 
   [2] FOR  at line 34, col 5
       Depth        : 1 (nested)
       Condition    : (id < numDevices) && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : NO  —  Condition does not reference init variable 'id'
       Body snippet : cl_device_id clDevice = clDevices[id];       cl_device_type clDeviceType;       …
 
   [3] FOR  at line 51, col 7
       Depth        : 2 (nested)
       Condition    : (i < numRequests) && canSatisfy
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : NO  —  Condition does not reference init variable 'i'
       Body snippet : cl_device_info devReq = va_arg( paramList, cl_device_info );           cl_bool c…
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/bfs/src/opencl_base/main.cpp
 ------------------------------------------------------------------------
-  Total loops             : 3
+  Total loops             : 5
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 3  (nested: 0,  canonicalizable: 3)
-    Do-while loops        : 0
+    For loops             : 4  (nested: 0,  canonicalizable: 4)
+    Do-while loops        : 1
   Nested loops (total)    : 0
-  Canonicalizability      : 3/3  (100.0%)
+  Canonicalizability      : 4/5  (80.0%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
   1    for          119   d=0  Yes         i < num_of_nodes
   2    for          131   d=0  Yes         i < num_of_edges
   3    for          143   d=0  Yes         i < num_of_nodes
+  4    do-while     234   d=0  No          1
+  5    for          288   d=0  Yes         j<num_of_nodes
 
   LOOP DETAILS
   ------------------------------------------------------------------------
   [1] FOR  at line 119, col 3
       Depth        : 0 (top-level)
       Condition    : i < num_of_nodes
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fscanf(fp,"%d %d",&start,&edgeno);     h_graph_nodes[i].x = start;     h_graph_n…
 
   [2] FOR  at line 131, col 3
       Depth        : 0 (top-level)
       Condition    : i < num_of_edges
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fscanf(fp,"%d",&id);     fscanf(fp,"%d",&cost);     h_graph_edges[i].x = id;    …
 
   [3] FOR  at line 143, col 3
       Depth        : 0 (top-level)
       Condition    : i < num_of_nodes
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : h_cost[i] = INF;
+
+  [4] DO-WHILE  at line 234, col 3
+      Depth        : 0 (top-level)
+      Condition    : 1
+      Computation  : pointer, arithmetic, function_call, array_access
+      Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
+      Body snippet : OCL_ERRCK_RETVAL(clEnqueueReadBuffer(clCommandQueue,tail,CL_TRUE,0,sizeof(int),&…
+
+  [5] FOR  at line 288, col 3
+      Depth        : 0 (top-level)
+      Condition    : j<num_of_nodes
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : fprintf(fp,"%d %d\n",j,h_cost[j]);
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/histo/src/opencl_nvidia/util.cpp
@@ -5430,21 +5862,21 @@ FILE: pb2.5benchmarks/benchmarks/histo/src/opencl_nvidia/OpenCL_common.cpp
   [1] FOR  at line 27, col 3
       Depth        : 0 (top-level)
       Condition    : ip < numPlatforms && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : cl_platform_id clPlatform = clPlatforms[ip];          OCL_ERRCK_RETVAL ( clGetDe…
 
   [2] FOR  at line 34, col 5
       Depth        : 1 (nested)
       Condition    : (id < numDevices) && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : NO  —  Condition does not reference init variable 'id'
       Body snippet : cl_device_id clDevice = clDevices[id];       cl_device_type clDeviceType;       …
 
   [3] FOR  at line 55, col 7
       Depth        : 2 (nested)
       Condition    : (i < numRequests) && canSatisfy
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : NO  —  Condition does not reference init variable 'i'
       Body snippet : cl_device_info devReq = va_arg( paramList, cl_device_info );           cl_bool c…
 
@@ -5470,28 +5902,28 @@ FILE: pb2.5benchmarks/benchmarks/histo/src/opencl_nvidia/main.cpp
   [1] FOR  at line 175, col 3
       Depth        : 0 (top-level)
       Condition    : i < 4
-      Computation  : pointer, arithmetic, bitwise, function_call, memory_alloc, io, array_access
+      Computation  : arithmetic, function_call, memory_alloc, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : // Dynamically allocate buffer for source     source[i] = oclLoadProgSource(sour…
 
   [2] FOR  at line 202, col 3
       Depth        : 0 (top-level)
       Condition    : i < 4
-      Computation  : pointer, arithmetic, bitwise, function_call, memory_alloc, io, array_access
+      Computation  : pointer, arithmetic, function_call, memory_alloc, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : //fprintf(stderr, "Building Program #%d...\n", i);     OCL_ERRCK_RETVAL ( clBuil…
 
   [3] FOR  at line 267, col 3
       Depth        : 0 (top-level)
       Condition    : y < img_height
-      Computation  : pointer, bitwise, function_call, array_access
+      Computation  : pointer, bitwise, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : OCL_ERRCK_RETVAL( clEnqueueWriteBuffer(clCommandQueue, input, CL_FALSE,         …
 
   [4] FOR  at line 318, col 3
       Depth        : 0 (top-level)
       Condition    : iter < numIterations
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : unsigned int ranges_h[2] = {UINT32_MAX, 0};          // how about something like…
 
@@ -5547,21 +5979,21 @@ FILE: pb2.5benchmarks/benchmarks/histo/src/opencl_base/OpenCL_common.cpp
   [1] FOR  at line 27, col 3
       Depth        : 0 (top-level)
       Condition    : ip < numPlatforms && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : cl_platform_id clPlatform = clPlatforms[ip];          OCL_ERRCK_RETVAL ( clGetDe…
 
   [2] FOR  at line 34, col 5
       Depth        : 1 (nested)
       Condition    : (id < numDevices) && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : NO  —  Condition does not reference init variable 'id'
       Body snippet : cl_device_id clDevice = clDevices[id];       cl_device_type clDeviceType;       …
 
   [3] FOR  at line 55, col 7
       Depth        : 2 (nested)
       Condition    : (i < numRequests) && canSatisfy
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : NO  —  Condition does not reference init variable 'i'
       Body snippet : cl_device_info devReq = va_arg( paramList, cl_device_info );           cl_bool c…
 
@@ -5587,28 +6019,28 @@ FILE: pb2.5benchmarks/benchmarks/histo/src/opencl_base/main.cpp
   [1] FOR  at line 197, col 3
       Depth        : 0 (top-level)
       Condition    : i < 4
-      Computation  : pointer, arithmetic, bitwise, function_call, memory_alloc, io, array_access
+      Computation  : arithmetic, function_call, memory_alloc, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : // Dynamically allocate buffer for source     source[i] = oclLoadProgSource(sour…
 
   [2] FOR  at line 224, col 3
       Depth        : 0 (top-level)
       Condition    : i < 4
-      Computation  : pointer, arithmetic, bitwise, function_call, memory_alloc, io, array_access
+      Computation  : pointer, arithmetic, function_call, memory_alloc, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : //fprintf(stderr, "Building Program #%d...\n", i);     OCL_ERRCK_RETVAL ( clBuil…
 
   [3] FOR  at line 275, col 3
       Depth        : 0 (top-level)
       Condition    : y < img_height
-      Computation  : pointer, bitwise, function_call, array_access
+      Computation  : pointer, bitwise, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : OCL_ERRCK_RETVAL( clEnqueueWriteBuffer(clCommandQueue, input, CL_TRUE,          …
 
   [4] FOR  at line 347, col 3
       Depth        : 0 (top-level)
       Condition    : iter < numIterations
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : unsigned int ranges_h[2] = {UINT32_MAX, 0};          // how about something like…
 
@@ -5632,7 +6064,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-gridding/src/opencl_nvidia/sort.cpp
   [1] WHILE  at line 26, col 3
       Depth        : 0 (top-level)
       Condition    : max_value > 0
-      Computation  : arithmetic, bitwise
+      Computation  : arithmetic
       Canonical    : NO  —  No increment/decrement of 'max_value' detected in body
       Body snippet : max_value >>= BITS;     iterations++;
 
@@ -5681,28 +6113,28 @@ FILE: pb2.5benchmarks/benchmarks/mri-gridding/src/opencl_nvidia/scanLargeArray.c
   [3] FOR  at line 111, col 5
       Depth        : 0 (top-level)
       Condition    : i < (size+GRID_SIZE-1)/GRID_SIZE
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : unsigned int gridSize = ((size-(i*GRID_SIZE)) > GRID_SIZE) ? GRID_SIZE : (size-i…
 
   [4] FOR  at line 129, col 5
       Depth        : 0 (top-level)
       Condition    : d > 1
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : size_t block[1] = { dim_block/2 };         size_t grid[1] = { (d/dim_block) * bl…
 
   [5] FOR  at line 148, col 5
       Depth        : 0 (top-level)
       Condition    : d <= current_max
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : stride /= dim_block;                  size_t block[1] = { dim_block/2 };        …
 
   [6] FOR  at line 160, col 5
       Depth        : 0 (top-level)
       Condition    : i < (size+GRID_SIZE-1)/GRID_SIZE
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : unsigned int gridSize = ((size-(i*GRID_SIZE)) > GRID_SIZE) ? GRID_SIZE : (size-i…
 
@@ -5725,7 +6157,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-gridding/src/opencl_nvidia/OpenCL_interface
   [1] FOR  at line 359, col 3
       Depth        : 0 (top-level)
       Condition    : i< num
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : gridData[indices_CPU[i]].real += gridData_CPU[i].real;     gridData[indices_CPU[…
 
@@ -5750,21 +6182,21 @@ FILE: pb2.5benchmarks/benchmarks/mri-gridding/src/opencl_nvidia/OpenCL_common.cp
   [1] FOR  at line 27, col 3
       Depth        : 0 (top-level)
       Condition    : ip < numPlatforms && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : cl_platform_id clPlatform = clPlatforms[ip];          OCL_SIMPLE_ERRCK_RETVAL ( …
 
   [2] FOR  at line 34, col 5
       Depth        : 1 (nested)
       Condition    : (id < numDevices) && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : NO  —  Condition does not reference init variable 'id'
       Body snippet : cl_device_id clDevice = clDevices[id];       cl_device_type clDeviceType;       …
 
   [3] FOR  at line 51, col 7
       Depth        : 2 (nested)
       Condition    : (i < numRequests) && canSatisfy
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : NO  —  Condition does not reference init variable 'i'
       Body snippet : cl_device_info devReq = va_arg( paramList, cl_device_info );           cl_bool c…
 
@@ -5789,7 +6221,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-gridding/src/opencl_nvidia/main.cpp
   [1] FOR  at line 77, col 3
       Depth        : 0 (top-level)
       Condition    : i<params.numSamples
-      Computation  : pointer, bitwise, function_call, io, array_access
+      Computation  : function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (feof(uksdata_f)){       break;     }     fread((void*) &(samples[i]), sizeof…
 
@@ -5803,7 +6235,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-gridding/src/opencl_nvidia/main.cpp
   [3] FOR  at line 306, col 3
       Depth        : 0 (top-level)
       Condition    : i<gridNumElems
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if(sampleDensity[i] != sampleDensity_gold[i]) {       passed=0;       break;    …
 
@@ -5827,7 +6259,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-gridding/src/opencl_base/sort.cpp
   [1] WHILE  at line 26, col 3
       Depth        : 0 (top-level)
       Condition    : max_value > 0
-      Computation  : arithmetic, bitwise
+      Computation  : arithmetic
       Canonical    : NO  —  No increment/decrement of 'max_value' detected in body
       Body snippet : max_value >>= BITS;     iterations++;
 
@@ -5876,28 +6308,28 @@ FILE: pb2.5benchmarks/benchmarks/mri-gridding/src/opencl_base/scanLargeArray.cpp
   [3] FOR  at line 111, col 5
       Depth        : 0 (top-level)
       Condition    : i < (size+GRID_SIZE-1)/GRID_SIZE
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : unsigned int gridSize = ((size-(i*GRID_SIZE)) > GRID_SIZE) ? GRID_SIZE : (size-i…
 
   [4] FOR  at line 129, col 5
       Depth        : 0 (top-level)
       Condition    : d > 1
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : size_t block[1] = { dim_block/2 };         size_t grid[1] = { (d/dim_block) * bl…
 
   [5] FOR  at line 147, col 5
       Depth        : 0 (top-level)
       Condition    : d <= current_max
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : stride /= dim_block;                  size_t block[1] = { dim_block/2 };        …
 
   [6] FOR  at line 159, col 5
       Depth        : 0 (top-level)
       Condition    : i < (size+GRID_SIZE-1)/GRID_SIZE
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : unsigned int gridSize = ((size-(i*GRID_SIZE)) > GRID_SIZE) ? GRID_SIZE : (size-i…
 
@@ -5933,21 +6365,21 @@ FILE: pb2.5benchmarks/benchmarks/mri-gridding/src/opencl_base/OpenCL_common.cpp
   [1] FOR  at line 27, col 3
       Depth        : 0 (top-level)
       Condition    : ip < numPlatforms && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : cl_platform_id clPlatform = clPlatforms[ip];          OCL_SIMPLE_ERRCK_RETVAL ( …
 
   [2] FOR  at line 34, col 5
       Depth        : 1 (nested)
       Condition    : (id < numDevices) && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : NO  —  Condition does not reference init variable 'id'
       Body snippet : cl_device_id clDevice = clDevices[id];       cl_device_type clDeviceType;       …
 
   [3] FOR  at line 51, col 7
       Depth        : 2 (nested)
       Condition    : (i < numRequests) && canSatisfy
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : NO  —  Condition does not reference init variable 'i'
       Body snippet : cl_device_info devReq = va_arg( paramList, cl_device_info );           cl_bool c…
 
@@ -5972,7 +6404,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-gridding/src/opencl_base/main.cpp
   [1] FOR  at line 76, col 3
       Depth        : 0 (top-level)
       Condition    : i<params.numSamples
-      Computation  : pointer, bitwise, function_call, io, array_access
+      Computation  : function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (feof(uksdata_f)){       break;     }     fread((void*) &(samples[i]), sizeof…
 
@@ -5986,7 +6418,7 @@ FILE: pb2.5benchmarks/benchmarks/mri-gridding/src/opencl_base/main.cpp
   [3] FOR  at line 303, col 3
       Depth        : 0 (top-level)
       Condition    : i<gridNumElems
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if(sampleDensity[i] != sampleDensity_gold[i]) {       passed=0;       break;    …
 
@@ -6011,33 +6443,33 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/opencl_nvidia/OpenCL_common.cpp
   [1] FOR  at line 27, col 3
       Depth        : 0 (top-level)
       Condition    : ip < numPlatforms && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : cl_platform_id clPlatform = clPlatforms[ip];          OCL_ERRCK_RETVAL ( clGetDe…
 
   [2] FOR  at line 34, col 5
       Depth        : 1 (nested)
       Condition    : (id < numDevices) && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : NO  —  Condition does not reference init variable 'id'
       Body snippet : cl_device_id clDevice = clDevices[id];       cl_device_type clDeviceType;       …
 
   [3] FOR  at line 51, col 7
       Depth        : 2 (nested)
       Condition    : (i < numRequests) && canSatisfy
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : NO  —  Condition does not reference init variable 'i'
       Body snippet : cl_device_info devReq = va_arg( paramList, cl_device_info );           cl_bool c…
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/sad/src/opencl_nvidia/main_debug.cpp
 ------------------------------------------------------------------------
-  Total loops             : 7
+  Total loops             : 10
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 7  (nested: 2,  canonicalizable: 7)
+    For loops             : 10  (nested: 4,  canonicalizable: 10)
     Do-while loops        : 0
-  Nested loops (total)    : 2
-  Canonicalizability      : 7/7  (100.0%)
+  Nested loops (total)    : 4
+  Canonicalizability      : 10/10  (100.0%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
@@ -6045,9 +6477,12 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/opencl_nvidia/main_debug.cpp
   2    for          215   d=1  Yes         subblock < 16
   3    for          219   d=2  Yes         sad_index < MAX_POS
   4    for          253   d=0  Yes         block < count
-  5    for          285   d=0  Yes         block < image_size_macroblocks
-  6    for          313   d=0  Yes         n < 41 * MAX_POS_PADDED * (width * height)
-  7    for          335   d=0  Yes         blocktype <= 7
+  5    for          259   d=1  Yes         pos < MAX_POS
+  6    for          285   d=0  Yes         block < image_size_macroblocks
+  7    for          290   d=1  Yes         blocktype <= 7
+  8    for          313   d=0  Yes         n < 41 * MAX_POS_PADDED * (width * height)
+  9    for          324   d=0  Yes         n < count
+  10   for          335   d=0  Yes         blocktype <= 7
 
   LOOP DETAILS
   ------------------------------------------------------------------------
@@ -6079,21 +6514,42 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/opencl_nvidia/main_debug.cpp
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : unsigned short *vec = subblock_array + 	(block + macroblock * count) * MAX_POS_P…
 
-  [5] FOR  at line 285, col 3
+  [5] FOR  at line 259, col 7
+      Depth        : 1 (nested)
+      Condition    : pos < MAX_POS
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : write16u(outfile, *vec++);
+
+  [6] FOR  at line 285, col 3
       Depth        : 0 (top-level)
       Condition    : block < image_size_macroblocks
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : int blocktype;        /* Write SADs for all sub-block types */       for (blockt…
 
-  [6] FOR  at line 313, col 3
+  [7] FOR  at line 290, col 7
+      Depth        : 1 (nested)
+      Condition    : blocktype <= 7
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : write_subblocks(outfile, 			sads + SAD_TYPE_IX(blocktype, image_size_macroblocks…
+
+  [8] FOR  at line 313, col 3
       Depth        : 0 (top-level)
       Condition    : n < 41 * MAX_POS_PADDED * (width * height)
-      Computation  : pointer, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : write16u(f, sads[n]);
 
-  [7] FOR  at line 335, col 3
+  [9] FOR  at line 324, col 3
+      Depth        : 0 (top-level)
+      Condition    : n < count
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : printf(" %d", base[(count * macroblock + n) * MAX_POS_PADDED + searchpos]);
+
+  [10] FOR  at line 335, col 3
       Depth        : 0 (top-level)
       Condition    : blocktype <= 7
       Computation  : function_call, io
@@ -6103,12 +6559,12 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/opencl_nvidia/main_debug.cpp
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/sad/src/opencl_nvidia/main.cpp
 ------------------------------------------------------------------------
-  Total loops             : 8
+  Total loops             : 11
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 8  (nested: 3,  canonicalizable: 8)
+    For loops             : 11  (nested: 5,  canonicalizable: 11)
     Do-while loops        : 0
-  Nested loops (total)    : 3
-  Canonicalizability      : 8/8  (100.0%)
+  Nested loops (total)    : 5
+  Canonicalizability      : 11/11  (100.0%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
@@ -6116,10 +6572,13 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/opencl_nvidia/main.cpp
   2    for           88   d=1  Yes         subblock < 16
   3    for           92   d=2  Yes         sad_index < MAX_POS
   4    for          126   d=0  Yes         block < count
-  5    for          168   d=0  Yes         row_indir < 6
-  6    for          174   d=1  Yes         block < mb_width * (row + 1)
-  7    for          203   d=0  Yes         n < 41 * MAX_POS_PADDED * (width * height)
-  8    for          225   d=0  Yes         blocktype <= 7
+  5    for          132   d=1  Yes         pos < MAX_POS
+  6    for          168   d=0  Yes         row_indir < 6
+  7    for          174   d=1  Yes         block < mb_width * (row + 1)
+  8    for          179   d=2  Yes         blocktype <= 7
+  9    for          203   d=0  Yes         n < 41 * MAX_POS_PADDED * (width * height)
+  10   for          214   d=0  Yes         n < count
+  11   for          225   d=0  Yes         blocktype <= 7
 
   LOOP DETAILS
   ------------------------------------------------------------------------
@@ -6151,28 +6610,49 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/opencl_nvidia/main.cpp
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : unsigned short *vec = subblock_array + 	(block + macroblock * count) * MAX_POS_P…
 
-  [5] FOR  at line 168, col 3
+  [5] FOR  at line 132, col 7
+      Depth        : 1 (nested)
+      Condition    : pos < MAX_POS
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : write16u(outfile, *vec++);
+
+  [6] FOR  at line 168, col 3
       Depth        : 0 (top-level)
       Condition    : row_indir < 6
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : int row = row_indices[row_indir];        /* Each block in row */       int block…
 
-  [6] FOR  at line 174, col 7
+  [7] FOR  at line 174, col 7
       Depth        : 1 (nested)
       Condition    : block < mb_width * (row + 1)
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : int blocktype;  	  /* Write SADs for all sub-block types */ 	  for (blocktype = …
 
-  [7] FOR  at line 203, col 3
+  [8] FOR  at line 179, col 4
+      Depth        : 2 (nested)
+      Condition    : blocktype <= 7
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : write_subblocks(outfile, 			    sads + SAD_TYPE_IX(blocktype, mbs), 			    block…
+
+  [9] FOR  at line 203, col 3
       Depth        : 0 (top-level)
       Condition    : n < 41 * MAX_POS_PADDED * (width * height)
-      Computation  : pointer, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : write16u(f, sads[n]);
 
-  [8] FOR  at line 225, col 3
+  [10] FOR  at line 214, col 3
+      Depth        : 0 (top-level)
+      Condition    : n < count
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : printf(" %d", base[(count * macroblock + n) * MAX_POS_PADDED + searchpos]);
+
+  [11] FOR  at line 225, col 3
       Depth        : 0 (top-level)
       Condition    : blocktype <= 7
       Computation  : function_call, io
@@ -6200,33 +6680,33 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/opencl_base/OpenCL_common.cpp
   [1] FOR  at line 27, col 3
       Depth        : 0 (top-level)
       Condition    : ip < numPlatforms && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : cl_platform_id clPlatform = clPlatforms[ip];          OCL_ERRCK_RETVAL ( clGetDe…
 
   [2] FOR  at line 34, col 5
       Depth        : 1 (nested)
       Condition    : (id < numDevices) && needDevice
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : NO  —  Condition does not reference init variable 'id'
       Body snippet : cl_device_id clDevice = clDevices[id];       cl_device_type clDeviceType;       …
 
   [3] FOR  at line 51, col 7
       Depth        : 2 (nested)
       Condition    : (i < numRequests) && canSatisfy
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : NO  —  Condition does not reference init variable 'i'
       Body snippet : cl_device_info devReq = va_arg( paramList, cl_device_info );           cl_bool c…
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/sad/src/opencl_base/main.cpp
 ------------------------------------------------------------------------
-  Total loops             : 8
+  Total loops             : 11
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 8  (nested: 3,  canonicalizable: 8)
+    For loops             : 11  (nested: 5,  canonicalizable: 11)
     Do-while loops        : 0
-  Nested loops (total)    : 3
-  Canonicalizability      : 8/8  (100.0%)
+  Nested loops (total)    : 5
+  Canonicalizability      : 11/11  (100.0%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
@@ -6234,10 +6714,13 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/opencl_base/main.cpp
   2    for           88   d=1  Yes         subblock < 16
   3    for           92   d=2  Yes         sad_index < MAX_POS
   4    for          126   d=0  Yes         block < count
-  5    for          168   d=0  Yes         row_indir < 6
-  6    for          174   d=1  Yes         block < mb_width * (row + 1)
-  7    for          203   d=0  Yes         n < 41 * MAX_POS_PADDED * (width * height)
-  8    for          225   d=0  Yes         blocktype <= 7
+  5    for          132   d=1  Yes         pos < MAX_POS
+  6    for          168   d=0  Yes         row_indir < 6
+  7    for          174   d=1  Yes         block < mb_width * (row + 1)
+  8    for          179   d=2  Yes         blocktype <= 7
+  9    for          203   d=0  Yes         n < 41 * MAX_POS_PADDED * (width * height)
+  10   for          214   d=0  Yes         n < count
+  11   for          225   d=0  Yes         blocktype <= 7
 
   LOOP DETAILS
   ------------------------------------------------------------------------
@@ -6269,28 +6752,49 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/opencl_base/main.cpp
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : unsigned short *vec = subblock_array + 	(block + macroblock * count) * MAX_POS_P…
 
-  [5] FOR  at line 168, col 3
+  [5] FOR  at line 132, col 7
+      Depth        : 1 (nested)
+      Condition    : pos < MAX_POS
+      Computation  : pointer, arithmetic, function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : write16u(outfile, *vec++);
+
+  [6] FOR  at line 168, col 3
       Depth        : 0 (top-level)
       Condition    : row_indir < 6
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : int row = row_indices[row_indir];        /* Each block in row */       int block…
 
-  [6] FOR  at line 174, col 7
+  [7] FOR  at line 174, col 7
       Depth        : 1 (nested)
       Condition    : block < mb_width * (row + 1)
       Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : int blocktype;  	  /* Write SADs for all sub-block types */ 	  for (blocktype = …
 
-  [7] FOR  at line 203, col 3
+  [8] FOR  at line 179, col 4
+      Depth        : 2 (nested)
+      Condition    : blocktype <= 7
+      Computation  : function_call
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : write_subblocks(outfile, 			    sads + SAD_TYPE_IX(blocktype, mbs), 			    block…
+
+  [9] FOR  at line 203, col 3
       Depth        : 0 (top-level)
       Condition    : n < 41 * MAX_POS_PADDED * (width * height)
-      Computation  : pointer, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : write16u(f, sads[n]);
 
-  [8] FOR  at line 225, col 3
+  [10] FOR  at line 214, col 3
+      Depth        : 0 (top-level)
+      Condition    : n < count
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : printf(" %d", base[(count * macroblock + n) * MAX_POS_PADDED + searchpos]);
+
+  [11] FOR  at line 225, col 3
       Depth        : 0 (top-level)
       Condition    : blocktype <= 7
       Computation  : function_call, io
@@ -6300,12 +6804,12 @@ FILE: pb2.5benchmarks/benchmarks/sad/src/opencl_base/main.cpp
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/bfs/src/omp_base/main.cc
 ------------------------------------------------------------------------
-  Total loops             : 5
+  Total loops             : 6
     While loops           : 1  (nested: 0,  canonicalizable: 0)
-    For loops             : 4  (nested: 1,  canonicalizable: 3)
+    For loops             : 5  (nested: 1,  canonicalizable: 4)
     Do-while loops        : 0
   Nested loops (total)    : 1
-  Canonicalizability      : 3/5  (60.0%)
+  Canonicalizability      : 4/6  (66.7%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
@@ -6315,13 +6819,14 @@ FILE: pb2.5benchmarks/benchmarks/bfs/src/omp_base/main.cc
   3    for          149   d=0  Yes         i < no_of_nodes
   4    for          161   d=0  Yes         i < edge_list_size
   5    for          175   d=0  Yes         i < no_of_nodes
+  6    for          190   d=0  Yes         i<no_of_nodes
 
   LOOP DETAILS
   ------------------------------------------------------------------------
   [1] WHILE  at line 81, col 2
       Depth        : 0 (top-level)
       Condition    : !wavefront.empty()
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
       Body snippet : index = wavefront.front(); 		wavefront.pop_front();  #pragma omp parallel for 		…
 
@@ -6329,40 +6834,47 @@ FILE: pb2.5benchmarks/benchmarks/bfs/src/omp_base/main.cc
       Depth        : 1 (nested)
       Condition    : i<(h_graph_nodes[index].y + 
 				h_graph_nodes[index].x)
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : NO  —  Condition does not reference init variable 'i'
       Body snippet : int id = h_graph_edges[i].x; 				if(color[id] == WHITE){ 					h_cost[id]=h_cost[…
 
   [3] FOR  at line 149, col 2
       Depth        : 0 (top-level)
       Condition    : i < no_of_nodes
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fscanf(fp,"%d %d",&start,&edgeno); 		h_graph_nodes[i].x = start; 		h_graph_nodes…
 
   [4] FOR  at line 161, col 2
       Depth        : 0 (top-level)
       Condition    : i < edge_list_size
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fscanf(fp,"%d",&id); 		fscanf(fp,"%d",&cost); 		h_graph_edges[i].x = id; 		h_gra…
 
   [5] FOR  at line 175, col 2
       Depth        : 0 (top-level)
       Condition    : i < no_of_nodes
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : h_cost[i] = INF;
+
+  [6] FOR  at line 190, col 6
+      Depth        : 0 (top-level)
+      Condition    : i<no_of_nodes
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : fprintf(fp,"%d %d\n",i,h_cost[i]);
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/bfs/src/base/main.cc
 ------------------------------------------------------------------------
-  Total loops             : 5
+  Total loops             : 6
     While loops           : 1  (nested: 0,  canonicalizable: 0)
-    For loops             : 4  (nested: 1,  canonicalizable: 3)
+    For loops             : 5  (nested: 1,  canonicalizable: 4)
     Do-while loops        : 0
   Nested loops (total)    : 1
-  Canonicalizability      : 3/5  (60.0%)
+  Canonicalizability      : 4/6  (66.7%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
@@ -6372,13 +6884,14 @@ FILE: pb2.5benchmarks/benchmarks/bfs/src/base/main.cc
   3    for          153   d=0  Yes         i < no_of_nodes
   4    for          165   d=0  Yes         i < edge_list_size
   5    for          179   d=0  Yes         i < no_of_nodes
+  6    for          194   d=0  Yes         i<no_of_nodes
 
   LOOP DETAILS
   ------------------------------------------------------------------------
   [1] WHILE  at line 81, col 2
       Depth        : 0 (top-level)
       Condition    : !wavefront.empty()
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
       Body snippet : index = wavefront.front(); 		wavefront.pop_front(); 		for(int i=h_graph_nodes[in…
 
@@ -6386,30 +6899,37 @@ FILE: pb2.5benchmarks/benchmarks/bfs/src/base/main.cc
       Depth        : 1 (nested)
       Condition    : i<(h_graph_nodes[index].y + 
 				h_graph_nodes[index].x)
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : NO  —  Condition does not reference init variable 'i'
       Body snippet : int id = h_graph_edges[i].x; 			if(color[id] == WHITE){ 				h_cost[id]=h_cost[in…
 
   [3] FOR  at line 153, col 2
       Depth        : 0 (top-level)
       Condition    : i < no_of_nodes
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fscanf(fp,"%d %d",&start,&edgeno); 		h_graph_nodes[i].x = start; 		h_graph_nodes…
 
   [4] FOR  at line 165, col 2
       Depth        : 0 (top-level)
       Condition    : i < edge_list_size
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fscanf(fp,"%d",&id); 		fscanf(fp,"%d",&cost); 		h_graph_edges[i].x = id; 		h_gra…
 
   [5] FOR  at line 179, col 2
       Depth        : 0 (top-level)
       Condition    : i < no_of_nodes
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : h_cost[i] = INF;
+
+  [6] FOR  at line 194, col 6
+      Depth        : 0 (top-level)
+      Condition    : i<no_of_nodes
+      Computation  : pointer, function_call, io, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : fprintf(fp,"%d %d\n",i,h_cost[i]);
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/lbm/src/cuda_base/main.cc
@@ -6643,13 +7163,25 @@ FILE: pb2.5benchmarks/benchmarks/mri-q/src/cpu/computeQ.cc
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/sgemm/src/opencl_nvidia/main.cc
 ------------------------------------------------------------------------
-  Total loops             : 0
+  Total loops             : 1
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 1  (nested: 0,  canonicalizable: 1)
     Do-while loops        : 0
   Nested loops (total)    : 0
+  Canonicalizability      : 1/1  (100.0%)
 
-  (no loops found)
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for          179   d=0  Yes         i<matC.size()
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 179, col 3
+      Depth        : 0 (top-level)
+      Condition    : i<matC.size()
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : matC[i] = 0.0f;
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/sgemm/src/opencl_nvidia/io.cc
@@ -6678,20 +7210,32 @@ FILE: pb2.5benchmarks/benchmarks/sgemm/src/opencl_nvidia/io.cc
   [2] FOR  at line 84, col 3
       Depth        : 0 (top-level)
       Condition    : i < v.size()
-      Computation  : pointer, bitwise, array_access
+      Computation  : bitwise, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : f << v[i] << ' ';
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/sgemm/src/opencl_base/main.cc
 ------------------------------------------------------------------------
-  Total loops             : 0
+  Total loops             : 1
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 0  (nested: 0,  canonicalizable: 0)
+    For loops             : 1  (nested: 0,  canonicalizable: 1)
     Do-while loops        : 0
   Nested loops (total)    : 0
+  Canonicalizability      : 1/1  (100.0%)
 
-  (no loops found)
+  #    KIND        LINE DEPTH  CANONICAL   CONDITION
+  ---- ---------- ----- -----  ----------  ------------------------------
+  1    for          171   d=0  Yes         i<matC.size()
+
+  LOOP DETAILS
+  ------------------------------------------------------------------------
+  [1] FOR  at line 171, col 3
+      Depth        : 0 (top-level)
+      Condition    : i<matC.size()
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : matC[i] = 0.0f;
 
 ========================================================================
 FILE: pb2.5benchmarks/benchmarks/sgemm/src/opencl_base/io.cc
@@ -6720,7 +7264,7 @@ FILE: pb2.5benchmarks/benchmarks/sgemm/src/opencl_base/io.cc
   [2] FOR  at line 84, col 3
       Depth        : 0 (top-level)
       Condition    : i < v.size()
-      Computation  : pointer, bitwise, array_access
+      Computation  : bitwise, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : f << v[i] << ' ';
 
@@ -6801,7 +7345,7 @@ FILE: pb2.5benchmarks/benchmarks/sgemm/src/omp_base/io.cc
   [2] FOR  at line 52, col 3
       Depth        : 0 (top-level)
       Condition    : i < v.size()
-      Computation  : pointer, bitwise, array_access
+      Computation  : bitwise, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : f << v[i] << ' ';
 
@@ -6832,7 +7376,7 @@ FILE: pb2.5benchmarks/benchmarks/sgemm/src/cuda_base/io.cc
   [2] FOR  at line 52, col 3
       Depth        : 0 (top-level)
       Condition    : i < v.size()
-      Computation  : pointer, bitwise, array_access
+      Computation  : bitwise, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : f << v[i] << ' ';
 
@@ -6863,7 +7407,7 @@ FILE: pb2.5benchmarks/benchmarks/sgemm/src/cuda/io.cc
   [2] FOR  at line 52, col 3
       Depth        : 0 (top-level)
       Condition    : i < v.size()
-      Computation  : pointer, bitwise, array_access
+      Computation  : bitwise, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : f << v[i] << ' ';
 
@@ -6944,7 +7488,7 @@ FILE: pb2.5benchmarks/benchmarks/sgemm/src/base/io.cc
   [2] FOR  at line 52, col 3
       Depth        : 0 (top-level)
       Condition    : i < v.size()
-      Computation  : pointer, bitwise, array_access
+      Computation  : bitwise, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : f << v[i] << ' ';
 
@@ -7154,7 +7698,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/opencl_nvidia/model.cc
   [1] FOR  at line 33, col 3
       Depth        : 0 (top-level)
       Condition    : lcount < npoints
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (fscanf(infile, "%f %f", &ra, &dec) != 2) 	break;        {         // data co…
 
@@ -7194,7 +7738,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/opencl_nvidia/main.cc
   [2] FOR  at line 105, col 3
       Depth        : 0 (top-level)
       Condition    : i < (NUM_SETS)
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : pb_SwitchToTimer( &timers, pb_TimerID_IO );       char fileName[50];       readd…
 
@@ -7215,7 +7759,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/opencl_nvidia/main.cc
   [5] FOR  at line 213, col 3
       Depth        : 0 (top-level)
       Condition    : i<NUM_BINS
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rr[i] = 0;
 
@@ -7236,7 +7780,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/opencl_nvidia/main.cc
   [8] FOR  at line 225, col 3
       Depth        : 0 (top-level)
       Condition    : i<NUM_BINS
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : dr[i] = 0;
 
@@ -7257,7 +7801,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/opencl_nvidia/main.cc
   [11] FOR  at line 247, col 3
       Depth        : 0 (top-level)
       Condition    : i<NUM_BINS
-      Computation  : pointer, function_call, io, array_access
+      Computation  : function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fprintf(outfile, "%d\n%d\n%d\n", dd_hist[i], dr[i], rr[i]);
 
@@ -7280,7 +7824,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/opencl_nvidia/args.cc
   [1] WHILE  at line 32, col 3
       Depth        : 0 (top-level)
       Condition    : (c = getopt(argc, argv, "           )) != EOF
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : pointer, function_call, array_access, control
       Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
       Body snippet : switch (c) 	{         case 'd':           args->data_name = optarg;           br…
 
@@ -7303,7 +7847,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/opencl_base/model.cc
   [1] FOR  at line 33, col 3
       Depth        : 0 (top-level)
       Condition    : lcount < npoints
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (fscanf(infile, "%f %f", &ra, &dec) != 2) 	break;        {         // data co…
 
@@ -7343,7 +7887,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/opencl_base/main.cc
   [2] FOR  at line 105, col 3
       Depth        : 0 (top-level)
       Condition    : i < (NUM_SETS)
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : pb_SwitchToTimer( &timers, pb_TimerID_IO );       char fileName[50];       readd…
 
@@ -7364,7 +7908,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/opencl_base/main.cc
   [5] FOR  at line 213, col 3
       Depth        : 0 (top-level)
       Condition    : i<NUM_BINS
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rr[i] = 0;
 
@@ -7385,7 +7929,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/opencl_base/main.cc
   [8] FOR  at line 225, col 3
       Depth        : 0 (top-level)
       Condition    : i<NUM_BINS
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : dr[i] = 0;
 
@@ -7406,7 +7950,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/opencl_base/main.cc
   [11] FOR  at line 247, col 3
       Depth        : 0 (top-level)
       Condition    : i<NUM_BINS
-      Computation  : pointer, function_call, io, array_access
+      Computation  : function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fprintf(outfile, "%d\n%d\n%d\n", dd_hist[i], dr[i], rr[i]);
 
@@ -7429,7 +7973,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/opencl_base/args.cc
   [1] WHILE  at line 32, col 3
       Depth        : 0 (top-level)
       Condition    : (c = getopt(argc, argv, "           )) != EOF
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : pointer, function_call, array_access, control
       Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
       Body snippet : switch (c) 	{         case 'd':           args->data_name = optarg;           br…
 
@@ -7452,7 +7996,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/cuda_base/model_io.cc
   [1] FOR  at line 28, col 3
       Depth        : 0 (top-level)
       Condition    : lcount < npoints
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (fscanf(infile, "%f %f", &ra, &dec) != 2) 	break;        {         // data co…
 
@@ -7475,7 +8019,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/cuda_base/args.cc
   [1] WHILE  at line 32, col 3
       Depth        : 0 (top-level)
       Condition    : (c = getopt(argc, argv, "           )) != EOF
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : pointer, function_call, array_access, control
       Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
       Body snippet : switch (c) 	{         case 'd':           args->data_name = optarg;           br…
 
@@ -7498,7 +8042,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/cuda/model_io.cc
   [1] FOR  at line 28, col 3
       Depth        : 0 (top-level)
       Condition    : lcount < npoints
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : #if SINGLE_PRECISION       if (fscanf(infile, "%f %f", &ra, &dec) != 2)       #e…
 
@@ -7521,7 +8065,7 @@ FILE: pb2.5benchmarks/benchmarks/tpacf/src/cuda/args.cc
   [1] WHILE  at line 32, col 3
       Depth        : 0 (top-level)
       Condition    : (c = getopt(argc, argv, "           )) != EOF
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : pointer, function_call, array_access, control
       Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
       Body snippet : switch (c) 	{         case 'd':           args->data_name = optarg;           br…
 

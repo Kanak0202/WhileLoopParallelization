@@ -1,38 +1,39 @@
 ========================================================================
   LOOP STATIC ANALYSIS REPORT
-  Generated: 2026-03-24 12:22:51
+  Generated: 2026-03-25 15:53:52
 ========================================================================
 
 GLOBAL SUMMARY
 ------------------------------------------------------------------------
   Files analysed          : 14
-  Total loops             : 907
-    While loops           : 14  (nested: 0)
-    For loops             : 893  (nested: 589)
-    Do-while loops        : 0
-  Nested loops (total)    : 589
+  Total loops             : 918
+    While loops           : 13  (nested: 0)
+    For loops             : 904  (nested: 590)
+    Do-while loops        : 1
+  Nested loops (total)    : 590
   Canonicalizable while   : 0
-  Canonicalizable for     : 893
-  Canonicalizability rate : 893/907  (98.5%)
+  Canonicalizable for     : 904
+  Canonicalizability rate : 904/918  (98.5%)
 
 ========================================================================
 FILE: NPB3.0-omp-C-master/sys/setparams.c
 ------------------------------------------------------------------------
-  Total loops             : 6
-    While loops           : 4  (nested: 0,  canonicalizable: 0)
+  Total loops             : 7
+    While loops           : 5  (nested: 0,  canonicalizable: 0)
     For loops             : 2  (nested: 0,  canonicalizable: 2)
     Do-while loops        : 0
   Nested loops (total)    : 0
-  Canonicalizability      : 2/6  (33.3%)
+  Canonicalizability      : 2/7  (28.6%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
   1    while        623   d=0  No          fgets(line, LL, deffile) != NULL
   2    while        688   d=0  No          *label != '    && *line == *label
-  3    while        725   d=0  No          *include_string != '    && *line == *include_…
-  4    while        737   d=0  No          *filename != '    && *line == *filename
-  5    for          810   d=0  Yes         i < nlines
-  6    for          834   d=0  Yes         log2 < 20
+  3    while        696   d=0  No          isspace(*line)
+  4    while        725   d=0  No          *include_string != '    && *line == *include_…
+  5    while        737   d=0  No          *filename != '    && *line == *filename
+  6    for          810   d=0  Yes         i < nlines
+  7    for          834   d=0  Yes         log2 < 20
 
   LOOP DETAILS
   ------------------------------------------------------------------------
@@ -50,28 +51,35 @@ FILE: NPB3.0-omp-C-master/sys/setparams.c
       Canonical    : NO  —  Condition is compound (&&/||) — loop has multiple termination variables and cannot be expressed as a single canonical counter
       Body snippet : line++; label++;
 
-  [3] WHILE  at line 725, col 3
+  [3] WHILE  at line 696, col 3
+      Depth        : 0 (top-level)
+      Condition    : isspace(*line)
+      Computation  : arithmetic
+      Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
+      Body snippet : line++;
+
+  [4] WHILE  at line 725, col 3
       Depth        : 0 (top-level)
       Condition    : *include_string != '    && *line == *include_string
       Computation  : arithmetic
       Canonical    : NO  —  Condition is compound (&&/||) — loop has multiple termination variables and cannot be expressed as a single canonical counter
       Body snippet : line++; include_string++;
 
-  [4] WHILE  at line 737, col 3
+  [5] WHILE  at line 737, col 3
       Depth        : 0 (top-level)
       Condition    : *filename != '    && *line == *filename
       Computation  : arithmetic
       Canonical    : NO  —  Condition is compound (&&/||) — loop has multiple termination variables and cannot be expressed as a single canonical counter
       Body snippet : line++; filename++;
 
-  [5] FOR  at line 810, col 3
+  [6] FOR  at line 810, col 3
       Depth        : 0 (top-level)
       Condition    : i < nlines
       Computation  : pointer, arithmetic, function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : pos = i*LINELEN;     if (i == 0) fprintf(fp, "%s\'", CONTINUE);     else        …
 
-  [6] FOR  at line 834, col 3
+  [7] FOR  at line 834, col 3
       Depth        : 0 (top-level)
       Condition    : log2 < 20
       Computation  : arithmetic, function_call
@@ -410,42 +418,42 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [1] FOR  at line 136, col 3
       Depth        : 0 (top-level)
       Condition    : step <= niter
-      Computation  : bitwise, function_call, io
+      Computation  : function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (step % 20 == 0 || step == 1) {        printf(" Time step %4d\n", step);     …
 
   [2] FOR  at line 185, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i = 1; i <= grid_points[0]-2; i++) {       for (j = 1; j <= grid_points[1]-…
 
   [3] FOR  at line 186, col 5
       Depth        : 1 (nested)
       Condition    : i <= grid_points[0]-2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 1; j <= grid_points[1]-2; j++) { 	for (k = 1; k <= grid_points[2]-2; k+…
 
   [4] FOR  at line 187, col 7
       Depth        : 2 (nested)
       Condition    : j <= grid_points[1]-2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k <= grid_points[2]-2; k++) { 	  u[m][i][j][k] = u[m][i][j][k] + rhs…
 
   [5] FOR  at line 188, col 2
       Depth        : 3 (nested)
       Condition    : k <= grid_points[2]-2
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[m][i][j][k] = u[m][i][j][k] + rhs[m][i][j][k];
 
   [6] FOR  at line 233, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rms[m] = 0.0;
 
@@ -480,21 +488,21 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [11] FOR  at line 252, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (d = 0; d < 3; d++) {       rms[m] = rms[m] / (double)(grid_points[d]-2);   …
 
   [12] FOR  at line 253, col 5
       Depth        : 1 (nested)
       Condition    : d < 3
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rms[m] = rms[m] / (double)(grid_points[d]-2);
 
   [13] FOR  at line 271, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rms[m] = 0.0;
 
@@ -529,42 +537,42 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [18] FOR  at line 286, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (d = 0; d < 3; d++) {       rms[m] = rms[m] / (double)(grid_points[d]-2);   …
 
   [19] FOR  at line 287, col 5
       Depth        : 1 (nested)
       Condition    : d < 3
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rms[m] = rms[m] / (double)(grid_points[d]-2);
 
   [20] FOR  at line 312, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i = 0; i <= grid_points[0]-1; i++) {       for (j = 0; j <= grid_points[1]-…
 
   [21] FOR  at line 313, col 5
       Depth        : 1 (nested)
       Condition    : i <= grid_points[0]-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 0; j <= grid_points[1]-1; j++) { 	for (k= 0; k <= grid_points[2]-1; k++…
 
   [22] FOR  at line 314, col 7
       Depth        : 2 (nested)
       Condition    : j <= grid_points[1]-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k= 0; k <= grid_points[2]-1; k++) { 	  forcing[m][i][j][k] = 0.0; 	}
 
   [23] FOR  at line 315, col 2
       Depth        : 3 (nested)
       Condition    : k <= grid_points[2]-1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : forcing[m][i][j][k] = 0.0;
 
@@ -592,7 +600,7 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [27] FOR  at line 334, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : ue[m][i] = dtemp[m];
 
@@ -662,7 +670,7 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [37] FOR  at line 429, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : ue[m][j] = dtemp[m];
 
@@ -732,7 +740,7 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [47] FOR  at line 525, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : ue[m][k] = dtemp[m];
 
@@ -816,63 +824,63 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [59] FOR  at line 673, col 3
       Depth        : 0 (top-level)
       Condition    : i <= IMAX-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 0; j <= IMAX-1; j++) {       for (k = 0; k <= IMAX-1; k++) { 	u[0][i][j…
 
   [60] FOR  at line 674, col 5
       Depth        : 1 (nested)
       Condition    : j <= IMAX-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k <= IMAX-1; k++) { 	u[0][i][j][k] = 1.0; 	u[1][i][j][k] = 0.0; 	u[2…
 
   [61] FOR  at line 675, col 7
       Depth        : 2 (nested)
       Condition    : k <= IMAX-1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[0][i][j][k] = 1.0; 	u[1][i][j][k] = 0.0; 	u[2][i][j][k] = 0.0; 	u[3][i][j][k] …
 
   [62] FOR  at line 689, col 3
       Depth        : 0 (top-level)
       Condition    : i <= grid_points[0]-1
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xi = (double)i * dnxm1;     for (j = 0; j <= grid_points[1]-1; j++) {       eta …
 
   [63] FOR  at line 691, col 5
       Depth        : 1 (nested)
       Condition    : j <= grid_points[1]-1
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : eta = (double)j * dnym1;       for (k = 0; k <= grid_points[2]-1; k++) { 	zeta =…
 
   [64] FOR  at line 693, col 7
       Depth        : 2 (nested)
       Condition    : k <= grid_points[2]-1
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : zeta = (double)k * dnzm1;                    	for (ix = 0; ix < 2; ix++) { 	  ex…
 
   [65] FOR  at line 696, col 2
       Depth        : 3 (nested)
       Condition    : ix < 2
-      Computation  : pointer, bitwise, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : exact_solution((double)ix, eta, zeta,  			 &Pface[ix][0][0]);
 
   [66] FOR  at line 701, col 2
       Depth        : 3 (nested)
       Condition    : iy < 2
-      Computation  : pointer, bitwise, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : exact_solution(xi, (double)iy , zeta,  			 &Pface[iy][1][0]);
 
   [67] FOR  at line 706, col 2
       Depth        : 3 (nested)
       Condition    : iz < 2
-      Computation  : pointer, bitwise, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : exact_solution(xi, eta, (double)iz,    			 &Pface[iz][2][0]);
 
@@ -900,7 +908,7 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [71] FOR  at line 743, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[m][i][j][k] = temp[m];
 
@@ -921,7 +929,7 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [74] FOR  at line 760, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[m][i][j][k] = temp[m];
 
@@ -942,7 +950,7 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [77] FOR  at line 777, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[m][i][j][k] = temp[m];
 
@@ -963,7 +971,7 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [80] FOR  at line 794, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[m][i][j][k] = temp[m];
 
@@ -984,7 +992,7 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [83] FOR  at line 811, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[m][i][j][k] = temp[m];
 
@@ -1005,35 +1013,35 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [86] FOR  at line 828, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[m][i][j][k] = temp[m];
 
   [87] FOR  at line 849, col 3
       Depth        : 0 (top-level)
       Condition    : n < 15
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : #pragma omp for nowait     for (i = 0; i < grid_points[0]; i++) {       for (j =…
 
   [88] FOR  at line 851, col 5
       Depth        : 1 (nested)
       Condition    : i < grid_points[0]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 0; j < grid_points[1]; j++) { 	for (k = 0; k < grid_points[2]; k++) { 	…
 
   [89] FOR  at line 852, col 7
       Depth        : 2 (nested)
       Condition    : j < grid_points[1]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k < grid_points[2]; k++) { 	  lhs[n][i][j][k] = 0.0; 	}
 
   [90] FOR  at line 853, col 2
       Depth        : 3 (nested)
       Condition    : k < grid_points[2]
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lhs[n][i][j][k] = 0.0;
 
@@ -1096,49 +1104,49 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [99] FOR  at line 924, col 3
       Depth        : 0 (top-level)
       Condition    : j <= grid_points[1]-2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k <= grid_points[2]-2; k++) {       lhs[2][i][j][k] = lhs[2][i][j][k…
 
   [100] FOR  at line 925, col 5
       Depth        : 1 (nested)
       Condition    : k <= grid_points[2]-2
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lhs[2][i][j][k] = lhs[2][i][j][k] + comz5;       lhs[3][i][j][k] = lhs[3][i][j][…
 
   [101] FOR  at line 937, col 3
       Depth        : 0 (top-level)
       Condition    : i <= grid_points[0]-4
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 1; j <= grid_points[1]-2; j++) {       for (k = 1; k <= grid_points[2]-…
 
   [102] FOR  at line 938, col 5
       Depth        : 1 (nested)
       Condition    : j <= grid_points[1]-2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k <= grid_points[2]-2; k++) { 	lhs[0][i][j][k] = lhs[0][i][j][k] + c…
 
   [103] FOR  at line 939, col 7
       Depth        : 2 (nested)
       Condition    : k <= grid_points[2]-2
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lhs[0][i][j][k] = lhs[0][i][j][k] + comz1; 	lhs[1][i][j][k] = lhs[1][i][j][k] - …
 
   [104] FOR  at line 951, col 3
       Depth        : 0 (top-level)
       Condition    : j <= grid_points[1]-2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k <= grid_points[2]-2; k++) {       lhs[0][i][j][k] = lhs[0][i][j][k…
 
   [105] FOR  at line 952, col 5
       Depth        : 1 (nested)
       Condition    : k <= grid_points[2]-2
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lhs[0][i][j][k] = lhs[0][i][j][k] + comz1;       lhs[1][i][j][k] = lhs[1][i][j][…
 
@@ -1194,49 +1202,49 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [113] FOR  at line 1038, col 3
       Depth        : 0 (top-level)
       Condition    : i <= grid_points[0]-2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k <= grid_points[2]-2; k++) {        lhs[2][i][j][k] = lhs[2][i][j][…
 
   [114] FOR  at line 1039, col 5
       Depth        : 1 (nested)
       Condition    : k <= grid_points[2]-2
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lhs[2][i][j][k] = lhs[2][i][j][k] + comz5;       lhs[3][i][j][k] = lhs[3][i][j][…
 
   [115] FOR  at line 1053, col 3
       Depth        : 0 (top-level)
       Condition    : i <= grid_points[0]-2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 3; j <= grid_points[1]-4; j++) {       for (k = 1; k <= grid_points[2]-…
 
   [116] FOR  at line 1054, col 5
       Depth        : 1 (nested)
       Condition    : j <= grid_points[1]-4
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k <= grid_points[2]-2; k++) { 	lhs[0][i][j][k] = lhs[0][i][j][k] + c…
 
   [117] FOR  at line 1055, col 7
       Depth        : 2 (nested)
       Condition    : k <= grid_points[2]-2
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lhs[0][i][j][k] = lhs[0][i][j][k] + comz1; 	lhs[1][i][j][k] = lhs[1][i][j][k] - …
 
   [118] FOR  at line 1067, col 3
       Depth        : 0 (top-level)
       Condition    : i <= grid_points[0]-2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k <= grid_points[2]-2; k++) {       lhs[0][i][j][k] = lhs[0][i][j][k…
 
   [119] FOR  at line 1068, col 5
       Depth        : 1 (nested)
       Condition    : k <= grid_points[2]-2
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lhs[0][i][j][k] = lhs[0][i][j][k] + comz1;       lhs[1][i][j][k] = lhs[1][i][j][…
 
@@ -1292,49 +1300,49 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [127] FOR  at line 1153, col 3
       Depth        : 0 (top-level)
       Condition    : i <= grid_points[0]-2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 1; j <= grid_points[1]-2; j++) {       lhs[2][i][j][k] = lhs[2][i][j][k…
 
   [128] FOR  at line 1154, col 5
       Depth        : 1 (nested)
       Condition    : j <= grid_points[1]-2
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lhs[2][i][j][k] = lhs[2][i][j][k] + comz5;       lhs[3][i][j][k] = lhs[3][i][j][…
 
   [129] FOR  at line 1167, col 3
       Depth        : 0 (top-level)
       Condition    : i <= grid_points[0]-2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 1; j <= grid_points[1]-2; j++) {       for (k = 3; k <= grid_points[2]-…
 
   [130] FOR  at line 1168, col 5
       Depth        : 1 (nested)
       Condition    : j <= grid_points[1]-2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 3; k <= grid_points[2]-4; k++) { 	lhs[0][i][j][k] = lhs[0][i][j][k] + c…
 
   [131] FOR  at line 1169, col 7
       Depth        : 2 (nested)
       Condition    : k <= grid_points[2]-4
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lhs[0][i][j][k] = lhs[0][i][j][k] + comz1; 	lhs[1][i][j][k] = lhs[1][i][j][k] - …
 
   [132] FOR  at line 1181, col 3
       Depth        : 0 (top-level)
       Condition    : i <= grid_points[0]-2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 1; j <= grid_points[1]-2; j++) {       lhs[0][i][j][k] = lhs[0][i][j][k…
 
   [133] FOR  at line 1182, col 5
       Depth        : 1 (nested)
       Condition    : j <= grid_points[1]-2
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lhs[0][i][j][k] = lhs[0][i][j][k] + comz1;       lhs[1][i][j][k] = lhs[1][i][j][…
 
@@ -1425,28 +1433,28 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [146] FOR  at line 1347, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : #pragma omp for     for (i = 0; i <= grid_points[0]-1; i++) {       for (j = 0; …
 
   [147] FOR  at line 1349, col 5
       Depth        : 1 (nested)
       Condition    : i <= grid_points[0]-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 0; j <= grid_points[1]-1; j++) { 	for (k = 0; k <= grid_points[2]-1; k+…
 
   [148] FOR  at line 1350, col 7
       Depth        : 2 (nested)
       Condition    : j <= grid_points[1]-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k <= grid_points[2]-1; k++) { 	  rhs[m][i][j][k] = forcing[m][i][j][…
 
   [149] FOR  at line 1351, col 2
       Depth        : 3 (nested)
       Condition    : k <= grid_points[2]-1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rhs[m][i][j][k] = forcing[m][i][j][k];
 
@@ -1922,21 +1930,21 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
   [217] FOR  at line 2073, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xcr[m] = xcr[m] / dt;
 
   [218] FOR  at line 2080, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xcrref[m] = 1.0;     xceref[m] = 1.0;
 
   [219] FOR  at line 2246, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xcrdif[m] = fabs((xcr[m]-xcrref[m])/xcrref[m]) ;     xcedif[m] = fabs((xce[m]-xc…
 
@@ -2608,651 +2616,643 @@ FILE: NPB3.0-omp-C-master/SP/sp.c
 ========================================================================
 FILE: NPB3.0-omp-C-master/MG/mg.c
 ------------------------------------------------------------------------
-  Total loops             : 78
-    While loops           : 2  (nested: 0,  canonicalizable: 0)
+  Total loops             : 77
+    While loops           : 1  (nested: 0,  canonicalizable: 0)
     For loops             : 76  (nested: 46,  canonicalizable: 76)
     Do-while loops        : 0
   Nested loops (total)    : 46
-  Canonicalizability      : 76/78  (97.4%)
+  Canonicalizability      : 76/77  (98.7%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
-  1    while        126   d=0  No          fgetc(fp) != '
-  2    for          127   d=0  Yes         i <= 7
-  3    for          140   d=0  Yes         i <= 7
-  4    for          203   d=0  Yes         l >=1
-  5    for          205   d=1  Yes         k < m3[l]
-  6    for          207   d=2  Yes         j < m2[l]
-  7    for          213   d=0  Yes         k < m3[lt]
-  8    for          215   d=1  Yes         j < m2[lt]
-  9    for          220   d=0  Yes         l >=1
-  10   for          222   d=1  Yes         k < m3[l]
-  11   for          224   d=2  Yes         j < m2[l]
-  12   for          265   d=0  Yes         it <= nit
-  13   for          343   d=0  Yes         k >= 1
-  14   for          349   d=0  Yes         k <= lt
-  15   for          393   d=0  Yes         k >= lb+1
-  16   for          406   d=0  Yes         k <= lt-1
-  17   for          455   d=0  Yes         i3 < n3-1
-  18   for          456   d=1  Yes         i2 < n2-1
-  19   for          457   d=2  Yes         i1 < n1
-  20   for          463   d=2  Yes         i1 < n1-1
-  21   for          517   d=0  Yes         i3 < n3-1
-  22   for          518   d=1  Yes         i2 < n2-1
-  23   for          519   d=2  Yes         i1 < n1
-  24   for          525   d=2  Yes         i1 < n1-1
-  25   for          596   d=0  Yes         j3 < m3j-1
-  26   for          599   d=1  Yes         j2 < m2j-1
-  27   for          603   d=2  Yes         j1 < m1j
-  28   for          612   d=2  Yes         j1 < m1j-1
-  29   for          670   d=0  Yes         i3 < mm3-1
-  30   for          671   d=1  Yes         i2 < mm2-1
-  31   for          672   d=2  Yes         i1 < mm1
-  32   for          677   d=2  Yes         i1 < mm1-1
-  33   for          683   d=2  Yes         i1 < mm1-1
-  34   for          689   d=2  Yes         i1 < mm1-1
-  35   for          695   d=2  Yes         i1 < mm1-1
-  36   for          731   d=0  Yes         i3 <= mm3-1
-  37   for          732   d=1  Yes         i2 <= mm2-1
-  38   for          733   d=2  Yes         i1 <= mm1-1
-  39   for          738   d=2  Yes         i1 <= mm1-1
-  40   for          744   d=1  Yes         i2 <= mm2-1
-  41   for          745   d=2  Yes         i1 <= mm1-1
-  42   for          750   d=2  Yes         i1 <= mm1-1
-  43   for          759   d=0  Yes         i3 <= mm3-1
-  44   for          760   d=1  Yes         i2 <= mm2-1
-  45   for          761   d=2  Yes         i1 <= mm1-1
-  46   for          766   d=2  Yes         i1 <= mm1-1
-  47   for          773   d=1  Yes         i2 <= mm2-1
-  48   for          774   d=2  Yes         i1 <= mm1-1
-  49   for          780   d=2  Yes         i1 <= mm1-1
-  50   for          827   d=0  Yes         i3 < n3-1
-  51   for          828   d=1  Yes         i2 < n2-1
-  52   for          829   d=2  Yes         i1 < n1-1
-  53   for          879   d=0  Yes         i3 < n3-1
-  54   for          880   d=1  Yes         i2 < n2-1
-  55   for          889   d=1  Yes         i1 < n1
-  56   for          897   d=0  Yes         i2 < n2
-  57   for          898   d=1  Yes         i1 < n1
-  58   for          949   d=0  Yes         i3 < e3
-  59   for          951   d=1  Yes         i2 < e2
-  60   for          967   d=0  Yes         i < MM
-  61   for          977   d=0  Yes         i3 < n3-1
-  62   for          978   d=1  Yes         i2 < n2-1
-  63   for          979   d=2  Yes         i1 < n1-1
-  64   for         1003   d=0  Yes         i >= 0
-  65   for         1065   d=0  Yes         i3 < n3
-  66   for         1066   d=1  Yes         i2 < n2
-  67   for         1067   d=2  Yes         i1 < n1
-  68   for         1072   d=0  Yes         i >= m0
-  69   for         1075   d=0  Yes         i >= m1
-  70   for         1101   d=0  Yes         i3 < m3
-  71   for         1102   d=1  Yes         i1 < m1
-  72   for         1103   d=2  Yes         i2 < m2
-  73   while       1134   d=0  No          nj != 0
-  74   for         1160   d=0  Yes         i < m-1
-  75   for         1183   d=0  Yes         i < m-1
-  76   for         1218   d=0  Yes         i3 < n3
-  77   for         1219   d=1  Yes         i2 < n2
-  78   for         1220   d=2  Yes         i1 < n1
+  1    for          127   d=0  Yes         i <= 7
+  2    for          140   d=0  Yes         i <= 7
+  3    for          203   d=0  Yes         l >=1
+  4    for          205   d=1  Yes         k < m3[l]
+  5    for          207   d=2  Yes         j < m2[l]
+  6    for          213   d=0  Yes         k < m3[lt]
+  7    for          215   d=1  Yes         j < m2[lt]
+  8    for          220   d=0  Yes         l >=1
+  9    for          222   d=1  Yes         k < m3[l]
+  10   for          224   d=2  Yes         j < m2[l]
+  11   for          265   d=0  Yes         it <= nit
+  12   for          343   d=0  Yes         k >= 1
+  13   for          349   d=0  Yes         k <= lt
+  14   for          393   d=0  Yes         k >= lb+1
+  15   for          406   d=0  Yes         k <= lt-1
+  16   for          455   d=0  Yes         i3 < n3-1
+  17   for          456   d=1  Yes         i2 < n2-1
+  18   for          457   d=2  Yes         i1 < n1
+  19   for          463   d=2  Yes         i1 < n1-1
+  20   for          517   d=0  Yes         i3 < n3-1
+  21   for          518   d=1  Yes         i2 < n2-1
+  22   for          519   d=2  Yes         i1 < n1
+  23   for          525   d=2  Yes         i1 < n1-1
+  24   for          596   d=0  Yes         j3 < m3j-1
+  25   for          599   d=1  Yes         j2 < m2j-1
+  26   for          603   d=2  Yes         j1 < m1j
+  27   for          612   d=2  Yes         j1 < m1j-1
+  28   for          670   d=0  Yes         i3 < mm3-1
+  29   for          671   d=1  Yes         i2 < mm2-1
+  30   for          672   d=2  Yes         i1 < mm1
+  31   for          677   d=2  Yes         i1 < mm1-1
+  32   for          683   d=2  Yes         i1 < mm1-1
+  33   for          689   d=2  Yes         i1 < mm1-1
+  34   for          695   d=2  Yes         i1 < mm1-1
+  35   for          731   d=0  Yes         i3 <= mm3-1
+  36   for          732   d=1  Yes         i2 <= mm2-1
+  37   for          733   d=2  Yes         i1 <= mm1-1
+  38   for          738   d=2  Yes         i1 <= mm1-1
+  39   for          744   d=1  Yes         i2 <= mm2-1
+  40   for          745   d=2  Yes         i1 <= mm1-1
+  41   for          750   d=2  Yes         i1 <= mm1-1
+  42   for          759   d=0  Yes         i3 <= mm3-1
+  43   for          760   d=1  Yes         i2 <= mm2-1
+  44   for          761   d=2  Yes         i1 <= mm1-1
+  45   for          766   d=2  Yes         i1 <= mm1-1
+  46   for          773   d=1  Yes         i2 <= mm2-1
+  47   for          774   d=2  Yes         i1 <= mm1-1
+  48   for          780   d=2  Yes         i1 <= mm1-1
+  49   for          827   d=0  Yes         i3 < n3-1
+  50   for          828   d=1  Yes         i2 < n2-1
+  51   for          829   d=2  Yes         i1 < n1-1
+  52   for          879   d=0  Yes         i3 < n3-1
+  53   for          880   d=1  Yes         i2 < n2-1
+  54   for          889   d=1  Yes         i1 < n1
+  55   for          897   d=0  Yes         i2 < n2
+  56   for          898   d=1  Yes         i1 < n1
+  57   for          949   d=0  Yes         i3 < e3
+  58   for          951   d=1  Yes         i2 < e2
+  59   for          967   d=0  Yes         i < MM
+  60   for          977   d=0  Yes         i3 < n3-1
+  61   for          978   d=1  Yes         i2 < n2-1
+  62   for          979   d=2  Yes         i1 < n1-1
+  63   for         1003   d=0  Yes         i >= 0
+  64   for         1065   d=0  Yes         i3 < n3
+  65   for         1066   d=1  Yes         i2 < n2
+  66   for         1067   d=2  Yes         i1 < n1
+  67   for         1072   d=0  Yes         i >= m0
+  68   for         1075   d=0  Yes         i >= m1
+  69   for         1101   d=0  Yes         i3 < m3
+  70   for         1102   d=1  Yes         i1 < m1
+  71   for         1103   d=2  Yes         i2 < m2
+  72   while       1134   d=0  No          nj != 0
+  73   for         1160   d=0  Yes         i < m-1
+  74   for         1183   d=0  Yes         i < m-1
+  75   for         1218   d=0  Yes         i3 < n3
+  76   for         1219   d=1  Yes         i2 < n2
+  77   for         1220   d=2  Yes         i1 < n1
 
   LOOP DETAILS
   ------------------------------------------------------------------------
-  [1] WHILE  at line 126, col 2
-      Depth        : 0 (top-level)
-      Condition    : fgetc(fp) != '
-      Computation  : pointer, bitwise, function_call, array_access
-      Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
-      Body snippet : fscanf(fp, "%d", &debug_vec[i]);
-
-  [2] FOR  at line 127, col 2
+  [1] FOR  at line 127, col 2
       Depth        : 0 (top-level)
       Condition    : i <= 7
-      Computation  : pointer, bitwise, function_call, array_access
+      Computation  : pointer, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : fscanf(fp, "%d", &debug_vec[i]);
 
-  [3] FOR  at line 140, col 2
+  [2] FOR  at line 140, col 2
       Depth        : 0 (top-level)
       Condition    : i <= 7
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : debug_vec[i] = DEBUG_DEFAULT;
 
-  [4] FOR  at line 203, col 5
+  [3] FOR  at line 203, col 5
       Depth        : 0 (top-level)
       Condition    : l >=1
       Computation  : pointer, arithmetic, function_call, memory_alloc, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[l] = (double ***)malloc(m3[l]*sizeof(double **)); 	for (k = 0; k < m3[l]; k++)…
 
-  [5] FOR  at line 205, col 2
+  [4] FOR  at line 205, col 2
       Depth        : 1 (nested)
       Condition    : k < m3[l]
       Computation  : pointer, arithmetic, function_call, memory_alloc, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[l][k] = (double **)malloc(m2[l]*sizeof(double *)); 	    for (j = 0; j < m2[l];…
 
-  [6] FOR  at line 207, col 6
+  [5] FOR  at line 207, col 6
       Depth        : 2 (nested)
       Condition    : j < m2[l]
       Computation  : pointer, arithmetic, function_call, memory_alloc, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[l][k][j] = (double *)malloc(m1[l]*sizeof(double));
 
-  [7] FOR  at line 213, col 5
+  [6] FOR  at line 213, col 5
       Depth        : 0 (top-level)
       Condition    : k < m3[lt]
       Computation  : pointer, arithmetic, function_call, memory_alloc, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : v[k] = (double **)malloc(m2[lt]*sizeof(double *)); 	for (j = 0; j < m2[lt]; j++)…
 
-  [8] FOR  at line 215, col 2
+  [7] FOR  at line 215, col 2
       Depth        : 1 (nested)
       Condition    : j < m2[lt]
       Computation  : pointer, arithmetic, function_call, memory_alloc, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : v[k][j] = (double *)malloc(m1[lt]*sizeof(double));
 
-  [9] FOR  at line 220, col 5
+  [8] FOR  at line 220, col 5
       Depth        : 0 (top-level)
       Condition    : l >=1
       Computation  : pointer, arithmetic, function_call, memory_alloc, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : r[l] = (double ***)malloc(m3[l]*sizeof(double **)); 	for (k = 0; k < m3[l]; k++)…
 
-  [10] FOR  at line 222, col 2
+  [9] FOR  at line 222, col 2
       Depth        : 1 (nested)
       Condition    : k < m3[l]
       Computation  : pointer, arithmetic, function_call, memory_alloc, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : r[l][k] = (double **)malloc(m2[l]*sizeof(double *)); 	    for (j = 0; j < m2[l];…
 
-  [11] FOR  at line 224, col 6
+  [10] FOR  at line 224, col 6
       Depth        : 2 (nested)
       Condition    : j < m2[l]
       Computation  : pointer, arithmetic, function_call, memory_alloc, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : r[l][k][j] = (double *)malloc(m1[l]*sizeof(double));
 
-  [12] FOR  at line 265, col 5
+  [11] FOR  at line 265, col 5
       Depth        : 0 (top-level)
       Condition    : it <= nit
-      Computation  : pointer, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : mg3P(u,v,r,a,c,n1,n2,n3,lt); 	resid(u[lt],v,r[lt],n1,n2,n3,a,lt);
 
-  [13] FOR  at line 343, col 5
+  [12] FOR  at line 343, col 5
       Depth        : 0 (top-level)
       Condition    : k >= 1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : nx[k] = nx[k+1]/2; 	ny[k] = ny[k+1]/2; 	nz[k] = nz[k+1]/2;
 
-  [14] FOR  at line 349, col 5
+  [13] FOR  at line 349, col 5
       Depth        : 0 (top-level)
       Condition    : k <= lt
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : m1[k] = nx[k]+2; 	m2[k] = nz[k]+2; 	m3[k] = ny[k]+2;
 
-  [15] FOR  at line 393, col 5
+  [14] FOR  at line 393, col 5
       Depth        : 0 (top-level)
       Condition    : k >= lb+1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : j = k-1; 	rprj3(r[k], m1[k], m2[k], m3[k], 	      r[j], m1[j], m2[j], m3[j], k);
 
-  [16] FOR  at line 406, col 5
+  [15] FOR  at line 406, col 5
       Depth        : 0 (top-level)
       Condition    : k <= lt-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : j = k-1; /*-------------------------------------------------------------------- …
 
-  [17] FOR  at line 455, col 5
+  [16] FOR  at line 455, col 5
       Depth        : 0 (top-level)
       Condition    : i3 < n3-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i2 = 1; i2 < n2-1; i2++) {             for (i1 = 0; i1 < n1; i1++) { 		r1[i…
 
-  [18] FOR  at line 456, col 2
+  [17] FOR  at line 456, col 2
       Depth        : 1 (nested)
       Condition    : i2 < n2-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i1 = 0; i1 < n1; i1++) { 		r1[i1] = r[i3][i2-1][i1] + r[i3][i2+1][i1] 		   …
 
-  [19] FOR  at line 457, col 13
+  [18] FOR  at line 457, col 13
       Depth        : 2 (nested)
       Condition    : i1 < n1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : r1[i1] = r[i3][i2-1][i1] + r[i3][i2+1][i1] 		    + r[i3-1][i2][i1] + r[i3+1][i2]…
 
-  [20] FOR  at line 463, col 13
+  [19] FOR  at line 463, col 13
       Depth        : 2 (nested)
       Condition    : i1 < n1-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[i3][i2][i1] = u[i3][i2][i1] 		    + c[0] * r[i3][i2][i1] 		    + c[1] * ( r[i3…
 
-  [21] FOR  at line 517, col 5
+  [20] FOR  at line 517, col 5
       Depth        : 0 (top-level)
       Condition    : i3 < n3-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i2 = 1; i2 < n2-1; i2++) {             for (i1 = 0; i1 < n1; i1++) { 		u1[i…
 
-  [22] FOR  at line 518, col 2
+  [21] FOR  at line 518, col 2
       Depth        : 1 (nested)
       Condition    : i2 < n2-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i1 = 0; i1 < n1; i1++) { 		u1[i1] = u[i3][i2-1][i1] + u[i3][i2+1][i1] 		   …
 
-  [23] FOR  at line 519, col 13
+  [22] FOR  at line 519, col 13
       Depth        : 2 (nested)
       Condition    : i1 < n1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u1[i1] = u[i3][i2-1][i1] + u[i3][i2+1][i1] 		       + u[i3-1][i2][i1] + u[i3+1][…
 
-  [24] FOR  at line 525, col 6
+  [23] FOR  at line 525, col 6
       Depth        : 2 (nested)
       Condition    : i1 < n1-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : r[i3][i2][i1] = v[i3][i2][i1] 		    - a[0] * u[i3][i2][i1] /*-------------------…
 
-  [25] FOR  at line 596, col 5
+  [24] FOR  at line 596, col 5
       Depth        : 0 (top-level)
       Condition    : j3 < m3j-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : i3 = 2*j3-d3; /*C        i3 = 2*j3-1*/ 	for (j2 = 1; j2 < m2j-1; j2++) {        …
 
-  [26] FOR  at line 599, col 2
+  [25] FOR  at line 599, col 2
       Depth        : 1 (nested)
       Condition    : j2 < m2j-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : i2 = 2*j2-d2; /*C           i2 = 2*j2-1*/              for (j1 = 1; j1 < m1j; j1…
 
-  [27] FOR  at line 603, col 13
+  [26] FOR  at line 603, col 13
       Depth        : 2 (nested)
       Condition    : j1 < m1j
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : i1 = 2*j1-d1; /*C             i1 = 2*j1-1*/ 		x1[i1] = r[i3+1][i2][i1] + r[i3+1]…
 
-  [28] FOR  at line 612, col 13
+  [27] FOR  at line 612, col 13
       Depth        : 2 (nested)
       Condition    : j1 < m1j-1
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : i1 = 2*j1-d1; /*C             i1 = 2*j1-1*/ 		y2 = r[i3][i2][i1+1] + r[i3+2][i2]…
 
-  [29] FOR  at line 670, col 2
+  [28] FOR  at line 670, col 2
       Depth        : 0 (top-level)
       Condition    : i3 < mm3-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i2 = 0; i2 < mm2-1; i2++) { 		for (i1 = 0; i1 < mm1; i1++) { 		    z1[i1] =…
 
-  [30] FOR  at line 671, col 13
+  [29] FOR  at line 671, col 13
       Depth        : 1 (nested)
       Condition    : i2 < mm2-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i1 = 0; i1 < mm1; i1++) { 		    z1[i1] = z[i3][i2+1][i1] + z[i3][i2][i1]; 	…
 
-  [31] FOR  at line 672, col 3
+  [30] FOR  at line 672, col 3
       Depth        : 2 (nested)
       Condition    : i1 < mm1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : z1[i1] = z[i3][i2+1][i1] + z[i3][i2][i1]; 		    z2[i1] = z[i3+1][i2][i1] + z[i3]…
 
-  [32] FOR  at line 677, col 3
+  [31] FOR  at line 677, col 3
       Depth        : 2 (nested)
       Condition    : i1 < mm1-1
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[2*i3][2*i2][2*i1] = u[2*i3][2*i2][2*i1] 			+z[i3][i2][i1]; 		    u[2*i3][2*i2]…
 
-  [33] FOR  at line 683, col 3
+  [32] FOR  at line 683, col 3
       Depth        : 2 (nested)
       Condition    : i1 < mm1-1
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[2*i3][2*i2+1][2*i1] = u[2*i3][2*i2+1][2*i1] 			+0.5 * z1[i1]; 		    u[2*i3][2*…
 
-  [34] FOR  at line 689, col 3
+  [33] FOR  at line 689, col 3
       Depth        : 2 (nested)
       Condition    : i1 < mm1-1
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[2*i3+1][2*i2][2*i1] = u[2*i3+1][2*i2][2*i1] 			+0.5 * z2[i1]; 		    u[2*i3+1][…
 
-  [35] FOR  at line 695, col 3
+  [34] FOR  at line 695, col 3
       Depth        : 2 (nested)
       Condition    : i1 < mm1-1
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[2*i3+1][2*i2+1][2*i1] = u[2*i3+1][2*i2+1][2*i1] 			+0.25* z3[i1]; 		    u[2*i3…
 
-  [36] FOR  at line 731, col 2
+  [35] FOR  at line 731, col 2
       Depth        : 0 (top-level)
       Condition    : i3 <= mm3-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for ( i2 = d2; i2 <= mm2-1; i2++) { 		for ( i1 = d1; i1 <= mm1-1; i1++) { 		    …
 
-  [37] FOR  at line 732, col 13
+  [36] FOR  at line 732, col 13
       Depth        : 1 (nested)
       Condition    : i2 <= mm2-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for ( i1 = d1; i1 <= mm1-1; i1++) { 		    u[2*i3-d3-1][2*i2-d2-1][2*i1-d1-1] = 	…
 
-  [38] FOR  at line 733, col 3
+  [37] FOR  at line 733, col 3
       Depth        : 2 (nested)
       Condition    : i1 <= mm1-1
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[2*i3-d3-1][2*i2-d2-1][2*i1-d1-1] = 			u[2*i3-d3-1][2*i2-d2-1][2*i1-d1-1] 			+z…
 
-  [39] FOR  at line 738, col 3
+  [38] FOR  at line 738, col 3
       Depth        : 2 (nested)
       Condition    : i1 <= mm1-1
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[2*i3-d3-1][2*i2-d2-1][2*i1-t1-1] = 			u[2*i3-d3-1][2*i2-d2-1][2*i1-t1-1] 			+0…
 
-  [40] FOR  at line 744, col 13
+  [39] FOR  at line 744, col 13
       Depth        : 1 (nested)
       Condition    : i2 <= mm2-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for ( i1 = d1; i1 <= mm1-1; i1++) { 		    u[2*i3-d3-1][2*i2-t2-1][2*i1-d1-1] = 	…
 
-  [41] FOR  at line 745, col 3
+  [40] FOR  at line 745, col 3
       Depth        : 2 (nested)
       Condition    : i1 <= mm1-1
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[2*i3-d3-1][2*i2-t2-1][2*i1-d1-1] = 			u[2*i3-d3-1][2*i2-t2-1][2*i1-d1-1] 			+0…
 
-  [42] FOR  at line 750, col 3
+  [41] FOR  at line 750, col 3
       Depth        : 2 (nested)
       Condition    : i1 <= mm1-1
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[2*i3-d3-1][2*i2-t2-1][2*i1-t1-1] = 			u[2*i3-d3-1][2*i2-t2-1][2*i1-t1-1] 			+0…
 
-  [43] FOR  at line 759, col 2
+  [42] FOR  at line 759, col 2
       Depth        : 0 (top-level)
       Condition    : i3 <= mm3-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for ( i2 = d2; i2 <= mm2-1; i2++) { 		for ( i1 = d1; i1 <= mm1-1; i1++) { 		    …
 
-  [44] FOR  at line 760, col 13
+  [43] FOR  at line 760, col 13
       Depth        : 1 (nested)
       Condition    : i2 <= mm2-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for ( i1 = d1; i1 <= mm1-1; i1++) { 		    u[2*i3-t3-1][2*i2-d2-1][2*i1-d1-1] = 	…
 
-  [45] FOR  at line 761, col 3
+  [44] FOR  at line 761, col 3
       Depth        : 2 (nested)
       Condition    : i1 <= mm1-1
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[2*i3-t3-1][2*i2-d2-1][2*i1-d1-1] = 			u[2*i3-t3-1][2*i2-d2-1][2*i1-d1-1] 			+0…
 
-  [46] FOR  at line 766, col 3
+  [45] FOR  at line 766, col 3
       Depth        : 2 (nested)
       Condition    : i1 <= mm1-1
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[2*i3-t3-1][2*i2-d2-1][2*i1-t1-1] = 			u[2*i3-t3-1][2*i2-d2-1][2*i1-t1-1] 			+0…
 
-  [47] FOR  at line 773, col 6
+  [46] FOR  at line 773, col 6
       Depth        : 1 (nested)
       Condition    : i2 <= mm2-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for ( i1 = d1; i1 <= mm1-1; i1++) { 		    u[2*i3-t3-1][2*i2-t2-1][2*i1-d1-1] = 	…
 
-  [48] FOR  at line 774, col 3
+  [47] FOR  at line 774, col 3
       Depth        : 2 (nested)
       Condition    : i1 <= mm1-1
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[2*i3-t3-1][2*i2-t2-1][2*i1-d1-1] = 			u[2*i3-t3-1][2*i2-t2-1][2*i1-d1-1] 			+0…
 
-  [49] FOR  at line 780, col 3
+  [48] FOR  at line 780, col 3
       Depth        : 2 (nested)
       Condition    : i1 <= mm1-1
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[2*i3-t3-1][2*i2-t2-1][2*i1-t1-1] = 			u[2*i3-t3-1][2*i2-t2-1][2*i1-t1-1] 			+0…
 
-  [50] FOR  at line 827, col 5
+  [49] FOR  at line 827, col 5
       Depth        : 0 (top-level)
       Condition    : i3 < n3-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i2 = 1; i2 < n2-1; i2++) {             for (i1 = 1; i1 < n1-1; i1++) { 		s …
 
-  [51] FOR  at line 828, col 2
+  [50] FOR  at line 828, col 2
       Depth        : 1 (nested)
       Condition    : i2 < n2-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i1 = 1; i1 < n1-1; i1++) { 		s = s + r[i3][i2][i1] * r[i3][i2][i1]; 		a = f…
 
-  [52] FOR  at line 829, col 13
+  [51] FOR  at line 829, col 13
       Depth        : 2 (nested)
       Condition    : i1 < n1-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : s = s + r[i3][i2][i1] * r[i3][i2][i1]; 		a = fabs(r[i3][i2][i1]); 		if (a > tmp)…
 
-  [53] FOR  at line 879, col 5
+  [52] FOR  at line 879, col 5
       Depth        : 0 (top-level)
       Condition    : i3 < n3-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for ( i2 = 1; i2 < n2-1; i2++) { 	    u[i3][i2][n1-1] = u[i3][i2][1]; 	    u[i3]…
 
-  [54] FOR  at line 880, col 2
+  [53] FOR  at line 880, col 2
       Depth        : 1 (nested)
       Condition    : i2 < n2-1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[i3][i2][n1-1] = u[i3][i2][1]; 	    u[i3][i2][0] = u[i3][i2][n1-2];
 
-  [55] FOR  at line 889, col 2
+  [54] FOR  at line 889, col 2
       Depth        : 1 (nested)
       Condition    : i1 < n1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[i3][n2-1][i1] = u[i3][1][i1]; 	    u[i3][0][i1] = u[i3][n2-2][i1];
 
-  [56] FOR  at line 897, col 5
+  [55] FOR  at line 897, col 5
       Depth        : 0 (top-level)
       Condition    : i2 < n2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for ( i1 = 0; i1 < n1; i1++) { 	    u[n3-1][i2][i1] = u[1][i2][i1]; 	    u[0][i2…
 
-  [57] FOR  at line 898, col 2
+  [56] FOR  at line 898, col 2
       Depth        : 1 (nested)
       Condition    : i1 < n1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[n3-1][i2][i1] = u[1][i2][i1]; 	    u[0][i2][i1] = u[n3-2][i2][i1];
 
-  [58] FOR  at line 949, col 5
+  [57] FOR  at line 949, col 5
       Depth        : 0 (top-level)
       Condition    : i3 < e3
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x1 = x0; 	for (i2 = 1; i2 < e2; i2++) {             xx = x1;             vranlc(…
 
-  [59] FOR  at line 951, col 2
+  [58] FOR  at line 951, col 2
       Depth        : 1 (nested)
       Condition    : i2 < e2
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xx = x1;             vranlc( d1, &xx, A, &(z[i3][i2][0]));             rdummy = …
 
-  [60] FOR  at line 967, col 5
+  [59] FOR  at line 967, col 5
       Depth        : 0 (top-level)
       Condition    : i < MM
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : ten[i][1] = 0.0; 	j1[i][1] = 0; 	j2[i][1] = 0; 	j3[i][1] = 0; 	ten[i][0] = 1.0; …
 
-  [61] FOR  at line 977, col 5
+  [60] FOR  at line 977, col 5
       Depth        : 0 (top-level)
       Condition    : i3 < n3-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i2 = 1; i2 < n2-1; i2++) {             for (i1 = 1; i1 < n1-1; i1++) { 		if…
 
-  [62] FOR  at line 978, col 2
+  [61] FOR  at line 978, col 2
       Depth        : 1 (nested)
       Condition    : i2 < n2-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i1 = 1; i1 < n1-1; i1++) { 		if ( z[i3][i2][i1] > ten[0][1] ) { 		    ten[0…
 
-  [63] FOR  at line 979, col 13
+  [62] FOR  at line 979, col 13
       Depth        : 2 (nested)
       Condition    : i1 < n1-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if ( z[i3][i2][i1] > ten[0][1] ) { 		    ten[0][1] = z[i3][i2][i1]; 		    j1[0][…
 
-  [64] FOR  at line 1003, col 5
+  [63] FOR  at line 1003, col 5
       Depth        : 0 (top-level)
       Condition    : i >= 0
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : best = z[j3[i1][1]][j2[i1][1]][j1[i1][1]]; 	if (best == z[j3[i1][1]][j2[i1][1]][…
 
-  [65] FOR  at line 1065, col 5
+  [64] FOR  at line 1065, col 5
       Depth        : 0 (top-level)
       Condition    : i3 < n3
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i2 = 0; i2 < n2; i2++) {             for (i1 = 0; i1 < n1; i1++) { 		z[i3][…
 
-  [66] FOR  at line 1066, col 2
+  [65] FOR  at line 1066, col 2
       Depth        : 1 (nested)
       Condition    : i2 < n2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i1 = 0; i1 < n1; i1++) { 		z[i3][i2][i1] = 0.0; 	    }
 
-  [67] FOR  at line 1067, col 13
+  [66] FOR  at line 1067, col 13
       Depth        : 2 (nested)
       Condition    : i1 < n1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : z[i3][i2][i1] = 0.0;
 
-  [68] FOR  at line 1072, col 5
+  [67] FOR  at line 1072, col 5
       Depth        : 0 (top-level)
       Condition    : i >= m0
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : z[j3[i][0]][j2[i][0]][j1[i][0]] = -1.0;
 
-  [69] FOR  at line 1075, col 5
+  [68] FOR  at line 1075, col 5
       Depth        : 0 (top-level)
       Condition    : i >= m1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : z[j3[i][1]][j2[i][1]][j1[i][1]] = 1.0;
 
-  [70] FOR  at line 1101, col 5
+  [69] FOR  at line 1101, col 5
       Depth        : 0 (top-level)
       Condition    : i3 < m3
-      Computation  : pointer, arithmetic, function_call, io, array_access
+      Computation  : arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i1 = 0; i1 < m1; i1++) { 	    for (i2 = 0; i2 < m2; i2++) { 		printf("%6.3f…
 
-  [71] FOR  at line 1102, col 2
+  [70] FOR  at line 1102, col 2
       Depth        : 1 (nested)
       Condition    : i1 < m1
-      Computation  : pointer, arithmetic, function_call, io, array_access
+      Computation  : arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i2 = 0; i2 < m2; i2++) { 		printf("%6.3f", z[i3][i2][i1]); 	    } 	    prin…
 
-  [72] FOR  at line 1103, col 6
+  [71] FOR  at line 1103, col 6
       Depth        : 2 (nested)
       Condition    : i2 < m2
-      Computation  : pointer, function_call, io, array_access
+      Computation  : function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : printf("%6.3f", z[i3][i2][i1]);
 
-  [73] WHILE  at line 1134, col 5
+  [72] WHILE  at line 1134, col 5
       Depth        : 0 (top-level)
       Condition    : nj != 0
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : NO  —  Counter variable 'nj' is modified conditionally or with a data-dependent (runtime) stride — trip count is not statically predictable
       Body snippet : if( (nj%2) == 1 ) rdummy =  randlc( &power, aj ); 	rdummy = randlc( &aj, aj ); 	…
 
-  [74] FOR  at line 1160, col 2
+  [73] FOR  at line 1160, col 2
       Depth        : 0 (top-level)
       Condition    : i < m-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if ( ten[i][ind] > ten[i+1][ind] ) {  		temp = ten[i+1][ind]; 		ten[i+1][ind] = …
 
-  [75] FOR  at line 1183, col 2
+  [74] FOR  at line 1183, col 2
       Depth        : 0 (top-level)
       Condition    : i < m-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if ( ten[i][ind] < ten[i+1][ind] ) {  		temp = ten[i+1][ind]; 		ten[i+1][ind] = …
 
-  [76] FOR  at line 1218, col 5
+  [75] FOR  at line 1218, col 5
       Depth        : 0 (top-level)
       Condition    : i3 < n3
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i2 = 0; i2 < n2; i2++) {             for (i1 = 0; i1 < n1; i1++) { 		z[i3][…
 
-  [77] FOR  at line 1219, col 2
+  [76] FOR  at line 1219, col 2
       Depth        : 1 (nested)
       Condition    : i2 < n2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i1 = 0; i1 < n1; i1++) { 		z[i3][i2][i1] = 0.0; 	    }
 
-  [78] FOR  at line 1220, col 13
+  [77] FOR  at line 1220, col 13
       Depth        : 2 (nested)
       Condition    : i1 < n1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : z[i3][i2][i1] = 0.0;
 
 ========================================================================
 FILE: NPB3.0-omp-C-master/LU/lu.c
 ------------------------------------------------------------------------
-  Total loops             : 177
-    While loops           : 5  (nested: 0,  canonicalizable: 0)
+  Total loops             : 176
+    While loops           : 4  (nested: 0,  canonicalizable: 0)
     For loops             : 172  (nested: 123,  canonicalizable: 172)
     Do-while loops        : 0
   Nested loops (total)    : 123
-  Canonicalizability      : 172/177  (97.2%)
+  Canonicalizability      : 172/176  (97.7%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
@@ -3358,81 +3358,80 @@ FILE: NPB3.0-omp-C-master/LU/lu.c
   100  for         2210   d=1  Yes         k <= ki2
   101  for         2222   d=0  Yes         j <= jfin1
   102  for         2223   d=1  Yes         k <= ki2-1
-  103  while       2287   d=0  No          fgetc(fp) != '
-  104  for         2356   d=0  Yes         i <= nx-1
-  105  for         2357   d=1  Yes         j <= ny-1
-  106  for         2358   d=2  Yes         k <= nz-1
-  107  for         2359   d=3  Yes         m < 5
-  108  for         2374   d=0  Yes         i <= L2
-  109  for         2375   d=1  Yes         j <= jend
-  110  for         2376   d=2  Yes         k <= nz - 2
-  111  for         2395   d=0  Yes         j <= jend
-  112  for         2396   d=1  Yes         k <= nz - 2
-  113  for         2397   d=2  Yes         i <= iend
-  114  for         2398   d=3  Yes         m < 5
-  115  for         2406   d=2  Yes         i <= L2
-  116  for         2432   d=2  Yes         i <= iend
-  117  for         2462   d=2  Yes         m < 5
-  118  for         2477   d=2  Yes         i <= iend1
-  119  for         2478   d=3  Yes         m < 5
-  120  for         2489   d=2  Yes         m < 5
-  121  for         2511   d=0  Yes         i <= iend
-  122  for         2512   d=1  Yes         j <= L2
-  123  for         2513   d=2  Yes         k <= nz - 2
-  124  for         2531   d=0  Yes         i <= iend
-  125  for         2532   d=1  Yes         k <= nz - 2
-  126  for         2533   d=2  Yes         j <= jend
-  127  for         2534   d=3  Yes         m < 5
-  128  for         2541   d=2  Yes         j <= L2
-  129  for         2566   d=2  Yes         j <= jend
-  130  for         2602   d=2  Yes         m < 5
-  131  for         2616   d=2  Yes         j <= jend1
-  132  for         2617   d=3  Yes         m < 5
-  133  for         2627   d=2  Yes         m < 5
-  134  for         2645   d=0  Yes         i <= iend
-  135  for         2646   d=1  Yes         j <= jend
-  136  for         2647   d=2  Yes         k <= nz-1
-  137  for         2662   d=2  Yes         k <= nz - 2
-  138  for         2663   d=3  Yes         m < 5
-  139  for         2669   d=2  Yes         k <= nz-1
-  140  for         2695   d=2  Yes         k <= nz - 2
-  141  for         2725   d=2  Yes         m < 5
-  142  for         2737   d=2  Yes         k <= nz - 4
-  143  for         2738   d=3  Yes         m < 5
-  144  for         2748   d=2  Yes         m < 5
-  145  for         2787   d=0  Yes         i < nx
-  146  for         2789   d=1  Yes         j < ny
-  147  for         2800   d=0  Yes         i < nx
-  148  for         2802   d=1  Yes         k < nz
-  149  for         2808   d=0  Yes         i < nx
-  150  for         2810   d=1  Yes         k < nz
-  151  for         2819   d=0  Yes         j < ny
-  152  for         2821   d=1  Yes         k < nz
-  153  for         2827   d=0  Yes         j < ny
-  154  for         2829   d=1  Yes         k < nz
-  155  for         3006   d=0  Yes         j < ny
-  156  for         3008   d=1  Yes         k < nz - 1
-  157  for         3012   d=2  Yes         i < nx
-  158  for         3022   d=3  Yes         m < 5
-  159  for         3071   d=0  Yes         i < ISIZ1
-  160  for         3072   d=1  Yes         j < ISIZ2
-  161  for         3073   d=2  Yes         k < 5
-  162  for         3074   d=3  Yes         m < 5
-  163  for         3105   d=0  Yes         istep <= itmax
-  164  for         3119   d=1  Yes         i <= iend
-  165  for         3120   d=2  Yes         j <= jend
-  166  for         3121   d=3  Yes         k <= nz - 2
-  167  for         3122   d=4  Yes         m < 5
-  168  for         3129   d=1  Yes         k <= nz - 2
-  169  for         3148   d=1  Yes         k >= 1
-  170  for         3171   d=1  Yes         i <= iend
-  171  for         3172   d=2  Yes         j <= jend
-  172  for         3173   d=3  Yes         k <= nz-2
-  173  for         3174   d=4  Yes         m < 5
-  174  for         3247   d=0  Yes         m < 5
-  175  for         3415   d=0  Yes         m < 5
-  176  for         3445   d=0  Yes         m < 5
-  177  for         3464   d=0  Yes         m < 5
+  103  for         2356   d=0  Yes         i <= nx-1
+  104  for         2357   d=1  Yes         j <= ny-1
+  105  for         2358   d=2  Yes         k <= nz-1
+  106  for         2359   d=3  Yes         m < 5
+  107  for         2374   d=0  Yes         i <= L2
+  108  for         2375   d=1  Yes         j <= jend
+  109  for         2376   d=2  Yes         k <= nz - 2
+  110  for         2395   d=0  Yes         j <= jend
+  111  for         2396   d=1  Yes         k <= nz - 2
+  112  for         2397   d=2  Yes         i <= iend
+  113  for         2398   d=3  Yes         m < 5
+  114  for         2406   d=2  Yes         i <= L2
+  115  for         2432   d=2  Yes         i <= iend
+  116  for         2462   d=2  Yes         m < 5
+  117  for         2477   d=2  Yes         i <= iend1
+  118  for         2478   d=3  Yes         m < 5
+  119  for         2489   d=2  Yes         m < 5
+  120  for         2511   d=0  Yes         i <= iend
+  121  for         2512   d=1  Yes         j <= L2
+  122  for         2513   d=2  Yes         k <= nz - 2
+  123  for         2531   d=0  Yes         i <= iend
+  124  for         2532   d=1  Yes         k <= nz - 2
+  125  for         2533   d=2  Yes         j <= jend
+  126  for         2534   d=3  Yes         m < 5
+  127  for         2541   d=2  Yes         j <= L2
+  128  for         2566   d=2  Yes         j <= jend
+  129  for         2602   d=2  Yes         m < 5
+  130  for         2616   d=2  Yes         j <= jend1
+  131  for         2617   d=3  Yes         m < 5
+  132  for         2627   d=2  Yes         m < 5
+  133  for         2645   d=0  Yes         i <= iend
+  134  for         2646   d=1  Yes         j <= jend
+  135  for         2647   d=2  Yes         k <= nz-1
+  136  for         2662   d=2  Yes         k <= nz - 2
+  137  for         2663   d=3  Yes         m < 5
+  138  for         2669   d=2  Yes         k <= nz-1
+  139  for         2695   d=2  Yes         k <= nz - 2
+  140  for         2725   d=2  Yes         m < 5
+  141  for         2737   d=2  Yes         k <= nz - 4
+  142  for         2738   d=3  Yes         m < 5
+  143  for         2748   d=2  Yes         m < 5
+  144  for         2787   d=0  Yes         i < nx
+  145  for         2789   d=1  Yes         j < ny
+  146  for         2800   d=0  Yes         i < nx
+  147  for         2802   d=1  Yes         k < nz
+  148  for         2808   d=0  Yes         i < nx
+  149  for         2810   d=1  Yes         k < nz
+  150  for         2819   d=0  Yes         j < ny
+  151  for         2821   d=1  Yes         k < nz
+  152  for         2827   d=0  Yes         j < ny
+  153  for         2829   d=1  Yes         k < nz
+  154  for         3006   d=0  Yes         j < ny
+  155  for         3008   d=1  Yes         k < nz - 1
+  156  for         3012   d=2  Yes         i < nx
+  157  for         3022   d=3  Yes         m < 5
+  158  for         3071   d=0  Yes         i < ISIZ1
+  159  for         3072   d=1  Yes         j < ISIZ2
+  160  for         3073   d=2  Yes         k < 5
+  161  for         3074   d=3  Yes         m < 5
+  162  for         3105   d=0  Yes         istep <= itmax
+  163  for         3119   d=1  Yes         i <= iend
+  164  for         3120   d=2  Yes         j <= jend
+  165  for         3121   d=3  Yes         k <= nz - 2
+  166  for         3122   d=4  Yes         m < 5
+  167  for         3129   d=1  Yes         k <= nz - 2
+  168  for         3148   d=1  Yes         k >= 1
+  169  for         3171   d=1  Yes         i <= iend
+  170  for         3172   d=2  Yes         j <= jend
+  171  for         3173   d=3  Yes         k <= nz-2
+  172  for         3174   d=4  Yes         m < 5
+  173  for         3247   d=0  Yes         m < 5
+  174  for         3415   d=0  Yes         m < 5
+  175  for         3445   d=0  Yes         m < 5
+  176  for         3464   d=0  Yes         m < 5
 
   LOOP DETAILS
   ------------------------------------------------------------------------
@@ -3495,7 +3494,7 @@ FILE: NPB3.0-omp-C-master/LU/lu.c
   [9] FOR  at line 262, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : tmat[m][0] = d[i][j][m][0]; 	tmat[m][1] = d[i][j][m][1]; 	tmat[m][2] = d[i][j][m…
 
@@ -3558,35 +3557,35 @@ FILE: NPB3.0-omp-C-master/LU/lu.c
   [18] FOR  at line 496, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : tmat[m][0] = d[i][j][m][0]; 	tmat[m][1] = d[i][j][m][1]; 	tmat[m][2] = d[i][j][m…
 
   [19] FOR  at line 735, col 3
       Depth        : 0 (top-level)
       Condition    : i < nx
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 0; j < ny; j++) {       for (k = 0; k < nz; k++) { 	for (m = 0; m < 5; …
 
   [20] FOR  at line 736, col 5
       Depth        : 1 (nested)
       Condition    : j < ny
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k < nz; k++) { 	for (m = 0; m < 5; m++) { 	  frct[i][j][k][m] = 0.0;…
 
   [21] FOR  at line 737, col 7
       Depth        : 2 (nested)
       Condition    : k < nz
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  frct[i][j][k][m] = 0.0; 	}
 
   [22] FOR  at line 738, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : frct[i][j][k][m] = 0.0;
 
@@ -3656,14 +3655,14 @@ FILE: NPB3.0-omp-C-master/LU/lu.c
   [32] FOR  at line 802, col 7
       Depth        : 2 (nested)
       Condition    : i <= iend
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  frct[i][j][k][m] =  frct[i][j][k][m] 	    - tx2 * (…
 
   [33] FOR  at line 803, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : frct[i][j][k][m] =  frct[i][j][k][m] 	    - tx2 * ( flux[i+1][j][k][m] - flux[i-…
 
@@ -3747,14 +3746,14 @@ FILE: NPB3.0-omp-C-master/LU/lu.c
   [45] FOR  at line 933, col 7
       Depth        : 2 (nested)
       Condition    : j <= jend
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  frct[i][j][k][m] =  frct[i][j][k][m] 	    - ty2 * (…
 
   [46] FOR  at line 934, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : frct[i][j][k][m] =  frct[i][j][k][m] 	    - ty2 * ( flux[i][j+1][k][m] - flux[i]…
 
@@ -3824,14 +3823,14 @@ FILE: NPB3.0-omp-C-master/LU/lu.c
   [56] FOR  at line 1057, col 7
       Depth        : 2 (nested)
       Condition    : k <= nz - 2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  frct[i][j][k][m] =  frct[i][j][k][m] 	    - tz2 * (…
 
   [57] FOR  at line 1058, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : frct[i][j][k][m] =  frct[i][j][k][m] 	    - tz2 * ( flux[i][j][k+1][m] - flux[i]…
 
@@ -3880,7 +3879,7 @@ FILE: NPB3.0-omp-C-master/LU/lu.c
   [64] FOR  at line 1177, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : errnm[m] = 0.0;
 
@@ -3915,7 +3914,7 @@ FILE: NPB3.0-omp-C-master/LU/lu.c
   [69] FOR  at line 1195, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : errnm[m] = sqrt ( errnm[m] / ( (nx0-2)*(ny0-2)*(nz0-2) ) );
 
@@ -3964,7 +3963,7 @@ FILE: NPB3.0-omp-C-master/LU/lu.c
   [76] FOR  at line 2005, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : sum[m] = 0.0;
 
@@ -3992,683 +3991,676 @@ FILE: NPB3.0-omp-C-master/LU/lu.c
   [80] FOR  at line 2033, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : sum[m] = sqrt ( sum[m] / ( (nx0-2)*(ny0-2)*(nz0-2) ) );
 
   [81] FOR  at line 2082, col 3
       Depth        : 0 (top-level)
       Condition    : i <= ISIZ2+1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k <= ISIZ3+1; k++) {       phi1[i][k] = 0.0;       phi2[i][k] = 0.0;…
 
   [82] FOR  at line 2083, col 5
       Depth        : 1 (nested)
       Condition    : k <= ISIZ3+1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : phi1[i][k] = 0.0;       phi2[i][k] = 0.0;
 
   [83] FOR  at line 2088, col 3
       Depth        : 0 (top-level)
       Condition    : i <= ifin
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : iglob = i;     for (j = jbeg; j <= jfin; j++) {       jglob = j;        k = ki1;…
 
   [84] FOR  at line 2090, col 5
       Depth        : 1 (nested)
       Condition    : j <= jfin
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : jglob = j;        k = ki1;        phi1[i][j] = C2*(  u[i][j][k][4] 			- 0.50 * (…
 
   [85] FOR  at line 2113, col 3
       Depth        : 0 (top-level)
       Condition    : i <= ifin1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = jbeg; j <= jfin1; j++) {       frc1 = frc1 + (  phi1[i][j] 		       + p…
 
   [86] FOR  at line 2114, col 5
       Depth        : 1 (nested)
       Condition    : j <= jfin1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : frc1 = frc1 + (  phi1[i][j] 		       + phi1[i+1][j] 		       + phi1[i][j+1] 		  …
 
   [87] FOR  at line 2131, col 3
       Depth        : 0 (top-level)
       Condition    : i <= ISIZ2+1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k <= ISIZ3+1; k++) {       phi1[i][k] = 0.0;       phi2[i][k] = 0.0;…
 
   [88] FOR  at line 2132, col 5
       Depth        : 1 (nested)
       Condition    : k <= ISIZ3+1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : phi1[i][k] = 0.0;       phi2[i][k] = 0.0;
 
   [89] FOR  at line 2139, col 5
       Depth        : 0 (top-level)
       Condition    : i <= ifin
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : iglob = i;       for (k = ki1; k <= ki2; k++) { 	phi1[i][k] = C2*(  u[i][jbeg][k…
 
   [90] FOR  at line 2141, col 7
       Depth        : 1 (nested)
       Condition    : k <= ki2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : phi1[i][k] = C2*(  u[i][jbeg][k][4] 			  - 0.50 * (  pow2(u[i][jbeg][k][1]) 				…
 
   [91] FOR  at line 2153, col 5
       Depth        : 0 (top-level)
       Condition    : i <= ifin
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : iglob = i;       for (k = ki1; k <= ki2; k++) { 	phi2[i][k] = C2*(  u[i][jfin][k…
 
   [92] FOR  at line 2155, col 7
       Depth        : 1 (nested)
       Condition    : k <= ki2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : phi2[i][k] = C2*(  u[i][jfin][k][4] 			  - 0.50 * (  pow2(u[i][jfin][k][1]) 				…
 
   [93] FOR  at line 2167, col 3
       Depth        : 0 (top-level)
       Condition    : i <= ifin1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = ki1; k <= ki2-1; k++) {       frc2 = frc2 + (  phi1[i][k] 		       + ph…
 
   [94] FOR  at line 2168, col 5
       Depth        : 1 (nested)
       Condition    : k <= ki2-1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : frc2 = frc2 + (  phi1[i][k] 		       + phi1[i+1][k] 		       + phi1[i][k+1] 		  …
 
   [95] FOR  at line 2186, col 3
       Depth        : 0 (top-level)
       Condition    : i <= ISIZ2+1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k <= ISIZ3+1; k++) {       phi1[i][k] = 0.0;       phi2[i][k] = 0.0;…
 
   [96] FOR  at line 2187, col 5
       Depth        : 1 (nested)
       Condition    : k <= ISIZ3+1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : phi1[i][k] = 0.0;       phi2[i][k] = 0.0;
 
   [97] FOR  at line 2194, col 5
       Depth        : 0 (top-level)
       Condition    : j <= jfin
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : jglob = j;       for (k = ki1; k <= ki2; k++) { 	phi1[j][k] = C2*(  u[ibeg][j][k…
 
   [98] FOR  at line 2196, col 7
       Depth        : 1 (nested)
       Condition    : k <= ki2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : phi1[j][k] = C2*(  u[ibeg][j][k][4] 			  - 0.50 * (  pow2(u[ibeg][j][k][1]) 				…
 
   [99] FOR  at line 2208, col 5
       Depth        : 0 (top-level)
       Condition    : j <= jfin
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : jglob = j;       for (k = ki1; k <= ki2; k++) { 	phi2[j][k] = C2*(  u[ifin][j][k…
 
   [100] FOR  at line 2210, col 7
       Depth        : 1 (nested)
       Condition    : k <= ki2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : phi2[j][k] = C2*(  u[ifin][j][k][4] 			  - 0.50 * (  pow2(u[ifin][j][k][1]) 				…
 
   [101] FOR  at line 2222, col 3
       Depth        : 0 (top-level)
       Condition    : j <= jfin1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = ki1; k <= ki2-1; k++) {       frc3 = frc3 + (  phi1[j][k] 		       + ph…
 
   [102] FOR  at line 2223, col 5
       Depth        : 1 (nested)
       Condition    : k <= ki2-1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : frc3 = frc3 + (  phi1[j][k] 		       + phi1[j+1][k] 		       + phi1[j][k+1] 		  …
 
-  [103] WHILE  at line 2287, col 5
-      Depth        : 0 (top-level)
-      Condition    : fgetc(fp) != '
-      Computation  : pointer, arithmetic, array_access
-      Canonical    : NO  —  Condition is not a simple comparison (var relop expr)
-      Body snippet : ipr = IPR_DEFAULT;     inorm = INORM_DEFAULT;     itmax = ITMAX_DEFAULT;     dt …
-
-  [104] FOR  at line 2356, col 3
+  [103] FOR  at line 2356, col 3
       Depth        : 0 (top-level)
       Condition    : i <= nx-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 0; j <= ny-1; j++) {       for (k = 0; k <= nz-1; k++) { 	for (m = 0; m…
 
-  [105] FOR  at line 2357, col 5
+  [104] FOR  at line 2357, col 5
       Depth        : 1 (nested)
       Condition    : j <= ny-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k <= nz-1; k++) { 	for (m = 0; m < 5; m++) { 	  rsd[i][j][k][m] = - …
 
-  [106] FOR  at line 2358, col 7
+  [105] FOR  at line 2358, col 7
       Depth        : 2 (nested)
       Condition    : k <= nz-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  rsd[i][j][k][m] = - frct[i][j][k][m]; 	}
 
-  [107] FOR  at line 2359, col 2
+  [106] FOR  at line 2359, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][j][k][m] = - frct[i][j][k][m];
 
-  [108] FOR  at line 2374, col 3
+  [107] FOR  at line 2374, col 3
       Depth        : 0 (top-level)
       Condition    : i <= L2
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = jst; j <= jend; j++) {       for (k = 1; k <= nz - 2; k++) { 	flux[i][j…
 
-  [109] FOR  at line 2375, col 5
+  [108] FOR  at line 2375, col 5
       Depth        : 1 (nested)
       Condition    : j <= jend
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k <= nz - 2; k++) { 	flux[i][j][k][0] = u[i][j][k][1]; 	u21 = u[i][j…
 
-  [110] FOR  at line 2376, col 7
+  [109] FOR  at line 2376, col 7
       Depth        : 2 (nested)
       Condition    : k <= nz - 2
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : flux[i][j][k][0] = u[i][j][k][1]; 	u21 = u[i][j][k][1] / u[i][j][k][0];  	q = 0.…
 
-  [111] FOR  at line 2395, col 3
+  [110] FOR  at line 2395, col 3
       Depth        : 0 (top-level)
       Condition    : j <= jend
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k <= nz - 2; k++) {       for (i = ist; i <= iend; i++) { 	for (m = …
 
-  [112] FOR  at line 2396, col 5
+  [111] FOR  at line 2396, col 5
       Depth        : 1 (nested)
       Condition    : k <= nz - 2
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i = ist; i <= iend; i++) { 	for (m = 0; m < 5; m++) { 	  rsd[i][j][k][m] = …
 
-  [113] FOR  at line 2397, col 7
+  [112] FOR  at line 2397, col 7
       Depth        : 2 (nested)
       Condition    : i <= iend
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  rsd[i][j][k][m] =  rsd[i][j][k][m] 	    - tx2 * ( f…
 
-  [114] FOR  at line 2398, col 2
+  [113] FOR  at line 2398, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][j][k][m] =  rsd[i][j][k][m] 	    - tx2 * ( flux[i+1][j][k][m] - flux[i-1]…
 
-  [115] FOR  at line 2406, col 7
+  [114] FOR  at line 2406, col 7
       Depth        : 2 (nested)
       Condition    : i <= L2
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : tmp = 1.0 / u[i][j][k][0];  	u21i = tmp * u[i][j][k][1]; 	u31i = tmp * u[i][j][k…
 
-  [116] FOR  at line 2432, col 7
+  [115] FOR  at line 2432, col 7
       Depth        : 2 (nested)
       Condition    : i <= iend
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][j][k][0] = rsd[i][j][k][0] 	  + dx1 * tx1 * (            u[i-1][j][k][0] …
 
-  [117] FOR  at line 2462, col 7
+  [116] FOR  at line 2462, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[1][j][k][m] = rsd[1][j][k][m] 	  - dssp * ( + 5.0 * u[1][j][k][m] 		     - 4…
 
-  [118] FOR  at line 2477, col 7
+  [117] FOR  at line 2477, col 7
       Depth        : 2 (nested)
       Condition    : i <= iend1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  rsd[i][j][k][m] = rsd[i][j][k][m] 	    - dssp * (  …
 
-  [119] FOR  at line 2478, col 2
+  [118] FOR  at line 2478, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][j][k][m] = rsd[i][j][k][m] 	    - dssp * (            u[i-2][j][k][m] 			…
 
-  [120] FOR  at line 2489, col 7
+  [119] FOR  at line 2489, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[nx-3][j][k][m] = rsd[nx-3][j][k][m] 	  - dssp * (             u[nx-5][j][k][…
 
-  [121] FOR  at line 2511, col 3
+  [120] FOR  at line 2511, col 3
       Depth        : 0 (top-level)
       Condition    : i <= iend
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = L1; j <= L2; j++) {       for (k = 1; k <= nz - 2; k++) { 	flux[i][j][k…
 
-  [122] FOR  at line 2512, col 5
+  [121] FOR  at line 2512, col 5
       Depth        : 1 (nested)
       Condition    : j <= L2
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k <= nz - 2; k++) { 	flux[i][j][k][0] = u[i][j][k][2]; 	u31 = u[i][j…
 
-  [123] FOR  at line 2513, col 7
+  [122] FOR  at line 2513, col 7
       Depth        : 2 (nested)
       Condition    : k <= nz - 2
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : flux[i][j][k][0] = u[i][j][k][2]; 	u31 = u[i][j][k][2] / u[i][j][k][0];  	q = 0.…
 
-  [124] FOR  at line 2531, col 3
+  [123] FOR  at line 2531, col 3
       Depth        : 0 (top-level)
       Condition    : i <= iend
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k <= nz - 2; k++) {       for (j = jst; j <= jend; j++) { 	for (m = …
 
-  [125] FOR  at line 2532, col 5
+  [124] FOR  at line 2532, col 5
       Depth        : 1 (nested)
       Condition    : k <= nz - 2
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = jst; j <= jend; j++) { 	for (m = 0; m < 5; m++) { 	  rsd[i][j][k][m] = …
 
-  [126] FOR  at line 2533, col 7
+  [125] FOR  at line 2533, col 7
       Depth        : 2 (nested)
       Condition    : j <= jend
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  rsd[i][j][k][m] =  rsd[i][j][k][m] 	    - ty2 * ( f…
 
-  [127] FOR  at line 2534, col 2
+  [126] FOR  at line 2534, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][j][k][m] =  rsd[i][j][k][m] 	    - ty2 * ( flux[i][j+1][k][m] - flux[i][j…
 
-  [128] FOR  at line 2541, col 7
+  [127] FOR  at line 2541, col 7
       Depth        : 2 (nested)
       Condition    : j <= L2
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : tmp = 1.0 / u[i][j][k][0];  	u21j = tmp * u[i][j][k][1]; 	u31j = tmp * u[i][j][k…
 
-  [129] FOR  at line 2566, col 7
+  [128] FOR  at line 2566, col 7
       Depth        : 2 (nested)
       Condition    : j <= jend
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][j][k][0] = rsd[i][j][k][0] 	  + dy1 * ty1 * (            u[i][j-1][k][0] …
 
-  [130] FOR  at line 2602, col 7
+  [129] FOR  at line 2602, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][1][k][m] = rsd[i][1][k][m] 	  - dssp * ( + 5.0 * u[i][1][k][m] 		     - 4…
 
-  [131] FOR  at line 2616, col 7
+  [130] FOR  at line 2616, col 7
       Depth        : 2 (nested)
       Condition    : j <= jend1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  rsd[i][j][k][m] = rsd[i][j][k][m] 	    - dssp * (  …
 
-  [132] FOR  at line 2617, col 2
+  [131] FOR  at line 2617, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][j][k][m] = rsd[i][j][k][m] 	    - dssp * (            u[i][j-2][k][m] 			…
 
-  [133] FOR  at line 2627, col 7
+  [132] FOR  at line 2627, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][ny-3][k][m] = rsd[i][ny-3][k][m] 	  - dssp * (             u[i][ny-5][k][…
 
-  [134] FOR  at line 2645, col 3
+  [133] FOR  at line 2645, col 3
       Depth        : 0 (top-level)
       Condition    : i <= iend
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = jst; j <= jend; j++) {       for (k = 0; k <= nz-1; k++) { 	flux[i][j][…
 
-  [135] FOR  at line 2646, col 5
+  [134] FOR  at line 2646, col 5
       Depth        : 1 (nested)
       Condition    : j <= jend
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k <= nz-1; k++) { 	flux[i][j][k][0] = u[i][j][k][3]; 	u41 = u[i][j][…
 
-  [136] FOR  at line 2647, col 7
+  [135] FOR  at line 2647, col 7
       Depth        : 2 (nested)
       Condition    : k <= nz-1
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : flux[i][j][k][0] = u[i][j][k][3]; 	u41 = u[i][j][k][3] / u[i][j][k][0];  	q = 0.…
 
-  [137] FOR  at line 2662, col 7
+  [136] FOR  at line 2662, col 7
       Depth        : 2 (nested)
       Condition    : k <= nz - 2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  rsd[i][j][k][m] =  rsd[i][j][k][m] 	    - tz2 * ( f…
 
-  [138] FOR  at line 2663, col 2
+  [137] FOR  at line 2663, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][j][k][m] =  rsd[i][j][k][m] 	    - tz2 * ( flux[i][j][k+1][m] - flux[i][j…
 
-  [139] FOR  at line 2669, col 7
+  [138] FOR  at line 2669, col 7
       Depth        : 2 (nested)
       Condition    : k <= nz-1
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : tmp = 1.0 / u[i][j][k][0];  	u21k = tmp * u[i][j][k][1]; 	u31k = tmp * u[i][j][k…
 
-  [140] FOR  at line 2695, col 7
+  [139] FOR  at line 2695, col 7
       Depth        : 2 (nested)
       Condition    : k <= nz - 2
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][j][k][0] = rsd[i][j][k][0] 	  + dz1 * tz1 * (            u[i][j][k-1][0] …
 
-  [141] FOR  at line 2725, col 7
+  [140] FOR  at line 2725, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][j][1][m] = rsd[i][j][1][m] 	  - dssp * ( + 5.0 * u[i][j][1][m] 		     - 4…
 
-  [142] FOR  at line 2737, col 7
+  [141] FOR  at line 2737, col 7
       Depth        : 2 (nested)
       Condition    : k <= nz - 4
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  rsd[i][j][k][m] = rsd[i][j][k][m] 	    - dssp * (  …
 
-  [143] FOR  at line 2738, col 2
+  [142] FOR  at line 2738, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][j][k][m] = rsd[i][j][k][m] 	    - dssp * (            u[i][j][k-2][m] 			…
 
-  [144] FOR  at line 2748, col 7
+  [143] FOR  at line 2748, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][j][nz-3][m] = rsd[i][j][nz-3][m] 	  - dssp * (             u[i][j][nz-5][…
 
-  [145] FOR  at line 2787, col 3
+  [144] FOR  at line 2787, col 3
       Depth        : 0 (top-level)
       Condition    : i < nx
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : iglob = i;     for (j = 0; j < ny; j++) {       jglob = j;       exact( iglob, j…
 
-  [146] FOR  at line 2789, col 5
+  [145] FOR  at line 2789, col 5
       Depth        : 1 (nested)
       Condition    : j < ny
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : jglob = j;       exact( iglob, jglob, 0, &u[i][j][0][0] );       exact( iglob, j…
 
-  [147] FOR  at line 2800, col 3
+  [146] FOR  at line 2800, col 3
       Depth        : 0 (top-level)
       Condition    : i < nx
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : iglob = i;     for (k = 0; k < nz; k++) {       exact( iglob, 0, k, &u[i][0][k][…
 
-  [148] FOR  at line 2802, col 5
+  [147] FOR  at line 2802, col 5
       Depth        : 1 (nested)
       Condition    : k < nz
-      Computation  : pointer, bitwise, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : exact( iglob, 0, k, &u[i][0][k][0] );
 
-  [149] FOR  at line 2808, col 3
+  [148] FOR  at line 2808, col 3
       Depth        : 0 (top-level)
       Condition    : i < nx
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : iglob = i;     for (k = 0; k < nz; k++) {       exact( iglob, ny0-1,  k, &u[i][n…
 
-  [150] FOR  at line 2810, col 5
+  [149] FOR  at line 2810, col 5
       Depth        : 1 (nested)
       Condition    : k < nz
-      Computation  : pointer, bitwise, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : exact( iglob, ny0-1,  k, &u[i][ny-1][k][0] );
 
-  [151] FOR  at line 2819, col 3
+  [150] FOR  at line 2819, col 3
       Depth        : 0 (top-level)
       Condition    : j < ny
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : jglob = j;     for (k = 0; k < nz; k++) {       exact( 0, jglob, k, &u[0][j][k][…
 
-  [152] FOR  at line 2821, col 5
+  [151] FOR  at line 2821, col 5
       Depth        : 1 (nested)
       Condition    : k < nz
-      Computation  : pointer, bitwise, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : exact( 0, jglob, k, &u[0][j][k][0] );
 
-  [153] FOR  at line 2827, col 3
+  [152] FOR  at line 2827, col 3
       Depth        : 0 (top-level)
       Condition    : j < ny
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : jglob = j;     for (k = 0; k < nz; k++) {       exact( nx0-1, jglob, k, &u[nx-1]…
 
-  [154] FOR  at line 2829, col 5
+  [153] FOR  at line 2829, col 5
       Depth        : 1 (nested)
       Condition    : k < nz
-      Computation  : pointer, bitwise, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : exact( nx0-1, jglob, k, &u[nx-1][j][k][0] );
 
-  [155] FOR  at line 3006, col 3
+  [154] FOR  at line 3006, col 3
       Depth        : 0 (top-level)
       Condition    : j < ny
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : jglob = j;     for (k = 1; k < nz - 1; k++) {       zeta = ((double)k) / (nz-1);…
 
-  [156] FOR  at line 3008, col 5
+  [155] FOR  at line 3008, col 5
       Depth        : 1 (nested)
       Condition    : k < nz - 1
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : zeta = ((double)k) / (nz-1);       if (jglob != 0 && jglob != ny0-1) { 	eta = ( …
 
-  [157] FOR  at line 3012, col 2
+  [156] FOR  at line 3012, col 2
       Depth        : 2 (nested)
       Condition    : i < nx
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : iglob = i; 	  if(iglob != 0 && iglob != nx0-1) { 	    xi = ( (double) (iglob) ) …
 
-  [158] FOR  at line 3022, col 6
+  [157] FOR  at line 3022, col 6
       Depth        : 3 (nested)
       Condition    : m < 5
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : pxi =   ( 1.0 - xi ) * ue_1jk[m] 		+ xi   * ue_nx0jk[m]; 	      peta =  ( 1.0 - …
 
-  [159] FOR  at line 3071, col 3
+  [158] FOR  at line 3071, col 3
       Depth        : 0 (top-level)
       Condition    : i < ISIZ1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 0; j < ISIZ2; j++) {       for (k = 0; k < 5; k++) { 	for (m = 0; m < 5…
 
-  [160] FOR  at line 3072, col 5
+  [159] FOR  at line 3072, col 5
       Depth        : 1 (nested)
       Condition    : j < ISIZ2
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k < 5; k++) { 	for (m = 0; m < 5; m++) { 	  a[i][j][k][m] = 0.0; 	  …
 
-  [161] FOR  at line 3073, col 7
+  [160] FOR  at line 3073, col 7
       Depth        : 2 (nested)
       Condition    : k < 5
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  a[i][j][k][m] = 0.0; 	  b[i][j][k][m] = 0.0; 	  c[i…
 
-  [162] FOR  at line 3074, col 2
+  [161] FOR  at line 3074, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : a[i][j][k][m] = 0.0; 	  b[i][j][k][m] = 0.0; 	  c[i][j][k][m] = 0.0; 	  d[i][j][…
 
-  [163] FOR  at line 3105, col 3
+  [162] FOR  at line 3105, col 3
       Depth        : 0 (top-level)
       Condition    : istep <= itmax
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (istep%20  ==  0 || istep  ==  itmax || istep  ==  1) { #pragma omp master	  …
 
-  [164] FOR  at line 3119, col 5
+  [163] FOR  at line 3119, col 5
       Depth        : 1 (nested)
       Condition    : i <= iend
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = jst; j <= jend; j++) { 	for (k = 1; k <= nz - 2; k++) { 	  for (m = 0; …
 
-  [165] FOR  at line 3120, col 7
+  [164] FOR  at line 3120, col 7
       Depth        : 2 (nested)
       Condition    : j <= jend
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k <= nz - 2; k++) { 	  for (m = 0; m < 5; m++) { 	    rsd[i][j][k][m…
 
-  [166] FOR  at line 3121, col 2
+  [165] FOR  at line 3121, col 2
       Depth        : 3 (nested)
       Condition    : k <= nz - 2
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	    rsd[i][j][k][m] = dt * rsd[i][j][k][m]; 	  }
 
-  [167] FOR  at line 3122, col 4
+  [166] FOR  at line 3122, col 4
       Depth        : 4 (nested)
       Condition    : m < 5
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rsd[i][j][k][m] = dt * rsd[i][j][k][m];
 
-  [168] FOR  at line 3129, col 5
+  [167] FOR  at line 3129, col 5
       Depth        : 1 (nested)
       Condition    : k <= nz - 2
       Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : /*-------------------------------------------------------------------- c   form …
 
-  [169] FOR  at line 3148, col 5
+  [168] FOR  at line 3148, col 5
       Depth        : 1 (nested)
       Condition    : k >= 1
       Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : /*-------------------------------------------------------------------- c   form …
 
-  [170] FOR  at line 3171, col 5
+  [169] FOR  at line 3171, col 5
       Depth        : 1 (nested)
       Condition    : i <= iend
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = jst; j <= jend; j++) { 	for (k = 1; k <= nz-2; k++) { 	  for (m = 0; m …
 
-  [171] FOR  at line 3172, col 7
+  [170] FOR  at line 3172, col 7
       Depth        : 2 (nested)
       Condition    : j <= jend
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k <= nz-2; k++) { 	  for (m = 0; m < 5; m++) { 	    u[i][j][k][m] = …
 
-  [172] FOR  at line 3173, col 2
+  [171] FOR  at line 3173, col 2
       Depth        : 3 (nested)
       Condition    : k <= nz-2
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	    u[i][j][k][m] = u[i][j][k][m] 	      + tmp * rsd[…
 
-  [173] FOR  at line 3174, col 4
+  [172] FOR  at line 3174, col 4
       Depth        : 4 (nested)
       Condition    : m < 5
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[i][j][k][m] = u[i][j][k][m] 	      + tmp * rsd[i][j][k][m];
 
-  [174] FOR  at line 3247, col 3
+  [173] FOR  at line 3247, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xcrref[m] = 1.0;     xceref[m] = 1.0;
 
-  [175] FOR  at line 3415, col 3
+  [174] FOR  at line 3415, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xcrdif[m] = fabs((xcr[m]-xcrref[m])/xcrref[m]);     xcedif[m] = fabs((xce[m]-xce…
 
-  [176] FOR  at line 3445, col 3
+  [175] FOR  at line 3445, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
       Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (*class  ==  'U') {       printf("          %2d  %20.13e\n", m, xcr[m]);     …
 
-  [177] FOR  at line 3464, col 3
+  [176] FOR  at line 3464, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
       Computation  : pointer, arithmetic, function_call, io, array_access
@@ -4678,22 +4670,29 @@ FILE: NPB3.0-omp-C-master/LU/lu.c
 ========================================================================
 FILE: NPB3.0-omp-C-master/IS/is.c
 ------------------------------------------------------------------------
-  Total loops             : 7
+  Total loops             : 14
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 7  (nested: 0,  canonicalizable: 7)
+    For loops             : 14  (nested: 0,  canonicalizable: 14)
     Do-while loops        : 0
   Nested loops (total)    : 0
-  Canonicalizability      : 7/7  (100.0%)
+  Canonicalizability      : 14/14  (100.0%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
   1    for          255   d=0  Yes         i<=23
   2    for          260   d=0  Yes         i<=46
   3    for          309   d=0  Yes         i<NUM_KEYS
-  4    for          400   d=0  Yes         i<NUM_KEYS
-  5    for          433   d=0  Yes         i<TEST_ARRAY_SIZE
-  6    for          595   d=0  Yes         i<TEST_ARRAY_SIZE
-  7    for          653   d=0  Yes         iteration<=MAX_ITERATIONS
+  4    for          337   d=0  Yes         i<NUM_KEYS
+  5    for          344   d=0  Yes         i<NUM_KEYS
+  6    for          386   d=0  Yes         i<TEST_ARRAY_SIZE
+  7    for          390   d=0  Yes         i<MAX_KEY
+  8    for          395   d=0  Yes         i<MAX_KEY
+  9    for          400   d=0  Yes         i<NUM_KEYS
+  10   for          412   d=0  Yes         i<MAX_KEY-1
+  11   for          418   d=0  Yes         i<MAX_KEY
+  12   for          433   d=0  Yes         i<TEST_ARRAY_SIZE
+  13   for          595   d=0  Yes         i<TEST_ARRAY_SIZE
+  14   for          653   d=0  Yes         iteration<=MAX_ITERATIONS
 
   LOOP DETAILS
   ------------------------------------------------------------------------
@@ -4714,32 +4713,81 @@ FILE: NPB3.0-omp-C-master/IS/is.c
   [3] FOR  at line 309, col 2
       Depth        : 0 (top-level)
       Condition    : i<NUM_KEYS
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x = randlc(&seed, &a); 	    x += randlc(&seed, &a);     	    x += randlc(&seed, …
 
-  [4] FOR  at line 400, col 5
+  [4] FOR  at line 337, col 5
+      Depth        : 0 (top-level)
+      Condition    : i<NUM_KEYS
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : key_array[--key_buff_ptr_global[key_buff2[i]]] = key_buff2[i];
+
+  [5] FOR  at line 344, col 5
+      Depth        : 0 (top-level)
+      Condition    : i<NUM_KEYS
+      Computation  : arithmetic, function_call, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : if( key_array[i-1] > key_array[i] )             j++;
+
+  [6] FOR  at line 386, col 5
+      Depth        : 0 (top-level)
+      Condition    : i<TEST_ARRAY_SIZE
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : partial_verify_vals[i] = key_array[test_index_array[i]];
+
+  [7] FOR  at line 390, col 5
+      Depth        : 0 (top-level)
+      Condition    : i<MAX_KEY
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : key_buff1[i] = 0;
+
+  [8] FOR  at line 395, col 3
+      Depth        : 0 (top-level)
+      Condition    : i<MAX_KEY
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : prv_buff1[i] = 0;
+
+  [9] FOR  at line 400, col 5
       Depth        : 0 (top-level)
       Condition    : i<NUM_KEYS
       Computation  : pointer, arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : key_buff2[i] = key_array[i];  /*  Ranking of all keys occurs in this section:   …
 
-  [5] FOR  at line 433, col 5
+  [10] FOR  at line 412, col 5
+      Depth        : 0 (top-level)
+      Condition    : i<MAX_KEY-1
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : prv_buff1[i+1] += prv_buff1[i];
+
+  [11] FOR  at line 418, col 2
+      Depth        : 0 (top-level)
+      Condition    : i<MAX_KEY
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : key_buff1[i] += prv_buff1[i];
+
+  [12] FOR  at line 433, col 5
       Depth        : 0 (top-level)
       Condition    : i<TEST_ARRAY_SIZE
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access, control
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : k = partial_verify_vals[i];          /* test vals were put here */         if( 0…
 
-  [6] FOR  at line 595, col 5
+  [13] FOR  at line 595, col 5
       Depth        : 0 (top-level)
       Condition    : i<TEST_ARRAY_SIZE
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, function_call, array_access, control
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
-      Body snippet : case 'S':                 test_index_array[i] = S_test_index_array[i];          …
+      Body snippet : switch( CLASS )         {             case 'S':                 test_index_array…
 
-  [7] FOR  at line 653, col 5
+  [14] FOR  at line 653, col 5
       Depth        : 0 (top-level)
       Condition    : iteration<=MAX_ITERATIONS
       Computation  : pointer, arithmetic, function_call, io
@@ -4831,7 +4879,7 @@ FILE: NPB3.0-omp-C-master/FT/ft.c
   [3] FOR  at line 163, col 5
       Depth        : 0 (top-level)
       Condition    : iter <= niter
-      Computation  : pointer, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (TIMERS_ENABLED == TRUE) {      	      timer_start(T_EVOLVE); 	    }  	    ev…
 
@@ -4859,42 +4907,42 @@ FILE: NPB3.0-omp-C-master/FT/ft.c
   [7] FOR  at line 276, col 5
       Depth        : 0 (top-level)
       Condition    : k < dims[0][2]
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x0 = start;         vranlc(2*NX*dims[0][1], &x0, A, tmp); 	 	t = 1; 	for (j = 0;…
 
   [8] FOR  at line 281, col 2
       Depth        : 1 (nested)
       Condition    : j < dims[0][1]
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
-      Body snippet : u0[k][j][i].real = tmp[t++]; 	    u0[k][j][i].imag = tmp[t++];
+      Body snippet : for (i = 0; i < NX; i++) { 	    u0[k][j][i].real = tmp[t++]; 	    u0[k][j][i].im…
 
   [9] FOR  at line 282, col 4
       Depth        : 1 (nested)
       Condition    : i < NX
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u0[k][j][i].real = tmp[t++]; 	    u0[k][j][i].imag = tmp[t++];
 
   [10] WHILE  at line 317, col 5
       Depth        : 0 (top-level)
       Condition    : n > 1
-      Computation  : pointer, arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : NO  —  Counter variable 'n' is modified conditionally or with a data-dependent (runtime) stride — trip count is not statically predictable
       Body snippet : n2 = n/2; 	if (n2 * 2 == n) {             dummy = randlc(&q, q);             n =…
 
   [11] FOR  at line 354, col 5
       Depth        : 0 (top-level)
       Condition    : i < 3
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : dims[i][0] = NX; 	dims[i][1] = NY; 	dims[i][2] = NZ;
 
   [12] FOR  at line 361, col 5
       Depth        : 0 (top-level)
       Condition    : i < 3
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xstart[i] = 1; 	xend[i]   = NX; 	ystart[i] = 1;         yend[i]   = NY;         …
 
@@ -4929,14 +4977,14 @@ FILE: NPB3.0-omp-C-master/FT/ft.c
   [17] FOR  at line 460, col 5
       Depth        : 0 (top-level)
       Condition    : i < T_MAX
-      Computation  : pointer, function_call, io, array_access
+      Computation  : function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (timer_read(i) != 0.0) {             printf("timer %2d(%16s( :%10.6f\n", i, t…
 
   [18] FOR  at line 512, col 5
       Depth        : 0 (top-level)
       Condition    : i < 3
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : logd[i] = ilog2(d[i]);
 
@@ -4957,35 +5005,35 @@ FILE: NPB3.0-omp-C-master/FT/ft.c
   [21] FOR  at line 525, col 13
       Depth        : 2 (nested)
       Condition    : j < fftblock
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i = 0; i < d[0]; i++) {  		    y0[i][j].real = x[k][j+jj][i].real;  		    y…
 
   [22] FOR  at line 526, col 3
       Depth        : 3 (nested)
       Condition    : i < d[0]
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : y0[i][j].real = x[k][j+jj][i].real;  		    y0[i][j].imag = x[k][j+jj][i].imag;
 
   [23] FOR  at line 541, col 13
       Depth        : 2 (nested)
       Condition    : j < fftblock
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i = 0; i < d[0]; i++) { 		  xout[k][j+jj][i].real = y0[i][j].real; 		  xout…
 
   [24] FOR  at line 542, col 3
       Depth        : 3 (nested)
       Condition    : i < d[0]
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xout[k][j+jj][i].real = y0[i][j].real; 		  xout[k][j+jj][i].imag = y0[i][j].imag…
 
   [25] FOR  at line 567, col 5
       Depth        : 0 (top-level)
       Condition    : i < 3
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : logd[i] = ilog2(d[i]);
 
@@ -5006,35 +5054,35 @@ FILE: NPB3.0-omp-C-master/FT/ft.c
   [28] FOR  at line 579, col 6
       Depth        : 2 (nested)
       Condition    : j < d[1]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i = 0; i < fftblock; i++) { 		    y0[j][i].real = x[k][j][i+ii].real; 		   …
 
   [29] FOR  at line 580, col 3
       Depth        : 3 (nested)
       Condition    : i < fftblock
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : y0[j][i].real = x[k][j][i+ii].real; 		    y0[j][i].imag = x[k][j][i+ii].imag;
 
   [30] FOR  at line 592, col 12
       Depth        : 2 (nested)
       Condition    : j < d[1]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i = 0; i < fftblock; i++) { 		   xout[k][j][i+ii].real = y0[j][i].real; 		 …
 
   [31] FOR  at line 593, col 9
       Depth        : 3 (nested)
       Condition    : i < fftblock
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xout[k][j][i+ii].real = y0[j][i].real; 		   xout[k][j][i+ii].imag = y0[j][i].ima…
 
   [32] FOR  at line 617, col 5
       Depth        : 0 (top-level)
       Condition    : i < 3
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : logd[i] = ilog2(d[i]);
 
@@ -5055,28 +5103,28 @@ FILE: NPB3.0-omp-C-master/FT/ft.c
   [35] FOR  at line 629, col 6
       Depth        : 2 (nested)
       Condition    : k < d[2]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i = 0; i < fftblock; i++) { 		    y0[k][i].real = x[k][j][i+ii].real; 		   …
 
   [36] FOR  at line 630, col 3
       Depth        : 3 (nested)
       Condition    : i < fftblock
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : y0[k][i].real = x[k][j][i+ii].real; 		    y0[k][i].imag = x[k][j][i+ii].imag;
 
   [37] FOR  at line 642, col 12
       Depth        : 2 (nested)
       Condition    : k < d[2]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i = 0; i < fftblock; i++) { 		   xout[k][j][i+ii].real = y0[k][i].real; 		 …
 
   [38] FOR  at line 643, col 9
       Depth        : 3 (nested)
       Condition    : i < fftblock
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xout[k][j][i+ii].real = y0[k][i].real; 		   xout[k][j][i+ii].imag = y0[k][i].ima…
 
@@ -5104,14 +5152,14 @@ FILE: NPB3.0-omp-C-master/FT/ft.c
   [42] FOR  at line 740, col 2
       Depth        : 0 (top-level)
       Condition    : j < n
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (i = 0; i < fftblock; i++) { 		x[j][i].real = y[j][i].real; 		x[j][i].imag =…
 
   [43] FOR  at line 741, col 6
       Depth        : 1 (nested)
       Condition    : i < fftblock
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x[j][i].real = y[j][i].real; 		x[j][i].imag = y[j][i].imag;
 
@@ -5125,14 +5173,14 @@ FILE: NPB3.0-omp-C-master/FT/ft.c
   [45] FOR  at line 802, col 9
       Depth        : 1 (nested)
       Condition    : k < lk
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 0; j < ny; j++) { 		double x11real, x11imag; 		double x21real, x21imag;…
 
   [46] FOR  at line 803, col 6
       Depth        : 2 (nested)
       Condition    : j < ny
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : double x11real, x11imag; 		double x21real, x21imag; 		x11real = x[i11+k][j].real…
 
@@ -5146,7 +5194,7 @@ FILE: NPB3.0-omp-C-master/FT/ft.c
   [48] FOR  at line 865, col 5
       Depth        : 0 (top-level)
       Condition    : j <= 1024
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : q = j%NX+1; 	if (q >= xstart[0] && q <= xend[0]) {             r = (3*j)%NY+1;  …
 
@@ -5188,79 +5236,103 @@ FILE: NPB3.0-omp-C-master/FT/ft.c
 ========================================================================
 FILE: NPB3.0-omp-C-master/EP/ep.c
 ------------------------------------------------------------------------
-  Total loops             : 8
+  Total loops             : 11
     While loops           : 0  (nested: 0,  canonicalizable: 0)
-    For loops             : 8  (nested: 2,  canonicalizable: 8)
+    For loops             : 11  (nested: 2,  canonicalizable: 11)
     Do-while loops        : 0
   Nested loops (total)    : 2
-  Canonicalizability      : 8/8  (100.0%)
+  Canonicalizability      : 11/11  (100.0%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
   1    for           87   d=0  Yes         j >= 1
-  2    for          126   d=0  Yes         i <= MK+1
-  3    for          136   d=0  Yes         i <= NQ - 1
-  4    for          156   d=0  Yes         k <= np
-  5    for          163   d=1  Yes         i <= 100
-  6    for          184   d=1  Yes         i < NK
-  7    for          210   d=0  Yes         i <= NQ-1
-  8    for          254   d=0  Yes         i  <= NQ-1
+  2    for          111   d=0  Yes         i < 2*NK
+  3    for          126   d=0  Yes         i <= MK+1
+  4    for          136   d=0  Yes         i <= NQ - 1
+  5    for          153   d=0  Yes         i < NQ
+  6    for          156   d=0  Yes         k <= np
+  7    for          163   d=1  Yes         i <= 100
+  8    for          184   d=1  Yes         i < NK
+  9    for          202   d=0  Yes         i <= NQ - 1
+  10   for          210   d=0  Yes         i <= NQ-1
+  11   for          254   d=0  Yes         i  <= NQ-1
 
   LOOP DETAILS
   ------------------------------------------------------------------------
   [1] FOR  at line 87, col 5
       Depth        : 0 (top-level)
       Condition    : j >= 1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (size[j] == '.') size[j] = ' ';
 
-  [2] FOR  at line 126, col 5
+  [2] FOR  at line 111, col 5
+      Depth        : 0 (top-level)
+      Condition    : i < 2*NK
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : x[i] = -1.0e99;
+
+  [3] FOR  at line 126, col 5
       Depth        : 0 (top-level)
       Condition    : i <= MK+1
-      Computation  : arithmetic, bitwise, function_call
+      Computation  : arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : t2 = randlc(&t1, t1);
 
-  [3] FOR  at line 136, col 5
+  [4] FOR  at line 136, col 5
       Depth        : 0 (top-level)
       Condition    : i <= NQ - 1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : q[i] = 0.0;
 
-  [4] FOR  at line 156, col 5
+  [5] FOR  at line 153, col 5
+      Depth        : 0 (top-level)
+      Condition    : i < NQ
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : qq[i] = 0.0;
+
+  [6] FOR  at line 156, col 5
       Depth        : 0 (top-level)
       Condition    : k <= np
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : kk = k_offset + k; 	t1 = S; 	t2 = an;  /*      Find starting seed t1 for this kk…
 
-  [5] FOR  at line 163, col 2
+  [7] FOR  at line 163, col 2
       Depth        : 1 (nested)
       Condition    : i <= 100
-      Computation  : pointer, arithmetic, bitwise, function_call
+      Computation  : pointer, arithmetic, function_call
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : ik = kk / 2;             if (2 * ik != kk) t3 = randlc(&t1, t2);             if …
 
-  [6] FOR  at line 184, col 2
+  [8] FOR  at line 184, col 2
       Depth        : 1 (nested)
       Condition    : i < NK
       Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x1 = 2.0 * x[2*i] - 1.0;             x2 = 2.0 * x[2*i+1] - 1.0;             t1 =…
 
-  [7] FOR  at line 210, col 5
+  [9] FOR  at line 202, col 7
+      Depth        : 0 (top-level)
+      Condition    : i <= NQ - 1
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : q[i] += qq[i];
+
+  [10] FOR  at line 210, col 5
       Depth        : 0 (top-level)
       Condition    : i <= NQ-1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : gc = gc + q[i];
 
-  [8] FOR  at line 254, col 5
+  [11] FOR  at line 254, col 5
       Depth        : 0 (top-level)
       Condition    : i  <= NQ-1
-      Computation  : pointer, function_call, io, array_access
+      Computation  : function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : printf("%3d %15.0f\n", i, q[i]);
 
@@ -5334,12 +5406,12 @@ FILE: NPB3.0-omp-C-master/common/c_print_results.c
 ========================================================================
 FILE: NPB3.0-omp-C-master/CG/cg.c
 ------------------------------------------------------------------------
-  Total loops             : 40
+  Total loops             : 42
     While loops           : 1  (nested: 0,  canonicalizable: 0)
-    For loops             : 39  (nested: 15,  canonicalizable: 39)
-    Do-while loops        : 0
-  Nested loops (total)    : 15
-  Canonicalizability      : 39/40  (97.5%)
+    For loops             : 40  (nested: 16,  canonicalizable: 40)
+    Do-while loops        : 1
+  Nested loops (total)    : 16
+  Canonicalizability      : 40/42  (95.2%)
 
   #    KIND        LINE DEPTH  CANONICAL   CONDITION
   ---- ---------- ----- -----  ----------  ------------------------------
@@ -5374,50 +5446,52 @@ FILE: NPB3.0-omp-C-master/CG/cg.c
   29   for          738   d=0  Yes         nza <= nnza
   30   for          744   d=0  Yes         j <= nrows+1
   31   for          757   d=0  Yes         j <= nrows-1
-  32   for          764   d=0  Yes         nza <= nnza
-  33   for          775   d=0  Yes         j >= 1
-  34   for          785   d=0  Yes         i <= n
-  35   for          791   d=0  Yes         j <= nrows
-  36   for          797   d=1  Yes         k < rowstr[j+1]
-  37   for          810   d=1  Yes         k <= nzrow
-  38   while        858   d=0  No          nzv < nz
-  39   for          881   d=0  Yes         ii <= nzrow
-  40   for          910   d=0  Yes         k <= *nzv
+  32   for          758   d=1  Yes         k <= rowstr[j+1]-1
+  33   for          764   d=0  Yes         nza <= nnza
+  34   for          775   d=0  Yes         j >= 1
+  35   for          785   d=0  Yes         i <= n
+  36   for          791   d=0  Yes         j <= nrows
+  37   for          797   d=1  Yes         k < rowstr[j+1]
+  38   for          810   d=1  Yes         k <= nzrow
+  39   do-while     850   d=0  No          nn1 < n
+  40   while        858   d=0  No          nzv < nz
+  41   for          881   d=0  Yes         ii <= nzrow
+  42   for          910   d=0  Yes         k <= *nzv
 
   LOOP DETAILS
   ------------------------------------------------------------------------
   [1] FOR  at line 175, col 5
       Depth        : 0 (top-level)
       Condition    : j <= lastrow - firstrow + 1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = rowstr[j]; k < rowstr[j+1]; k++) {             colidx[k] = colidx[k] - …
 
   [2] FOR  at line 176, col 2
       Depth        : 1 (nested)
       Condition    : k < rowstr[j+1]
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : colidx[k] = colidx[k] - firstcol + 1;
 
   [3] FOR  at line 185, col 5
       Depth        : 0 (top-level)
       Condition    : i <= NA+1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x[i] = 1.0;
 
   [4] FOR  at line 189, col 7
       Depth        : 0 (top-level)
       Condition    : j <= lastcol-firstcol+1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : q[j] = 0.0;          z[j] = 0.0;          r[j] = 0.0;          p[j] = 0.0;
 
   [5] FOR  at line 204, col 5
       Depth        : 0 (top-level)
       Condition    : it <= 1
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : /*-------------------------------------------------------------------- c  The ca…
 
@@ -5438,14 +5512,14 @@ FILE: NPB3.0-omp-C-master/CG/cg.c
   [8] FOR  at line 240, col 5
       Depth        : 0 (top-level)
       Condition    : i <= NA+1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x[i] = 1.0;
 
   [9] FOR  at line 255, col 5
       Depth        : 0 (top-level)
       Condition    : it <= NITER
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : /*-------------------------------------------------------------------- c  The ca…
 
@@ -5466,7 +5540,7 @@ FILE: NPB3.0-omp-C-master/CG/cg.c
   [12] FOR  at line 379, col 5
       Depth        : 0 (top-level)
       Condition    : j <= naa+1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : q[j] = 0.0; 	z[j] = 0.0; 	r[j] = x[j]; 	p[j] = r[j]; 	//w[j] = 0.0;
 
@@ -5543,126 +5617,140 @@ FILE: NPB3.0-omp-C-master/CG/cg.c
   [23] FOR  at line 636, col 5
       Depth        : 0 (top-level)
       Condition    : i <= n
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : colidx[n+i] = 0;
 
   [24] FOR  at line 639, col 5
       Depth        : 0 (top-level)
       Condition    : iouter <= n
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : nzv = nonzer; 	sprnvc(n, nzv, v, iv, &(colidx[0]), &(colidx[n])); 	vecset(n, v, …
 
   [25] FOR  at line 643, col 2
       Depth        : 1 (nested)
       Condition    : ivelt <= nzv
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : jcol = iv[ivelt]; 	    if (jcol >= firstcol && jcol <= lastcol) { 		scale = size…
 
   [26] FOR  at line 647, col 3
       Depth        : 2 (nested)
       Condition    : ivelt1 <= nzv
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : pointer, arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : irow = iv[ivelt1];                     if (irow >= firstrow && irow <= lastrow) …
 
   [27] FOR  at line 672, col 5
       Depth        : 0 (top-level)
       Condition    : i <= lastrow
-      Computation  : pointer, arithmetic, bitwise, function_call, io, array_access
+      Computation  : arithmetic, function_call, io, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (i >= firstcol && i <= lastcol) { 	    iouter = n + i; 	    nnza = nnza + 1; …
 
   [28] FOR  at line 732, col 5
       Depth        : 0 (top-level)
       Condition    : j <= n
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rowstr[j] = 0; 	mark[j] = FALSE;
 
   [29] FOR  at line 738, col 5
       Depth        : 0 (top-level)
       Condition    : nza <= nnza
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : j = (arow[nza] - firstrow + 1) + 1; 	rowstr[j] = rowstr[j] + 1;
 
   [30] FOR  at line 744, col 5
       Depth        : 0 (top-level)
       Condition    : j <= nrows+1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rowstr[j] = rowstr[j] + rowstr[j-1];
 
   [31] FOR  at line 757, col 7
       Depth        : 0 (top-level)
       Condition    : j <= nrows-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for(k = rowstr[j];k <= rowstr[j+1]-1;k++) 	       a[k] = 0.0;
 
-  [32] FOR  at line 764, col 5
+  [32] FOR  at line 758, col 10
+      Depth        : 1 (nested)
+      Condition    : k <= rowstr[j+1]-1
+      Computation  : arithmetic, array_access
+      Canonical    : YES  —  Standard canonical form (init; cond; incr)
+      Body snippet : a[k] = 0.0;
+
+  [33] FOR  at line 764, col 5
       Depth        : 0 (top-level)
       Condition    : nza <= nnza
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : j = arow[nza] - firstrow + 1; 	k = rowstr[j]; 	a[k] = aelt[nza]; 	colidx[k] = ac…
 
-  [33] FOR  at line 775, col 5
+  [34] FOR  at line 775, col 5
       Depth        : 0 (top-level)
       Condition    : j >= 1
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rowstr[j+1] = rowstr[j];
 
-  [34] FOR  at line 785, col 5
+  [35] FOR  at line 785, col 5
       Depth        : 0 (top-level)
       Condition    : i <= n
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : x[i] = 0.0; 	mark[i] = FALSE;
 
-  [35] FOR  at line 791, col 5
+  [36] FOR  at line 791, col 5
       Depth        : 0 (top-level)
       Condition    : j <= nrows
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : nzrow = 0; 	 /*-----------------------------------------------------------------…
 
-  [36] FOR  at line 797, col 2
+  [37] FOR  at line 797, col 2
       Depth        : 1 (nested)
       Condition    : k < rowstr[j+1]
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : i = colidx[k];             x[i] = x[i] + a[k];             if ( mark[i] == FALSE…
 
-  [37] FOR  at line 810, col 2
+  [38] FOR  at line 810, col 2
       Depth        : 1 (nested)
       Condition    : k <= nzrow
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : i = nzloc[k];             mark[i] = FALSE;             xi = x[i];             x[…
 
-  [38] WHILE  at line 858, col 5
+  [39] DO-WHILE  at line 850, col 5
+      Depth        : 0 (top-level)
+      Condition    : nn1 < n
+      Computation  : pointer, arithmetic
+      Canonical    : NO  —  No increment/decrement of 'nn1' detected in body
+      Body snippet : nn1 = 2 * nn1;
+
+  [40] WHILE  at line 858, col 5
       Depth        : 0 (top-level)
       Condition    : nzv < nz
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : NO  —  Counter variable 'nzv' is modified conditionally or with a data-dependent (runtime) stride — trip count is not statically predictable
       Body snippet : vecelt = randlc(&tran, amult);  /*----------------------------------------------…
 
-  [39] FOR  at line 881, col 5
+  [41] FOR  at line 881, col 5
       Depth        : 0 (top-level)
       Condition    : ii <= nzrow
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : i = nzloc[ii]; 	mark[i] = 0;
 
-  [40] FOR  at line 910, col 5
+  [42] FOR  at line 910, col 5
       Depth        : 0 (top-level)
       Condition    : k <= *nzv
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (iv[k] == i) {             v[k] = val;             set  = TRUE; 	}
 
@@ -5907,42 +5995,42 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [1] FOR  at line 142, col 3
       Depth        : 0 (top-level)
       Condition    : step <= niter
-      Computation  : bitwise, function_call, io
+      Computation  : function_call, io
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : if (step%20 == 0 || step == 1) {       printf(" Time step %4d\n", step);     }  …
 
   [2] FOR  at line 190, col 3
       Depth        : 0 (top-level)
       Condition    : i < grid_points[0]-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 1; j < grid_points[1]-1; j++) {       for (k = 1; k < grid_points[2]-1;…
 
   [3] FOR  at line 191, col 5
       Depth        : 1 (nested)
       Condition    : j < grid_points[1]-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k < grid_points[2]-1; k++) { 	for (m = 0; m < 5; m++) { 	  u[i][j][k…
 
   [4] FOR  at line 192, col 7
       Depth        : 2 (nested)
       Condition    : k < grid_points[2]-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  u[i][j][k][m] = u[i][j][k][m] + rhs[i][j][k][m]; 	}
 
   [5] FOR  at line 193, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[i][j][k][m] = u[i][j][k][m] + rhs[i][j][k][m];
 
   [6] FOR  at line 234, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rms[m] = 0.0;
 
@@ -5977,21 +6065,21 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [11] FOR  at line 254, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (d = 0; d <= 2; d++) {       rms[m] = rms[m] / (double)(grid_points[d]-2);  …
 
   [12] FOR  at line 255, col 5
       Depth        : 1 (nested)
       Condition    : d <= 2
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rms[m] = rms[m] / (double)(grid_points[d]-2);
 
   [13] FOR  at line 273, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rms[m] = 0.0;
 
@@ -6026,42 +6114,42 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [18] FOR  at line 288, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (d = 0; d <= 2; d++) {       rms[m] = rms[m] / (double)(grid_points[d]-2);  …
 
   [19] FOR  at line 289, col 5
       Depth        : 1 (nested)
       Condition    : d <= 2
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rms[m] = rms[m] / (double)(grid_points[d]-2);
 
   [20] FOR  at line 318, col 3
       Depth        : 0 (top-level)
       Condition    : i < grid_points[0]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 0; j < grid_points[1]; j++) {       for (k = 0; k < grid_points[2]; k++…
 
   [21] FOR  at line 319, col 5
       Depth        : 1 (nested)
       Condition    : j < grid_points[1]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k < grid_points[2]; k++) { 	for (m = 0; m < 5; m++) { 	  forcing[i][…
 
   [22] FOR  at line 320, col 7
       Depth        : 2 (nested)
       Condition    : k < grid_points[2]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  forcing[i][j][k][m] = 0.0; 	}
 
   [23] FOR  at line 321, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : forcing[i][j][k][m] = 0.0;
 
@@ -6089,7 +6177,7 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [27] FOR  at line 342, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : ue[i][m] = dtemp[m];
 
@@ -6159,7 +6247,7 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [37] FOR  at line 441, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : ue[j][m] = dtemp[m];
 
@@ -6229,7 +6317,7 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [47] FOR  at line 541, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : ue[k][m] = dtemp[m];
 
@@ -6313,70 +6401,70 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [59] FOR  at line 693, col 3
       Depth        : 0 (top-level)
       Condition    : i < IMAX
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 0; j < IMAX; j++) {       for (k = 0; k < IMAX; k++) { 	for (m = 0; m <…
 
   [60] FOR  at line 694, col 5
       Depth        : 1 (nested)
       Condition    : j < IMAX
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k < IMAX; k++) { 	for (m = 0; m < 5; m++) { 	  u[i][j][k][m] = 1.0; …
 
   [61] FOR  at line 695, col 7
       Depth        : 2 (nested)
       Condition    : k < IMAX
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  u[i][j][k][m] = 1.0; 	}
 
   [62] FOR  at line 696, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[i][j][k][m] = 1.0;
 
   [63] FOR  at line 708, col 3
       Depth        : 0 (top-level)
       Condition    : i < grid_points[0]
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xi = (double)i * dnxm1;          for (j = 0; j < grid_points[1]; j++) {       et…
 
   [64] FOR  at line 711, col 5
       Depth        : 1 (nested)
       Condition    : j < grid_points[1]
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : eta = (double)j * dnym1;              for (k = 0; k < grid_points[2]; k++) { 	ze…
 
   [65] FOR  at line 714, col 7
       Depth        : 2 (nested)
       Condition    : k < grid_points[2]
-      Computation  : pointer, arithmetic, bitwise, function_call, array_access
+      Computation  : pointer, arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : zeta = (double)k * dnzm1;                    	for (ix = 0; ix < 2; ix++) { 	  ex…
 
   [66] FOR  at line 717, col 2
       Depth        : 3 (nested)
       Condition    : ix < 2
-      Computation  : pointer, bitwise, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : exact_solution((double)ix, eta, zeta,                           &(Pface[ix][0][0…
 
   [67] FOR  at line 722, col 2
       Depth        : 3 (nested)
       Condition    : iy < 2
-      Computation  : pointer, bitwise, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : exact_solution(xi, (double)iy , zeta,                           &Pface[iy][1][0]…
 
   [68] FOR  at line 727, col 2
       Depth        : 3 (nested)
       Condition    : iz < 2
-      Computation  : pointer, bitwise, function_call, array_access
+      Computation  : function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : exact_solution(xi, eta, (double)iz,                             &Pface[iz][2][0]…
 
@@ -6404,7 +6492,7 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [72] FOR  at line 763, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[i][j][k][m] = temp[m];
 
@@ -6425,7 +6513,7 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [75] FOR  at line 781, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[i][j][k][m] = temp[m];
 
@@ -6446,7 +6534,7 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [78] FOR  at line 798, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[i][j][k][m] = temp[m];
 
@@ -6467,7 +6555,7 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [81] FOR  at line 815, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[i][j][k][m] = temp[m];
 
@@ -6488,7 +6576,7 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [84] FOR  at line 832, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[i][j][k][m] = temp[m];
 
@@ -6509,70 +6597,70 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [87] FOR  at line 849, col 7
       Depth        : 2 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : u[i][j][k][m] = temp[m];
 
   [88] FOR  at line 873, col 3
       Depth        : 0 (top-level)
       Condition    : i < grid_points[0]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 0; j < grid_points[1]; j++) {       for (k = 0; k < grid_points[2]; k++…
 
   [89] FOR  at line 874, col 5
       Depth        : 1 (nested)
       Condition    : j < grid_points[1]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k < grid_points[2]; k++) { 	for (m = 0; m < 5; m++) { 	  for (n = 0;…
 
   [90] FOR  at line 875, col 7
       Depth        : 2 (nested)
       Condition    : k < grid_points[2]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  for (n = 0; n < 5; n++) { 	    lhs[i][j][k][0][m][n…
 
   [91] FOR  at line 876, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (n = 0; n < 5; n++) { 	    lhs[i][j][k][0][m][n] = 0.0; 	    lhs[i][j][k][1]…
 
   [92] FOR  at line 877, col 4
       Depth        : 4 (nested)
       Condition    : n < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lhs[i][j][k][0][m][n] = 0.0; 	    lhs[i][j][k][1][m][n] = 0.0; 	    lhs[i][j][k]…
 
   [93] FOR  at line 891, col 3
       Depth        : 0 (top-level)
       Condition    : i < grid_points[0]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 0; j < grid_points[1]; j++) {       for (k = 0; k < grid_points[2]; k++…
 
   [94] FOR  at line 892, col 5
       Depth        : 1 (nested)
       Condition    : j < grid_points[1]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k < grid_points[2]; k++) { 	for (m = 0; m < 5; m++) { 	  lhs[i][j][k…
 
   [95] FOR  at line 893, col 7
       Depth        : 2 (nested)
       Condition    : k < grid_points[2]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  lhs[i][j][k][1][m][m] = 1.0; 	}
 
   [96] FOR  at line 894, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : lhs[i][j][k][1][m][m] = 1.0;
 
@@ -6712,28 +6800,28 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [116] FOR  at line 1808, col 3
       Depth        : 0 (top-level)
       Condition    : i < grid_points[0]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 0; j < grid_points[1]; j++) {       for (k = 0; k < grid_points[2]; k++…
 
   [117] FOR  at line 1809, col 5
       Depth        : 1 (nested)
       Condition    : j < grid_points[1]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 0; k < grid_points[2]; k++) { 	for (m = 0; m < 5; m++) { 	  rhs[i][j][k…
 
   [118] FOR  at line 1810, col 7
       Depth        : 2 (nested)
       Condition    : k < grid_points[2]
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (m = 0; m < 5; m++) { 	  rhs[i][j][k][m] = forcing[i][j][k][m]; 	}
 
   [119] FOR  at line 1811, col 2
       Depth        : 3 (nested)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : rhs[i][j][k][m] = forcing[i][j][k][m];
 
@@ -7167,21 +7255,21 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [181] FOR  at line 2423, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xcr[m] = xcr[m] / dt;
 
   [182] FOR  at line 2430, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, array_access
+      Computation  : arithmetic, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xcrref[m] = 1.0;     xceref[m] = 1.0;
 
   [183] FOR  at line 2593, col 3
       Depth        : 0 (top-level)
       Condition    : m < 5
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : xcrdif[m] = fabs((xcr[m]-xcrref[m])/xcrref[m]);     xcedif[m] = fabs((xce[m]-xce…
 
@@ -7237,14 +7325,14 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [191] FOR  at line 2744, col 3
       Depth        : 0 (top-level)
       Condition    : j < grid_points[1]-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k < grid_points[2]-1; k++) {  /*------------------------------------…
 
   [192] FOR  at line 2745, col 5
       Depth        : 1 (nested)
       Condition    : k < grid_points[2]-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : /*-------------------------------------------------------------------- c     mul…
 
@@ -7335,14 +7423,14 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [205] FOR  at line 3383, col 3
       Depth        : 0 (top-level)
       Condition    : i < grid_points[0]-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (k = 1; k < grid_points[2]-1; k++) {  /*------------------------------------…
 
   [206] FOR  at line 3384, col 5
       Depth        : 1 (nested)
       Condition    : k < grid_points[2]-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : /*-------------------------------------------------------------------- c     mul…
 
@@ -7419,14 +7507,14 @@ FILE: NPB3.0-omp-C-master/BT/bt.c
   [217] FOR  at line 3543, col 3
       Depth        : 0 (top-level)
       Condition    : i < grid_points[0]-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : for (j = 1; j < grid_points[1]-1; j++) {  /*------------------------------------…
 
   [218] FOR  at line 3544, col 5
       Depth        : 1 (nested)
       Condition    : j < grid_points[1]-1
-      Computation  : pointer, arithmetic, function_call, array_access
+      Computation  : arithmetic, function_call, array_access
       Canonical    : YES  —  Standard canonical form (init; cond; incr)
       Body snippet : /*-------------------------------------------------------------------- c     mul…
 

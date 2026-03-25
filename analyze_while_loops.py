@@ -126,29 +126,190 @@ def find_closing_paren(src: str, start: int) -> int:
     return -1
 
 
+def extract_loop_body(clean: str, src: str, paren_end: int):
+    """
+    Extract the loop body that starts after `paren_end` (the closing ')' of
+    the loop header).  Handles two forms:
+
+      Braced:       while (...) { ... }
+      Brace-less:   for (...)  single_statement;
+
+    Returns (body_str, brace_start, brace_end) where:
+      - body_str   is taken from the ORIGINAL src (so it has the real content,
+                   not the comment/string-stripped version)
+      - brace_start / brace_end are indices into `clean` used for nesting
+        range tracking.  For brace-less bodies these point to the virtual
+        "block" that is the single statement (start = paren_end, end = semicolon).
+    Returns (None, -1, -1) if no body can be found.
+    """
+    # Skip whitespace after ')'
+    pos = paren_end + 1
+    while pos < len(clean) and clean[pos] in ' \t\r\n':
+        pos += 1
+
+    if pos >= len(clean):
+        return None, -1, -1
+
+    if clean[pos] == '{':
+        # ── Braced body ───────────────────────────────────────────────────
+        brace_start = pos
+        brace_end = find_matching_brace(clean, brace_start)
+        if brace_end == -1:
+            return None, -1, -1
+        body = src[brace_start + 1:brace_end]
+        return body, brace_start, brace_end
+
+    else:
+        # ── Brace-less single statement ───────────────────────────────────
+        # Find the terminating semicolon, respecting nested parens/braces.
+        stmt_start = pos
+        depth_p = 0
+        depth_b = 0
+        i = pos
+        while i < len(clean):
+            ch = clean[i]
+            if ch == '(':
+                depth_p += 1
+            elif ch == ')':
+                depth_p -= 1
+            elif ch == '{':
+                depth_b += 1
+            elif ch == '}':
+                depth_b -= 1
+            elif ch == ';' and depth_p == 0 and depth_b == 0:
+                stmt_end = i  # index of the semicolon
+                body = src[stmt_start:stmt_end + 1].strip()
+                # Use stmt_start/stmt_end as the "range" for nesting purposes
+                return body, stmt_start, stmt_end
+            i += 1
+        return None, -1, -1
+
+
 def classify_computation(body: str) -> List[str]:
+    """
+    Classify what kinds of operations appear in a loop body.
+
+    Key correctness rules:
+    - arithmetic: only MUTATION operators (+=, -=, *=, /=, %=, ++, --)
+                  NOT comparisons (<, >, ==, !=) which appear in conditions
+                  NOT the for-loop increment (passed in separately, not in body)
+    - array_access: only explicit subscript in the body text (word[word])
+                    NOT pointer patterns, NOT subscripts inside string literals
+    - pointer: dereference (*x), arrow (->), but NOT bare array subscripts
+               (array_access is separate)
+    - control: switch/case/break patterns (getopt-style dispatch loops)
+    - io: extended to include fopen, fclose, fgetc, fgets, fputs, feof,
+          fscanf, sscanf, sprintf, snprintf
+    """
+    # Strip string literals before classification to avoid matching
+    # patterns like argv "i:t:m:n:l:" or format strings "%d %f"
+    # We already received the original body (with strings), so strip here.
+    clean_body = re.sub(r'"[^"\\]*(?:\\.[^"\\]*)*"', '""', body)
+    clean_body = re.sub(r"'[^'\\]*(?:\\.[^'\\]*)*'", "''", clean_body)
+
     types = []
-    # Pointer ops
-    if re.search(r'\*\s*\w|\w\s*->\s*\w|\w\s*\[\s*\w', body):
+
+    # ── Pointer: dereference *x, arrow x->y, or pointer-typed variable ───
+    # Also catches: FILE* fp used as argument, char* p, etc.
+    # Heuristic: any identifier ending in common pointer suffixes, or
+    # explicit * dereference / arrow operator in the body.
+    if re.search(
+        r'\*\s*[a-zA-Z_]'           # explicit deref: *ptr  *buf
+        r'|\b\w+\s*->\s*\w+'        # arrow: p->field
+        r'|\b\w+ptr\b|\bptr\w*\b'   # variables named *ptr*
+        r'|\bfp\b|\bbuf\b|\boptarg\b|\bargv\b',  # common pointer vars
+        clean_body
+    ):
         types.append("pointer")
-    # Arithmetic
-    if re.search(r'[\+\-\*\/\%]=|[^<>!=]=\s*[^=]|\+\+|--', body):
+
+    # ── Arithmetic: mutation operators only ───────────────────────────────
+    # += -= *= /= %=  and  ++  --
+    # Simple assignment: word = / word[...] =  (but NOT == or !=)
+    if re.search(
+        r'[\+\-\*\/%]=|'                    # compound assignment: +=  -=  *=  /=  %=
+        r'\+\+|--|'                         # increment/decrement
+        r'(?<![=!<>])\b\w[\w\[\]]*\s*=[^=]',  # assignment: x=  x[i]=  x[i-1]=
+        clean_body
+    ):
         types.append("arithmetic")
-    # Bitwise
-    if re.search(r'[&|^~]|<<|>>', body):
+
+    # ── Bitwise: true bitwise operators only ─────────────────────────────
+    # Rules:
+    #  ACCEPT  a & b   (binary &)  — word/)/] LEFT of &, word/( RIGHT, not &&
+    #  REJECT  &x      (address-of) — nothing / punctuation LEFT of &
+    #  ACCEPT  a | b   (binary |)  — not ||
+    #  ACCEPT  a |= b  (|= compound assign)
+    #  ACCEPT  a ^= b  a ^ b
+    #  ACCEPT  ~x      (unary bitwise NOT)
+    #  ACCEPT  a << b  a >> b
+    #  REJECT  &&  ||  (logical, not bitwise)
+    _bw = False
+    # Binary &: must have a word-char or ) or ] on the LEFT — not &&
+    if re.search(r'(?<=[\w\)\]])\s*&(?!&)', clean_body):
+        # Extra guard: the left side must NOT be a cast like (void*)
+        # We accept it only when left token is an identifier or closing bracket
+        # which means it's  expr & expr  not  cast &var
+        matches = re.finditer(r'([\w\)\]])\s*(&)(?!&)', clean_body)
+        for m in matches:
+            left_char = m.group(1)
+            # If left is ')' check what's inside — if it's a type cast reject
+            pos = m.start(2)  # position of &
+            pre = clean_body[:pos].rstrip()
+            # A type-cast ends with *)  or  just )  where the ( contains a type
+            # Heuristic: if & is preceded by  *) or <type>)  treat as address-of
+            if pre.endswith('*)') or re.search(r'\(\s*\w+\s*\*?\s*\)\s*$', pre):
+                continue  # address-of after cast
+            _bw = True
+            break
+    # |= and &= compound bitwise assigns
+    if re.search(r'[\w\)\]]\s*[|&^]=', clean_body):
+        _bw = True
+    # Binary | (not ||): word/)/] on left
+    if re.search(r'[\w\)\]]\s*\|(?!\|)', clean_body):
+        _bw = True
+    # Binary ^
+    if re.search(r'[\w\)\]]\s*\^(?!=)', clean_body):
+        _bw = True
+    # Unary ~
+    if re.search(r'~\s*[\w\(]', clean_body):
+        _bw = True
+    # Shifts
+    if re.search(r'[\w\)\]]\s*(?:<<|>>)\s*[\w\(]', clean_body):
+        _bw = True
+    if _bw:
         types.append("bitwise")
-    # Function calls
-    if re.search(r'\w+\s*\(', body):
+
+    # ── Function calls ────────────────────────────────────────────────────
+    if re.search(r'\b[a-zA-Z_]\w*\s*\(', clean_body):
         types.append("function_call")
-    # Memory allocation
-    if re.search(r'\b(malloc|calloc|realloc|free|new|delete)\b', body):
+
+    # ── Memory allocation ─────────────────────────────────────────────────
+    if re.search(r'\b(malloc|calloc|realloc|free|new\b|delete)\b', clean_body):
         types.append("memory_alloc")
-    # I/O
-    if re.search(r'\b(printf|scanf|cout|cin|fwrite|fread|fprintf)\b', body):
+
+    # ── I/O: extended set including file ops, sprintf family, getopt ──────
+    if re.search(
+        r'\b(printf|fprintf|sprintf|snprintf|vprintf|vfprintf|'
+        r'scanf|fscanf|sscanf|'
+        r'fopen|fclose|fread|fwrite|fgetc|fgets|fputs|fputc|feof|'
+        r'cout|cin|cerr|getline|'
+        r'read|write|recv|send|'
+        r'getopt)\b',
+        clean_body
+    ):
         types.append("io")
-    # Array access
-    if re.search(r'\w\s*\[\s*\w', body):
+
+    # ── Array access: explicit subscript  word[word_or_expr] ─────────────
+    # Must be a real index expression — reject empty brackets []
+    # Also reject cases where the subscript is purely inside a string literal
+    # (already stripped above via clean_body)
+    if re.search(r'\b[a-zA-Z_]\w*\s*\[\s*[^\]\s]', clean_body):
         types.append("array_access")
+
+    # ── Control flow: switch/case dispatch (getopt-style loops) ──────────
+    if re.search(r'\bswitch\s*\(|\bcase\b', clean_body):
+        types.append("control")
+
     if not types:
         types.append("none_detected")
     return types
@@ -586,24 +747,52 @@ def parse_loops(src: str, filename: str) -> FileReport:
     while_pat = re.compile(r'\bwhile\s*\(', re.DOTALL)
     for m in while_pat.finditer(clean):
         kw_start = m.start()
+
+        # ── Skip do-while tails: `do { ... } while (cond);` ──────────────
+        # Strategy: if the character immediately before `while` (ignoring
+        # whitespace) is `}`, find its matching `{`, then look at what
+        # keyword precedes THAT `{`. If it's `do`, this is a do-while tail.
+        pre_stripped = clean[max(0, kw_start - 500):kw_start].rstrip()
+        if pre_stripped.endswith('}'):
+            # Find the `}` position in the full clean string
+            close_brace_pos = kw_start - (len(clean[max(0, kw_start-500):kw_start])
+                                          - len(pre_stripped)) - 1
+            # Walk back to find the matching `{`
+            depth = 0
+            open_brace_pos = -1
+            for bp in range(close_brace_pos, max(0, close_brace_pos - 5000), -1):
+                if bp >= len(clean):
+                    continue
+                if clean[bp] == '}':
+                    depth += 1
+                elif clean[bp] == '{':
+                    depth -= 1
+                    if depth == 0:
+                        open_brace_pos = bp
+                        break
+            if open_brace_pos != -1:
+                # Look at what keyword immediately precedes the `{`
+                before_brace = clean[max(0, open_brace_pos - 20):open_brace_pos].rstrip()
+                if before_brace.endswith('do') and (
+                    len(before_brace) == 2 or not before_brace[-3].isalnum()
+                ):
+                    continue  # genuine do-while tail
+
         paren_start = clean.index('(', kw_start)
         paren_end = find_closing_paren(clean, paren_start)
         if paren_end == -1:
             continue
         cond_raw = clean[paren_start+1:paren_end]
-        # Find body
-        brace_start = clean.find('{', paren_end)
-        if brace_start == -1 or (brace_start > paren_end + 50):
-            continue
-        brace_end = find_matching_brace(clean, brace_start)
-        if brace_end == -1:
+
+        # Find body — supports both braced and brace-less forms
+        body, brace_start, brace_end = extract_loop_body(clean, src, paren_end)
+        if body is None:
             continue
 
-        # Check do-while (look back)
-        pre = clean[max(0, kw_start-10):kw_start].strip()
-        is_do_while = pre.endswith('}') or re.search(r'\bdo\b', clean[max(0, kw_start-20):kw_start])
+        # Reject semicolon-only bodies — do-while tail that slipped through
+        if body.strip() in ('', ';', '{}'):
+            continue
 
-        body = src[brace_start+1:brace_end]
         line_no = pos_to_line(kw_start)
         col_no = pos_to_col(kw_start)
         depth = depth_at(kw_start, loop_ranges)
@@ -614,7 +803,7 @@ def parse_loops(src: str, filename: str) -> FileReport:
         snippet = body.strip()[:120].replace('\n', ' ')
 
         li = LoopInfo(
-            kind="do-while" if is_do_while else "while",
+            kind="while",
             line=line_no, col=col_no,
             depth=depth, is_nested=(depth > 0),
             condition=cond_raw.strip()[:80],
@@ -625,14 +814,59 @@ def parse_loops(src: str, filename: str) -> FileReport:
             file=filename
         )
         report.loops.append(li)
-        if is_do_while:
-            report.total_do_while += 1
-        else:
-            report.total_while += 1
-            if depth > 0:
-                report.nested_while += 1
-            if can:
-                report.canonicalizable_while += 1
+        report.total_while += 1
+        if depth > 0:
+            report.nested_while += 1
+        if can:
+            report.canonicalizable_while += 1
+
+    # ── DO-WHILE loops ────────────────────────────────────────
+    # Pattern:  do { body } while (cond);
+    # We scan for `do {` and then find the matching `}`, then verify
+    # that `while (...)` follows immediately.
+    do_pat = re.compile(r'\bdo\s*\{', re.DOTALL)
+    for m in do_pat.finditer(clean):
+        kw_start  = m.start()
+        brace_pos = clean.index('{', kw_start)
+        brace_end = find_matching_brace(clean, brace_pos)
+        if brace_end == -1:
+            continue
+        # After `}` there must be whitespace then `while (`
+        after = clean[brace_end+1:brace_end+30].lstrip()
+        if not after.startswith('while'):
+            continue
+        # Find the while condition
+        w_start    = clean.index('while', brace_end)
+        p_start    = clean.index('(', w_start)
+        p_end      = find_closing_paren(clean, p_start)
+        if p_end == -1:
+            continue
+        cond_raw   = clean[p_start+1:p_end]
+        body       = src[brace_pos+1:brace_end]
+        line_no    = pos_to_line(kw_start)
+        col_no     = pos_to_col(kw_start)
+        depth      = depth_at(kw_start, loop_ranges)
+        loop_ranges.append((brace_pos, brace_end))
+
+        can, reason = check_canonicalizable_while(cond_raw, body)
+        comp    = classify_computation(body)
+        snippet = body.strip()[:120].replace('\n', ' ')
+
+        li = LoopInfo(
+            kind="do-while",
+            line=line_no, col=col_no,
+            depth=depth, is_nested=(depth > 0),
+            condition=cond_raw.strip()[:80],
+            body_snippet=snippet,
+            computation_types=comp,
+            is_canonicalizable=can,
+            canonicalize_reason=reason,
+            file=filename
+        )
+        report.loops.append(li)
+        report.total_do_while += 1
+        if depth > 0:
+            report.nested_while += 1
 
     # ── FOR loops ────────────────────────────────────────────
     for_pat = re.compile(r'\bfor\s*\(', re.DOTALL)
@@ -649,21 +883,18 @@ def parse_loops(src: str, filename: str) -> FileReport:
         cond = parts[1].strip() if len(parts) > 1 else ''
         incr = parts[2].strip() if len(parts) > 2 else ''
 
-        brace_start = clean.find('{', paren_end)
-        if brace_start == -1 or (brace_start > paren_end + 50):
-            continue
-        brace_end = find_matching_brace(clean, brace_start)
-        if brace_end == -1:
+        # Find body — supports both braced and brace-less single-statement forms
+        body, brace_start, brace_end = extract_loop_body(clean, src, paren_end)
+        if body is None:
             continue
 
-        body = src[brace_start+1:brace_end]
         line_no = pos_to_line(kw_start)
-        col_no = pos_to_col(kw_start)
-        depth = depth_at(kw_start, loop_ranges)
+        col_no  = pos_to_col(kw_start)
+        depth   = depth_at(kw_start, loop_ranges)
         loop_ranges.append((brace_start, brace_end))
 
         can, reason = check_canonicalizable_for(init, cond, incr)
-        comp = classify_computation(body)
+        comp    = classify_computation(body)
         snippet = body.strip()[:120].replace('\n', ' ')
 
         li = LoopInfo(
